@@ -7,8 +7,15 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DebugLibrary", "DebugLibrary\DebugLibrary.vcxproj", "{56A1F4E5-78E4-359A-80A3-2E0BE2E35421}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MixFaceLibrary", "MixFaceLibrary\MixFaceLibrary.vcxproj", "{6A9D8FF8-481E-373E-BE55-BAA91686C819}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C976B891-9E00-36D5-A026-8B0943CEEB1E} = {C976B891-9E00-36D5-A026-8B0943CEEB1E}
+		{56A1F4E5-78E4-359A-80A3-2E0BE2E35421} = {56A1F4E5-78E4-359A-80A3-2E0BE2E35421}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MixFaceQtWidgets", "MixFaceQtWidgets\MixFaceQtWidgets.vcxproj", "{D3F77EB7-42EA-341E-9299-E6A5ED2679B1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6A9D8FF8-481E-373E-BE55-BAA91686C819} = {6A9D8FF8-481E-373E-BE55-BAA91686C819}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
