@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    OSCPACK \
+    oscpack \
     DebugLibrary \
     MixFaceLibrary \
     MixFaceQtWidgets
