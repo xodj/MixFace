@@ -1,0 +1,3 @@
+[submodule "OSCPACK"]
+	path = OSCPACK
+	url = https://github.com/xodj/OSCPACK.git
