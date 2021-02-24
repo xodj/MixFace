@@ -234,6 +234,7 @@ public:
 
 protected:
     void timerEvent(QTimerEvent *event) override {
+        Q_UNUSED(event)
         m_vmeter->update();
         m_dmeter->update();
     }

@@ -3,18 +3,19 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication *mixFace = new QApplication(argc,argv);
-    DebugLibrary *debug = new DebugLibrary(mixFace);
+    QApplication *mixFace = new QApplication(argc, argv);
+    DebugLibrary *debug = new DebugLibrary(argc, argv);
+
     MixFaceWindow *mixFaceWindow = new MixFaceWindow(mixFace,debug);
     mixFaceWindow->showMaximized();
     return mixFace->exec();
 }
 
 MixFaceWindow::MixFaceWindow(QApplication *mixFace_, DebugLibrary *debug_)
-    : QMainWindow() {
-    debug = debug_;
-    mixFace = mixFace_;
-
+    : QMainWindow(),
+      debug(debug_),
+      mixFace(mixFace_)
+{
     dpiRatio = float(this->logicalDpiX())/96;
     if (mixFace->arguments().contains("-dpi",Qt::CaseInsensitive)) {
         QRegExp rxdpi("-dpi");
@@ -24,11 +25,11 @@ MixFaceWindow::MixFaceWindow(QApplication *mixFace_, DebugLibrary *debug_)
     }
     if (dpiRatio < 1) dpiRatio = 1;
     if (dpiRatio > 2) dpiRatio = 2;
-    debug->sendMessage("MixFaceWindow::MixFaceWindow DPI ratio set to " + QString::number(dpiRatio),1);
+    debug->sendMessage(QString("MixFaceWindow::MixFaceWindow DPI ratio set to " + QString::number(dpiRatio)).toStdString(),1);
 
-    debug->sendMessage("MixFaceWindow::MixFaceWindow Init MixFaceFonts...",5);
+    debug->sendMessage(QString("MixFaceWindow::MixFaceWindow Init MixFaceFonts...").toStdString(),5);
     mf_fonts = new MixFaceFonts;
-    debug->sendMessage("MixFaceWindow::MixFaceWindow Init MixFaceLibrary...",3);
+    debug->sendMessage(QString("MixFaceWindow::MixFaceWindow Init MixFaceLibrary...").toStdString(),3);
     mf_library = new MixFaceLibrary(this, debug);
 
     initUI();
@@ -48,7 +49,7 @@ MixFaceWindow::MixFaceWindow(QApplication *mixFace_, DebugLibrary *debug_)
 }
 
 void MixFaceWindow::initUI(){
-    debug->sendMessage("MixFaceWindow::initUI Init ui...",1);
+    debug->sendMessage(QString("MixFaceWindow::initUI Init ui...").toStdString(),1);
 
     this->resize(1280, 720);
 
@@ -184,15 +185,15 @@ void MixFaceWindow::initUI(){
 
     verticalLayout->addLayout(horizontalLayout);
 
-    debug->sendMessage("MixFaceWindow::initTopAreaBar...",4);
+    debug->sendMessage(QString("MixFaceWindow::initTopAreaBar...").toStdString(),4);
     initTopAreaBar();
-    debug->sendMessage("MixFaceWindow::initControlAreaWidgets...",4);
+    debug->sendMessage(QString("MixFaceWindow::initControlAreaWidgets...").toStdString(),4);
     initControlAreaWidgets();
-    debug->sendMessage("MixFaceWindow::initMainAreaWidgets...",4);
+    debug->sendMessage(QString("MixFaceWindow::initMainAreaWidgets...").toStdString(),4);
     initMainAreaWidgets();
-    debug->sendMessage("MixFaceWindow::initRightAreaBar...",4);
+    debug->sendMessage(QString("MixFaceWindow::initRightAreaBar...").toStdString(),4);
     initRightAreaBar();
-    debug->sendMessage("MixFaceWindow::initMixFaceIconPicker...",4);
+    debug->sendMessage(QString("MixFaceWindow::initMixFaceIconPicker...").toStdString(),4);
     mf_picker = new MixFaceIconPicker(dpiRatio, debug, mf_fonts, this);
     connect(mf_picker,&MixFaceIconPicker::logoChanged, this, &MixFaceWindow::logoChanged);
     connect(mf_picker,&MixFaceIconPicker::colorChanged, this, &MixFaceWindow::colorChanged);
@@ -211,12 +212,12 @@ void MixFaceWindow::initUI(){
     for (const QHostAddress &address : QNetworkInterface::allAddresses()) {
       if (address.protocol() == QAbstractSocket::IPv4Protocol &&
           address != localhost) {
-          debug->sendMessage("MixFaceWindow::MixFaceWindow getting ip address " + address.toString(),4);
+          debug->sendMessage(QString("MixFaceWindow::MixFaceWindow getting ip address " + address.toString()).toStdString(),4);
           mf_topArea->lineIp->setText(address.toString());
       }
     }
 
-    debug->sendMessage("MixFaceWindow::initUI Set main window widget...",1);
+    debug->sendMessage(QString("MixFaceWindow::initUI Set main window widget...").toStdString(),1);
     this->setCentralWidget(centralWidget);
 }
 
@@ -891,7 +892,7 @@ void MixFaceWindow::valueChanged(enum MessageType mtype, int idx, int idy) {
     case configname:
         break;
     case merror:
-        debug->sendMessage("Error change value!",0);
+        debug->sendMessage(QString("Error change value!").toStdString(),0);
         break;
     }
 }

@@ -1,12 +1,12 @@
 #include "MixFaceTopWidget.h"
 
-MixFaceTopWidget::MixFaceTopWidget(float dpiRatio_, DebugLibrary *debug_, MixFaceFonts *m_fonts_, QMainWindow *mainWindow_) : QWidget()
+MixFaceTopWidget::MixFaceTopWidget(float dpiRatio_, DebugLibrary *debug_, MixFaceFonts *m_fonts_, QMainWindow *mainWindow_)
+    : QWidget(),
+      mainWindow(mainWindow_),
+      m_fonts(m_fonts_),
+      debug(debug_),
+      dpiRatio(dpiRatio_)
 {
-    dpiRatio = dpiRatio_;
-    debug = debug_;
-    m_fonts = m_fonts_;
-    mainWindow = mainWindow_;
-
     initTopAreaBar();
     initSettingsPopup();
 }

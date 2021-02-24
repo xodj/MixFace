@@ -1,8 +1,9 @@
 #include "MixFaceSourceWidget.h"
 
-SourceWidget::SourceWidget(int idx, float dpiRatio, MixFaceFonts *m_fonts_) {
+SourceWidget::SourceWidget(int idx, float dpiRatio, MixFaceFonts *m_fonts_)
+    :m_fonts(m_fonts_)
+{
     Q_UNUSED(dpiRatio)
-    m_fonts = m_fonts_;
 
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->setContentsMargins(0, 0, 0, 0);

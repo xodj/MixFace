@@ -1,12 +1,13 @@
 #include "MixFaceLinker.h"
 
-MixFaceLinker::MixFaceLinker(QObject *parent) : QObject(parent)
+MixFaceLinker::MixFaceLinker() : QThread()
 {
-    listener = new packetListener;
-    connect(listener, &packetListener::newMessage, this, &MixFaceLinker::newMessage);
-    connect(listener, &packetListener::newXinfo, this, &MixFaceLinker::processXinfo);
-    connect(listener, &packetListener::newMeters2, this, &MixFaceLinker::newMeters2);
-    connect(listener, &packetListener::debug, this, &MixFaceLinker::debug);
+    MixFaceListenerSignals *mfl_signals = new MixFaceListenerSignals;
+    listener = new MixFaceListener(mfl_signals);
+    connect(mfl_signals, &MixFaceListenerSignals::snewMessage, this, &MixFaceLinker::newMessage);
+    connect(mfl_signals, &MixFaceListenerSignals::sprocessXinfo, this, &MixFaceLinker::processXinfo);
+    connect(mfl_signals, &MixFaceListenerSignals::snewMeters2, this, &MixFaceLinker::newMeters2);
+    connect(mfl_signals, &MixFaceListenerSignals::sdebug, this, &MixFaceLinker::debug);
     reciever = new SocketReceiveMultiplexer;
     udpSocket = new UdpSocket;
     udpSocket->Bind(IpEndpointName(IpEndpointName::ANY_ADDRESS, ANY_PORT));
@@ -18,8 +19,11 @@ MixFaceLinker::MixFaceLinker(QObject *parent) : QObject(parent)
 
 void MixFaceLinker::processMessages(){reciever->Run();}
 
-void MixFaceLinker::processXinfo(QString xinfo0, QString xinfo1, QString xinfo2, QString xinfo3){
-    xinfo[0] = xinfo0;xinfo[1] = xinfo1;xinfo[2] = xinfo2;xinfo[3] = xinfo3;
+void MixFaceLinker::processXinfo(QString xinfo_[]){
+    xinfo[0] = xinfo_[0];
+    xinfo[1] = xinfo_[1];
+    xinfo[2] = xinfo_[2];
+    xinfo[3] = xinfo_[3];
 }
 
 bool MixFaceLinker::connectTo(QString hostNameString) {

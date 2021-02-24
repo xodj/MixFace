@@ -21,7 +21,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS += \
     MixFaceKeeper.h \
     MixFaceLibrary.h \
-    MixFaceLinker.h
+    MixFaceLinker.h \
+    MixFaceListener.h
 
 SOURCES += \
     MixFaceKeeper.cpp \

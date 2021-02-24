@@ -1,8 +1,10 @@
 #include "MixFaceEqualizerWidget.h"
 
-EqualizerWidget::EqualizerWidget(int idx, float dpiRatio, MixFaceFonts *m_fonts_) {
+EqualizerWidget::EqualizerWidget(int idx, float dpiRatio,
+                                 MixFaceFonts *m_fonts_)
+    : m_fonts(m_fonts_)
+{
     Q_UNUSED(dpiRatio)
-    m_fonts = m_fonts_;
 
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->setContentsMargins(0, 0, 0, 0);

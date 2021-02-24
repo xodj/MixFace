@@ -2,9 +2,9 @@
 #include "MixFaceStaticMath.h"
 #include <math.h>
 
-DynamicsWidget::DynamicsWidget(int idx, float dpiRatio, MixFaceFonts *m_fonts_){
-    m_fonts = m_fonts_;
-
+DynamicsWidget::DynamicsWidget(int idx, float dpiRatio, MixFaceFonts *m_fonts_)
+    : m_fonts(m_fonts_)
+{
     QVBoxLayout *vlayout = new QVBoxLayout;
     vlayout->setContentsMargins(0, 0, 0, 0);
     vlayout->setSpacing(0);

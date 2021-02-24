@@ -1,12 +1,13 @@
 #include "MixFaceRightWidget.h"
 
-MixFaceRightWidget::MixFaceRightWidget(float dpiRatio_,DebugLibrary *debug_, MixFaceFonts *mf_fonts_, QMainWindow *mainWindow_) : QWidget()
+MixFaceRightWidget::MixFaceRightWidget(float dpiRatio_,DebugLibrary *debug_,
+                                       MixFaceFonts *mf_fonts_, QMainWindow *mainWindow_)
+    : QWidget(),
+      mainWindow(mainWindow_),
+      mf_fonts(mf_fonts_),
+      debug(debug_),
+      dpiRatio(dpiRatio_)
 {
-    dpiRatio = dpiRatio_;
-    debug = debug_;
-    mf_fonts = mf_fonts_;
-    mainWindow = mainWindow_;
-
     initRightAreaBar();
     initBusPopup();
     initAssignPopup();

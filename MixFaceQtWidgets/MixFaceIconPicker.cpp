@@ -1,11 +1,9 @@
 #include "MixFaceIconPicker.h"
 
-MixFaceIconPicker::MixFaceIconPicker(float dpiRatio_, DebugLibrary *debug_, MixFaceFonts *m_fonts_, QMainWindow *mainWindow_){
-    dpiRatio = dpiRatio_;
-    debug = debug_;
-    m_fonts = m_fonts_;
-    mainWindow = mainWindow_;
-
+MixFaceIconPicker::MixFaceIconPicker(float dpiRatio_, DebugLibrary *debug_,
+                                     MixFaceFonts *m_fonts_, QMainWindow *mainWindow_)
+    : dpiRatio(dpiRatio_), mainWindow(mainWindow_), debug(debug_), m_fonts(m_fonts_)
+{
     initIconPopup();
 }
 
