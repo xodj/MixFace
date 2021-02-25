@@ -235,7 +235,6 @@ void MixFaceWindow::connection(){
         mf_topArea->lineIp->setDisabled(true);
         //mf_library->sendSyncMessages();
         mf_topArea->connectAction->setText("Disconnect...");
-        mf_topArea->consoleName->setText( /*QString::fromStdString*/( mf_library->linker->xinfo[1] ) );
         mf_topArea->consoleName->setText(mf_library->linker->xinfo[1]);
         mf_topArea->consoleName->setStyleSheet("QLabel {"
                                    "color: rgb(255,255,255);"
