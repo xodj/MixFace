@@ -6,7 +6,7 @@
 #include "ip/UdpSocket.h"
 #include "osc/OscPacketListener.h"
 #include <boost/signals2.hpp>
-#include "DebugLibrary.h"
+#include "DebugLibrary.hpp"
 
 #define ANY_PORT -1
 #define OUTPUT_BUFFER_SIZE 1024

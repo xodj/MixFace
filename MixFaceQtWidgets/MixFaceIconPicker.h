@@ -12,7 +12,7 @@
 #include <QScroller>
 #include <QListWidget>
 #include "MixFaceFonts.h"
-#include "DebugLibrary.h"
+#include "DebugLibrary.hpp"
 
 class MixFaceIconPicker : public QFrame
 {

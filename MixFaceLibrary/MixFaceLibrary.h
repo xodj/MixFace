@@ -6,7 +6,7 @@
 #include <QThread>
 #include <QTimer>
 #include "MixFaceLinker.h"
-#include "DebugLibrary.h"
+#include "DebugLibrary.hpp"
 
 typedef boost::signals2::signal<void(int, int, int)> signal_thr_int;
 typedef signal_thr_int::slot_type signal_type_thr_int;

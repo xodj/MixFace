@@ -11,7 +11,7 @@
 #include <QAbstractScrollArea>
 #include <QMainWindow>
 #include "MixFaceFonts.h"
-#include "DebugLibrary.h"
+#include "DebugLibrary.hpp"
 
 class MixFaceTopWidget : public QWidget
 {

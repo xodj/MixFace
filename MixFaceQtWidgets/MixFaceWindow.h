@@ -13,7 +13,7 @@
 #include "MixFaceFonts.h"
 #include "MixFaceEnumTypes.h"
 #include "MixFaceLibrary.h"
-#include "DebugLibrary.h"
+#include "DebugLibrary.hpp"
 #include "MixFaceTopWidget.h"
 #include "MixFaceRightWidget.h"
 #include "MixFaceIconPicker.h"

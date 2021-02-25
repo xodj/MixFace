@@ -26,9 +26,9 @@ endif(WIN32)
 add_executable(MixFaceWXWidgets
         ${MixFaceWXWidgets_SOURCES}
         ${MixFaceWXWidgets_HEADERS}
-		${SRCS}
-)
+        ${SRCS}
+        )
 
 target_link_libraries(MixFaceWXWidgets
         ${wxWidgets_LIBRARIES}
-		)
+        )

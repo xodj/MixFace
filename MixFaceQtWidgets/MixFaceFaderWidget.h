@@ -4,7 +4,7 @@
 #include <QtWidgets>
 #include "MixFaceFonts.h"
 #include "MixFaceEnumTypes.h"
-#include "DebugLibrary.h"
+#include "DebugLibrary.hpp"
 
 #define MAX_AUDIO_CHANNELS 2
 #define M_INFINITE 3.4e38f

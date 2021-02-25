@@ -3,7 +3,7 @@ CONFIG += staticlib
 CONFIG += c++11
 
 HEADERS += \
-    DebugLibrary.h
+    DebugLibrary.hpp
 
 #Boost libraries
 INCLUDEPATH += $$PWD/../../../Boost/boost_1_75_0

@@ -11,7 +11,7 @@
 #include <QAction>
 #include "MixFaceEnumTypes.h"
 #include "MixFaceFonts.h"
-#include "DebugLibrary.h"
+#include "DebugLibrary.hpp"
 
 class MixFaceRightWidget : public QWidget
 {
