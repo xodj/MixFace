@@ -15,4 +15,4 @@ add_subdirectory(DebugLibrary)
 
 add_subdirectory(MixFaceLibrary)
 add_subdirectory(MixFaceQtWidgets)
-#add_subdirectory(MixFaceWXWidgets)
+add_subdirectory(MixFaceWXWidgets)
