@@ -34,7 +34,7 @@ MixFaceWindow::MixFaceWindow(QApplication *mixFace_, DebugLibrary *debug_)
 
     initUI();
 
-    connect(mf_library, &MixFaceLibrary::valueChanged, this, &MixFaceWindow::valueChanged);
+    mf_library->valueChanged.connect(signal_type_thr_int(&MixFaceWindow::valueChanged, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>()));
 
     for(int idx = 0;idx<80;idx++)
         for (int idy = 0;idy < 7;idy++)
@@ -235,14 +235,14 @@ void MixFaceWindow::connection(){
         mf_topArea->lineIp->setDisabled(true);
         //mf_library->sendSyncMessages();
         mf_topArea->connectAction->setText("Disconnect...");
-        mf_topArea->consoleName->setText(mf_library->linker->xinfo[1]);
+        mf_topArea->consoleName->setText(QString::fromStdString(mf_library->linker->xinfo[1]));
         mf_topArea->consoleName->setStyleSheet("QLabel {"
                                    "color: rgb(255,255,255);"
                                    "background-color: rgb(96, 96, 96);"
                                    "border: 0px solid rgb(0,0,0);"
                                    "border-radius: 0px;"
                                    "}");
-        mf_topArea->console->setText(mf_library->linker->xinfo[2]);
+        mf_topArea->console->setText(QString::fromStdString(mf_library->linker->xinfo[2]));
         demo=false;
     } else {
         mf_topArea->syncAction->setDisabled(true);
@@ -365,7 +365,7 @@ void MixFaceWindow::assignScrollFaders(int idy) {
 
 void MixFaceWindow::iconButtonClicked(){
     int idx = reinterpret_cast<QObject *>(sender())->property("idx").toInt();
-    mf_picker->showIconPopup(idx, mf_library->db.configicon[idx], mf_library->db.configcolor[idx],mf_library->channelNameFromIdx(idx),mf_library->db.configname[idx]);
+    mf_picker->showIconPopup(idx, mf_library->db.configicon[idx], mf_library->db.configcolor[idx],mf_library->channelNameFromIdx(idx),QString::fromStdString(mf_library->db.configname[idx]));
 }
 
 void MixFaceWindow::logoChanged(int idx, int value){
@@ -380,7 +380,7 @@ void MixFaceWindow::colorChanged(int idx, int value){
 
 void MixFaceWindow::nameChanged(int idx, QString value){
     scrollWidget[idx]->setName(value);
-    mf_library->db.configname[idx] = value;
+    mf_library->db.configname[idx] = value.toStdString();
 }
 
 void MixFaceWindow::buttonSrcClicked(){
@@ -585,8 +585,7 @@ void MixFaceWindow::faderChanged(float value)
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
         QString msg = mf_library->getOscAddress(mtype, chtype, chN, send);
-        QByteArray oscAddressArray = msg.toLatin1();
-        const char *oscAddress = oscAddressArray;
+        const char *oscAddress = QByteArray(msg.toLatin1());
         mf_library->linker->sendFloat(oscAddress, value);
     }
 
@@ -614,8 +613,7 @@ void MixFaceWindow::muteClicked(int value)
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
         QString msg = mf_library->getOscAddress(mtype, chtype, chN, send);
-        QByteArray oscAddressArray = msg.toLatin1();
-        const char *oscAddress = oscAddressArray;
+        const char *oscAddress = QByteArray(msg.toLatin1());
         mf_library->linker->sendFloat(oscAddress, value);
     }
 
@@ -659,7 +657,8 @@ void MixFaceWindow::windowRenew() {
     }
 }
 
-void MixFaceWindow::valueChanged(enum MessageType mtype, int idx, int idy) {
+void MixFaceWindow::valueChanged(int imtype, int idx, int idy) {
+    MessageType mtype = MessageType(imtype);
     switch (mtype) {
     case stereoon:
         break;

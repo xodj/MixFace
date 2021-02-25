@@ -19,7 +19,7 @@ MixFaceLibrary::MixFaceLibrary(QObject *parent, DebugLibrary *debug_)
         db.trim[idx] = 0.5;
         db.configicon[idx] = 1;
         db.configcolor[idx] = 1;
-        db.configname[idx] = channelNameFromIdx(idx);
+        db.configname[idx] = channelNameFromIdx(idx).toStdString();
         for(int idy=0;idy<16;idy++){
             db.sendlevel[idx][idy] = 0.75;
             db.sendpan[idx][idy] = 0.5;
@@ -40,7 +40,7 @@ MixFaceLibrary::MixFaceLibrary(QObject *parent, DebugLibrary *debug_)
 bool MixFaceLibrary::connectTo(QString hostNameString){
 
     thread->start();
-    connected = linker->connectTo(hostNameString);
+    connected = linker->connectTo(hostNameString.toStdString());
     if (connected) {
         sendRenewMessagesTimer->start(1000);
         linker->listener->s_str.connect(signal_type_str(&MixFaceLibrary::processMessage, this, boost::arg<1>()));
@@ -232,358 +232,358 @@ QString MixFaceLibrary::channelNameFromIdx(int idx) {
   return name;
 }
 
-void MixFaceLibrary::processMessage(string message_) {
-    QString message = QString::fromStdString(message_);
-    MessageType mtype = getMessageType(message);
-    ValueType vtype = getValueType(message);
+void MixFaceLibrary::processMessage(string message) {
+    QString message_ = QString::fromStdString(message);
+    MessageType mtype = getMessageType(message_);
+    ValueType vtype = getValueType(message_);
 
-    int chN = getChannelNumber(message);
-    ChannelType chtype = getChannelType(message);
+    int chN = getChannelNumber(message_);
+    ChannelType chtype = getChannelType(message_);
     int idx = getIdxFromChNandChType(chN, chtype);
-    int sendN = getSendNumber(message);
+    int sendN = getSendNumber(message_);
     float fval = 0.0;
     int ival = 0;
     QString sval;
 
-    if (vtype == floatvalue) fval = getFloatValue(message);
-    else if (vtype == intvalue) ival = getIntValue(message);
-    else if (vtype == stringvalue) sval = getStringValue(message);
+    if (vtype == floatvalue) fval = getFloatValue(message_);
+    else if (vtype == intvalue) ival = getIntValue(message_);
+    else if (vtype == stringvalue) sval = getStringValue(message_);
 
     switch (mtype) {
     case stereoon:
         db.stereoon[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case monoon:
         db.monoon[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case mlevel:
         db.mlevel[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case fader:
         db.fader[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case pan:
         db.pan[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case on:
         db.on[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case solo:
         db.solo[chN-1] = ival;
-        emit valueChanged(mtype,chN-1,0);
+        valueChanged(mtype,chN-1,0);
         break;
     case chlink:
         db.chlink[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case auxlink:
         db.auxlink[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case buslink:
         db.buslink[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case mtxlink:
         db.mtxlink[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case phantom:
         db.phantom[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case invert:
         db.invert[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case source:
         db.source[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gain:
         db.gain[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case trim:
         db.trim[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case hpf:
         db.hpf[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case hpon:
         db.hpon[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case delayon:
         db.delayon[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case delaytime:
         db.delaytime[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case inserton:
         db.inserton[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case insertsel:
         db.insertsel[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case insertpos:
         db.insertpos[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gateon:
         db.gateon[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gatethr:
         db.gatethr[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gaterange:
         db.gaterange[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gatemode:
         db.gatemode[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gateattack:
         db.gateattack[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gatehold:
         db.gatehold[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gaterelease:
         db.gaterelease[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gatekeysrc:
         db.gatekeysrc[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gatefilteron:
         db.gatefilteron[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gatefiltertype:
         db.gatefiltertype[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case gatefilterf:
         db.gatefilterf[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynon:
         db.dynon[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynthr:
         db.dynthr[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynratio:
         db.dynratio[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynmix:
         db.dynmix[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynmgain:
         db.dynmgain[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynattack:
         db.dynattack[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynhold:
         db.dynhold[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynrelease:
         db.dynrelease[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynmode:
         db.dynmode[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynknee:
         db.dynknee[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynenv:
         db.dynenv[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dyndet:
         db.dyndet[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynauto:
         db.dynauto[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynkeysrc:
         db.dynkeysrc[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynfilteron:
         db.dynfilteron[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynfiltertype:
         db.dynfiltertype[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case dynfilterf:
         db.dynfilterf[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq1type:
         db.eq1type[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq1g:
         db.eq1g[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq1f:
         db.eq1f[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq1q:
         db.eq1q[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq2type:
         db.eq2type[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq2g:
         db.eq2g[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq2f:
         db.eq2f[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq2q:
         db.eq2q[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq3type:
         db.eq3type[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq3g:
         db.eq3g[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq3f:
         db.eq3f[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq3q:
         db.eq3q[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq4type:
         db.eq4type[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq4g:
         db.eq4g[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq4f:
         db.eq4f[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq4q:
         db.eq4q[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq5type:
         db.eq5type[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq5g:
         db.eq5g[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq5f:
         db.eq5f[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq5q:
         db.eq5q[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq6type:
         db.eq6type[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq6g:
         db.eq6g[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq6f:
         db.eq6f[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case eq6q:
         db.eq6q[idx] = fval;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case sendlevel:
         db.sendlevel[idx][sendN] = fval;
-        emit valueChanged(mtype,idx,sendN);
+        valueChanged(mtype,idx,sendN);
         break;
     case sendpan:
         db.sendpan[idx][sendN] = fval;
-        emit valueChanged(mtype,idx,sendN);
+        valueChanged(mtype,idx,sendN);
         break;
     case sendpanfollow:
         db.sendpanfollow[idx][sendN] = ival;
-        emit valueChanged(mtype,idx,sendN);
+        valueChanged(mtype,idx,sendN);
         break;
     case sendtype:
         db.sendtype[idx][sendN] = ival;
-        emit valueChanged(mtype,idx,sendN);
+        valueChanged(mtype,idx,sendN);
         break;
     case sendon:
         db.sendon[idx][sendN] = ival;
-        emit valueChanged(mtype,idx,sendN);
+        valueChanged(mtype,idx,sendN);
         break;
     case configicon:
         db.configicon[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case configcolor:
         db.configcolor[idx] = ival;
-        emit valueChanged(mtype,idx,0);
+        valueChanged(mtype,idx,0);
         break;
     case configname:
-        db.configname[idx] = sval;
-        emit valueChanged(mtype,idx,0);
+        db.configname[idx] = sval.toStdString();
+        valueChanged(mtype,idx,0);
         break;
     case merror:
-        debug->sendMessage("Error message read: " + message.toStdString(),0);
+        debug->sendMessage("Error message read: " + message,0);
         break;
     }
 }

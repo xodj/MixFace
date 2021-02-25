@@ -6,6 +6,7 @@
 #include "ip/UdpSocket.h"
 #include "osc/OscPacketListener.h"
 #include <boost/signals2.hpp>
+#include "DebugLibrary.h"
 
 #define ANY_PORT -1
 #define OUTPUT_BUFFER_SIZE 1024
@@ -28,9 +29,6 @@ typedef signal_str_int::slot_type  signal_type_str_int;
 typedef signal_str_float::slot_type  signal_type_str_float;
 typedef signal_str_bool::slot_type  signal_type_str_bool;
 typedef signal_str_str::slot_type  signal_type_str_str;
-
-typedef boost::signals2::signal<void(string, int)> signal_debug;
-typedef signal_debug::slot_type signal_type_debug;
 
 using namespace osc;
 

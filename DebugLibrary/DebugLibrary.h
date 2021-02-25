@@ -3,11 +3,15 @@
 
 #include <iostream>
 #include <ctime>
+#include <boost/signals2.hpp>
 
 #define def_caps "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #define def_no_caps "abcdefghijklmnopqrstuvwxyz"
 
 using namespace std;
+
+typedef boost::signals2::signal<void(string, int)> signal_debug;
+typedef signal_debug::slot_type signal_type_debug;
 
 class DebugLibrary {
 public:

@@ -8,8 +8,11 @@
 #include "MixFaceLinker.h"
 #include "DebugLibrary.h"
 
+typedef boost::signals2::signal<void(int, int, int)> signal_thr_int;
+typedef signal_thr_int::slot_type signal_type_thr_int;
+
 enum MessageType {
-    stereoon,  // ch/01/mix/st~~~,i~~
+    stereoon = 0,  // ch/01/mix/st~~~,i~~
     monoon,    // ch/01/mix/mono~~~,i~~
     mlevel,    // ch/01/mix/mlevel~~~,f~~
     fader,     // ch/01/mix/fader~~~~,f~~
@@ -104,7 +107,7 @@ enum MessageType {
 };
 
 enum ChannelType {
-    channel,
+    channel = 0,
     auxin,
     fxreturn,
     bus,
@@ -117,7 +120,7 @@ enum ChannelType {
 };
 
 enum ValueType {
-    intvalue,
+    intvalue = 0,
     floatvalue,
     stringvalue,
     boolvalue,
@@ -126,10 +129,11 @@ enum ValueType {
 
 class MixFaceLinker;
 
-class MixFaceLibrary : public QObject
-{
+class MixFaceLibrary : public QObject {
     Q_OBJECT
 public:
+    signal_thr_int valueChanged;
+
     struct x32db {
         int stereoon[80];
         int monoon[80];
@@ -221,7 +225,7 @@ public:
 
         int configicon[80];
         int configcolor[80];
-        QString configname[80];
+        string configname[80];
     };
     x32db db;
 
@@ -350,7 +354,7 @@ public:
 
     QString channelNameFromIdx(int idx);
 
-    void processMessage(std::string message_);
+    void processMessage(string message);
 
     QString getOscAddress(MessageType mtype, ChannelType chtype, int channelN,
                           int sendN);
@@ -379,7 +383,6 @@ private:
     bool demo = false;
 
 signals:
-    void valueChanged(MessageType mtype, int idx, int idy);
     void processMeter6(float preL_, float preR_, float gate, float comp);
 
 };

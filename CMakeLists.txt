@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.0)
 project(MixFace)
 add_subdirectory(MixFaceWXWidgets)
-add_subdirectory(OSCPACK)
-add_subdirectory(DebugLibrary)
-

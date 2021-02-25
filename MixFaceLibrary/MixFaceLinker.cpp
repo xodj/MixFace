@@ -19,13 +19,13 @@ MixFaceLinker::MixFaceLinker() : QThread()
     reciever->AttachSocketListener(udpSocket, listener);
 }
 
-bool MixFaceLinker::connectTo(QString hostNameString) {
+bool MixFaceLinker::connectTo(string hostNameStr_) {
     if (!connected) {
-        hostNameStr = hostNameString.toStdString();
+        hostNameStr = hostNameStr_;
         sendCmdOnly("/xinfo");
         sendCmdOnly("/status");
         QThread::msleep(100);
-        if (hostNameString/*.toStdString()*/==xinfo[0]/*&&(atof(xinfo[3].c_str())>=4)*/) {
+        if (hostNameStr_ == xinfo[0] && (atof(xinfo[3].c_str()) >= 4)) {
             connected = true;
             //sendInt("/-stat/lock",1);
         } else {
@@ -60,9 +60,8 @@ void MixFaceLinker::sendInt(const char *oscAddress,int value) {
     udpSocket->SendTo(host, p.Data(), p.Size());
 }
 
-void MixFaceLinker::sendString(const char *oscAddress,QString value_) {
-    QByteArray valueArray = value_.toLatin1();
-    const char *value = valueArray;
+void MixFaceLinker::sendString(const char *oscAddress, string value_) {
+    const char *value = value_.c_str();
     IpEndpointName host(hostNameStr.c_str(),PORT);
     char buffer[OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);

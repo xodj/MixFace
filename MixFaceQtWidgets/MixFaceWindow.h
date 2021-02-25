@@ -31,7 +31,7 @@ signals:
     void resizeSignal();
 
 public slots:
-    void valueChanged(enum MessageType mtype, int idx, int idy);
+    void valueChanged(int imtype, int idx, int idy);
 
 
 private:
