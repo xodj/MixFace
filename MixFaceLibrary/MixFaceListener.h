@@ -2,11 +2,10 @@
 #define MIXFACELISTENER_H
 
 #include <iostream>
-#include <QObject>
 #include "osc/OscOutboundPacketStream.h"
 #include "ip/UdpSocket.h"
 #include "osc/OscPacketListener.h"
-#include "MixFaceLinker.h"
+#include <boost/signals2.hpp>
 
 #define ANY_PORT -1
 #define OUTPUT_BUFFER_SIZE 1024
@@ -14,52 +13,40 @@
 
 using namespace std;
 
-class MixFaceListenerSignals : public QObject {
-    Q_OBJECT
-public:
-    void newMessage(string message) {
-        emit snewMessage(QString::fromStdString(message));
-    }
+typedef boost::signals2::signal<void(string*)> signal_xinfo;
+typedef boost::signals2::signal<void(string*)> signal_status;
+typedef boost::signals2::signal<void(string)> signal_str;
+typedef boost::signals2::signal<void(string, int)> signal_str_int;
+typedef boost::signals2::signal<void(string, float)> signal_str_float;
+typedef boost::signals2::signal<void(string, bool)> signal_str_bool;
+typedef boost::signals2::signal<void(string, string)> signal_str_str;
 
-    void newXinfo(string *xinfo) {
-        QString qxinfo[4] = { QString::fromStdString(xinfo[0]), QString::fromStdString(xinfo[1]),
-                              QString::fromStdString(xinfo[2]), QString::fromStdString(xinfo[3])};
-        emit sprocessXinfo(qxinfo);
-    }
+typedef signal_xinfo::slot_type  signal_type_xi;
+typedef signal_status::slot_type  signal_type_st;
+typedef signal_str::slot_type  signal_type_str;
+typedef signal_str_int::slot_type  signal_type_str_int;
+typedef signal_str_float::slot_type  signal_type_str_float;
+typedef signal_str_bool::slot_type  signal_type_str_bool;
+typedef signal_str_str::slot_type  signal_type_str_str;
 
-    void newStatus(string *status) {
-        QString qstatus[3] = { QString::fromStdString(status[0]), QString::fromStdString(status[1]),
-                               QString::fromStdString(status[2])};
-        emit snewStatus(qstatus);
-    }
-
-    void newMeters2(float *floatArray) {
-        emit snewMeters2(floatArray);
-    }
-
-    void debug(string message,int debugLevel) {
-        emit sdebug(QString::fromStdString(message), debugLevel);
-    }
-
-signals:
-    void snewMessage(QString message);
-    void sprocessXinfo(QString xinfo[]);
-    void snewStatus(QString *status);
-    void snewMeters2(float *floatArray);
-    void sdebug(QString message, int debugLevel);
-
-};
+typedef boost::signals2::signal<void(string, int)> signal_debug;
+typedef signal_debug::slot_type signal_type_debug;
 
 using namespace osc;
 
 class MixFaceListener : public OscPacketListener {
 public:
-    MixFaceListener(MixFaceListenerSignals *mfl_signals_) :
-          OscPacketListener(),
-          mfl_signals(mfl_signals_) {}
+    signal_xinfo s_xi;
+    signal_status s_st;
+    signal_str s_str;
+    signal_str_int s_str_int;
+    signal_str_float s_str_float;
+    signal_str_bool s_str_bool;
+    signal_str_str s_str_str;
+
+    signal_debug s_debug;
 
 private:
-    MixFaceListenerSignals *mfl_signals;
     string xinfo[4];
     string status[3];
 
@@ -67,7 +54,6 @@ protected:
     virtual void ProcessMessage(const ReceivedMessage& m, const IpEndpointName& remoteEndpoint) {
         (void) remoteEndpoint;
         try{
-            cout<<"MixFaceListener::ProcessMessage message"<<endl<<endl;
             if (strcmp(m.AddressPattern(), "/xinfo") == 0) {
                 ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
                 xinfo[0] = (arg++)->AsString();
@@ -75,14 +61,14 @@ protected:
                 xinfo[2] = (arg++)->AsString();
                 xinfo[3] = (arg++)->AsString();
                 if(arg != m.ArgumentsEnd()) throw ExcessArgumentException();
-                mfl_signals->newXinfo(xinfo);
+                s_xi(xinfo);
             } else if (strcmp(m.AddressPattern(), "/status") == 0) {
                 ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
                 status[0] = (arg++)->AsString();
                 status[1] = (arg++)->AsString();
                 status[2] = (arg++)->AsString();
                 if (arg != m.ArgumentsEnd()) throw ExcessArgumentException();
-                mfl_signals->newStatus(status);
+                s_st(status);
             } else if (strcmp(m.AddressPattern(), "meters/9") == 0) {
             } else if (strcmp(m.AddressPattern(), "meters/10") == 0) {
             } else if (strcmp(m.AddressPattern(), "meters/14") == 0) {
@@ -105,23 +91,23 @@ protected:
                 if ((arg)->IsBool()) {
                     string value;
                     (arg)->AsBool() ? value = "1" : value = "0";
-                    mfl_signals->newMessage("%A" + address
+                    s_str("%A" + address
                                     + "%B" + value);
                 } else if ((arg)->IsInt32()) {
-                    mfl_signals->newMessage("%A" + address
+                    s_str("%A" + address
                                     + "%I" + to_string((arg)->AsInt32()));
                 } else if ((arg)->IsFloat()) {
-                    mfl_signals->newMessage("%A" + address
+                    s_str("%A" + address
                                     + "%F" + to_string((arg)->AsFloat()));
                 } else if ((arg)->IsString()) {
-                    mfl_signals->newMessage("%A" + address
+                    s_str("%A" + address
                                     + "%S" + string((arg)->AsString()));
                 } else
                     throw WrongArgumentTypeException();
             }
         }
         catch (Exception& e) {
-            mfl_signals->debug("Error while parsing message:" +
+            s_debug("Error while parsing message:" +
                           string(m.AddressPattern()) + ":" +
                           string(e.what()),0);
         }

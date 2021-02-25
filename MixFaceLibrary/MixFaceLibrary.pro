@@ -1,22 +1,9 @@
 TEMPLATE = lib
 CONFIG += staticlib
-
-QT       += core
-
+QT += core
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
 CONFIG += c++11
-
-# The following define makes your compiler emit warnings if you use
-# any Qt feature that has been marked deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
-# deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-
-# You can also make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
     MixFaceKeeper.h \
@@ -64,3 +51,17 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../Debu
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/release/DebugLibrary.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/debug/DebugLibrary.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary.a
+
+#Boost libraries
+INCLUDEPATH += $$PWD/../../../Boost/boost_1_75_0
+DEPENDPATH += $$PWD/../../../Boost/boost_1_75_0
+
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../Boost/boost_1_75_0/libsOnly/ -lboost_thread-mgw8-mt-x32-1_75
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../Boost/boost_1_75_0/libsOnly/ -lboost_thread-mgw8-mt-d-x32-1_75
+#else:unix: LIBS += -L$$PWD/../../../Boost/boost_1_75_0/libsOnly/ -lboost_thread-mgw8-mt-d-x32-1_75
+
+#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_75_0/libsOnly/libboost_thread-mgw8-mt-x32-1_75.a
+#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_75_0/libsOnly/libboost_thread-mgw8-mt-d-x32-1_75.a
+#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_75_0/libsOnly/boost_thread-mgw8-mt-x32-1_75.lib
+#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_75_0/libsOnly/boost_thread-mgw8-mt-d-x32-1_75.lib
+#else:unix: PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_75_0/libsOnly/libboost_thread-mgw8-mt-x32-1_75.a

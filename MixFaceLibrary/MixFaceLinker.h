@@ -1,12 +1,13 @@
 #ifndef MIXFACELINKER_H
 #define MIXFACELINKER_H
 
-#include <QString>
 #include <QThread>
 #include "osc/OscOutboundPacketStream.h"
 #include "ip/UdpSocket.h"
 #include "osc/OscPacketListener.h"
 #include "MixFaceListener.h"
+#include <boost/thread.hpp>
+#include <boost/signals2.hpp>
 
 #define ANY_PORT -1
 #define OUTPUT_BUFFER_SIZE 1024
@@ -28,9 +29,9 @@ signals:
     void debug(QString message,int debugLevel);
 
 public slots:
-    void processMessages();
-
     bool connectTo(QString hostNameString);
+
+    void processMessages(){ reciever->Run(); }
 
     void sendFloat(const char *oscAddress,float value);
     void sendInt(const char *oscAddress,int value);
@@ -39,12 +40,14 @@ public slots:
     void sendDynamicMsg(osc::OutboundPacketStream p);
 
 private:
-    void processXinfo(QString xinfo_[]);
-    bool connected = false;
+    void processXinfo(string *xinfo_) { for(int i = 0;i < 4; i++) xinfo[i] = QString::fromStdString(xinfo_[i]); }
+
     UdpSocket *udpSocket;
     SocketReceiveMultiplexer *reciever;
     MixFaceListener *listener;
-    QByteArray hostNameArray;
+
+    bool connected = false;
+    string hostNameStr = "127.0.0.1";
 
 };
 

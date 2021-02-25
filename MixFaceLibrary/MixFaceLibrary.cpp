@@ -39,7 +39,7 @@ MixFaceLibrary::MixFaceLibrary(QObject *parent, DebugLibrary *debug_) : QObject(
     connect(thread, SIGNAL(started()), linker, SLOT(processMessages()));
     sendRenewMessagesTimer = new QTimer(this);
     QTimer::connect(sendRenewMessagesTimer, &QTimer::timeout, this, &MixFaceLibrary::sendXremoteMessage);
-    //connect(linker, &MixFaceLinker::debug, debug, &DebugLibrary::sendMessage);
+    connect(linker, &MixFaceLinker::debug, this, &MixFaceLibrary::sendDebugMessage);
 }
 
 bool MixFaceLibrary::connectTo(QString hostNameString){

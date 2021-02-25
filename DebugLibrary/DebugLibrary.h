@@ -2,7 +2,6 @@
 #define DEBUGLIBRARY_H
 
 #include <iostream>
-#include <string.h>
 #include <ctime>
 
 #define def_caps "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

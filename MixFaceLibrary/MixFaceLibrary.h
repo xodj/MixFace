@@ -8,6 +8,8 @@
 #include "MixFaceLinker.h"
 #include "MixFaceKeeper.h"
 #include "DebugLibrary.h"
+#include <boost/thread.hpp>
+#include <boost/signals2.hpp>
 
 #define ANY_PORT -1
 #define OUTPUT_BUFFER_SIZE 1024
@@ -379,6 +381,7 @@ public:
 private:
     DebugLibrary *debug;
     void demoThread();
+    void sendDebugMessage(QString msg, int dlvl){ debug->sendMessage(msg.toStdString(),dlvl); }
 
     QThread *thread;
     QTimer *sendRenewMessagesTimer;
