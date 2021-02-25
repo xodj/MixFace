@@ -7,8 +7,7 @@ int main(int argc, char *argv[])
     DebugLibrary *debug = new DebugLibrary(argc, argv);
 
     MixFaceWindow *mixFaceWindow = new MixFaceWindow(mixFace,debug);
-    //mixFaceWindow->showMaximized();
-    Q_UNUSED(mixFaceWindow)
+    mixFaceWindow->showMaximized();
     return mixFace->exec();
 }
 
@@ -230,20 +229,21 @@ void MixFaceWindow::resizeEvent(QResizeEvent *e){
 }
 
 void MixFaceWindow::connection(){
-    connected = mf_library->connectTo( mf_topArea->lineIp->text() );
+    connected = mf_library->connectTo(mf_topArea->lineIp->text());
     if (connected) {
         mf_topArea->syncAction->setEnabled(true);
         mf_topArea->lineIp->setDisabled(true);
         //mf_library->sendSyncMessages();
         mf_topArea->connectAction->setText("Disconnect...");
         mf_topArea->consoleName->setText( /*QString::fromStdString*/( mf_library->linker->xinfo[1] ) );
+        mf_topArea->consoleName->setText(mf_library->linker->xinfo[1]);
         mf_topArea->consoleName->setStyleSheet("QLabel {"
                                    "color: rgb(255,255,255);"
                                    "background-color: rgb(96, 96, 96);"
                                    "border: 0px solid rgb(0,0,0);"
                                    "border-radius: 0px;"
                                    "}");
-        mf_topArea->console->setText( /*QString::fromStdString*/( mf_library->linker->xinfo[2] ) );
+        mf_topArea->console->setText(mf_library->linker->xinfo[2]);
         demo=false;
     } else {
         mf_topArea->syncAction->setDisabled(true);

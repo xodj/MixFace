@@ -16,7 +16,7 @@ MixFaceLinker::MixFaceLinker() : QThread()
     reciever = new SocketReceiveMultiplexer;
     udpSocket = new UdpSocket;
     udpSocket->Bind(IpEndpointName(IpEndpointName::ANY_ADDRESS, ANY_PORT));
-    reciever->AttachSocketListener(udpSocket,listener);
+    reciever->AttachSocketListener(udpSocket, listener);
 }
 
 bool MixFaceLinker::connectTo(QString hostNameString) {

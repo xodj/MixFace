@@ -9,10 +9,6 @@
 #include <boost/thread.hpp>
 #include <boost/signals2.hpp>
 
-#define ANY_PORT -1
-#define OUTPUT_BUFFER_SIZE 1024
-#define PORT 10023
-
 class MixFaceListener;
 
 class MixFaceLinker : public QThread
@@ -20,11 +16,12 @@ class MixFaceLinker : public QThread
     Q_OBJECT
 public:
     explicit MixFaceLinker();
+    MixFaceListener *listener;
 
     QString xinfo[4];
 
 signals:
-    void newMessage(QString message);
+    void newMessage(string message);
     void newMeters2(float *floatArray);
     void debug(QString message,int debugLevel);
 
@@ -44,7 +41,6 @@ private:
 
     UdpSocket *udpSocket;
     SocketReceiveMultiplexer *reciever;
-    MixFaceListener *listener;
 
     bool connected = false;
     string hostNameStr = "127.0.0.1";

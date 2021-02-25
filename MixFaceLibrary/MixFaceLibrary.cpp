@@ -1,7 +1,8 @@
 #include "MixFaceLibrary.h"
 
-MixFaceLibrary::MixFaceLibrary(QObject *parent, DebugLibrary *debug_) : QObject(parent){
-    debug = debug_;
+MixFaceLibrary::MixFaceLibrary(QObject *parent, DebugLibrary *debug_)
+    : QObject(parent),
+      debug(debug_) {
     for (int idx=0;idx<80;idx++){
         db.stereoon[idx] = 1;
         db.fader[idx] = 0.75;
@@ -27,19 +28,13 @@ MixFaceLibrary::MixFaceLibrary(QObject *parent, DebugLibrary *debug_) : QObject(
             db.sendon[idx][idy] = 1;
         }
     }
-    keeper = new MixFaceKeeper;
-    QThread *keeperThread = new QThread;
-    keeper->moveToThread(keeperThread);
-    connect(keeperThread, SIGNAL(started()), keeper, SLOT(open()));
-    keeperThread->start();
-
     linker = new MixFaceLinker;
     thread = new QThread;
     linker->moveToThread(thread);
     connect(thread, SIGNAL(started()), linker, SLOT(processMessages()));
     sendRenewMessagesTimer = new QTimer(this);
     QTimer::connect(sendRenewMessagesTimer, &QTimer::timeout, this, &MixFaceLibrary::sendXremoteMessage);
-    connect(linker, &MixFaceLinker::debug, this, &MixFaceLibrary::sendDebugMessage);
+    //connect(linker, &MixFaceLinker::debug, debug, &DebugLibrary::sendMessage);
 }
 
 bool MixFaceLibrary::connectTo(QString hostNameString){
@@ -48,7 +43,7 @@ bool MixFaceLibrary::connectTo(QString hostNameString){
     connected = linker->connectTo(hostNameString);
     if (connected) {
         sendRenewMessagesTimer->start(1000);
-        connect(linker, &MixFaceLinker::newMessage, this, &MixFaceLibrary::processMessage);
+        linker->listener->s_str.connect(signal_type_str(&MixFaceLibrary::processMessage, this, boost::arg<1>()));
 
         char buffer[OUTPUT_BUFFER_SIZE];
         osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
@@ -96,7 +91,7 @@ bool MixFaceLibrary::connectTo(QString hostNameString){
         linker->sendDynamicMsg(p);*/
     } else {
         sendRenewMessagesTimer->stop();
-        disconnect(linker, &MixFaceLinker::newMessage, this, &MixFaceLibrary::processMessage);
+        linker->listener->s_str.disconnect_all_slots();
     }
     return connected;
 }
@@ -237,7 +232,8 @@ QString MixFaceLibrary::channelNameFromIdx(int idx) {
   return name;
 }
 
-void MixFaceLibrary::processMessage(QString message) {
+void MixFaceLibrary::processMessage(string message_) {
+    QString message = QString::fromStdString(message_);
     MessageType mtype = getMessageType(message);
     ValueType vtype = getValueType(message);
 
@@ -884,7 +880,7 @@ QString MixFaceLibrary::getOscAddress(MessageType mtype,
         oscAddress = ("/config/name");
         break;
     case merror:
-        debug->sendMessage("Message type error " + std::to_string(channelN),0);
+        debug->sendMessage("Message type error " + QString::number(channelN).toStdString(),0);
         oscAddress = nullptr;
         break;
     }
@@ -930,7 +926,7 @@ QString MixFaceLibrary::getOscAddress(MessageType mtype,
         case headamp:
             break;
         case cherror:
-            debug->sendMessage("Channel type error " + std::to_string(channelN),0);
+            debug->sendMessage("Channel type error " + QString::number(channelN).toStdString(),0);
             oscAddress = nullptr;
             break;
         }

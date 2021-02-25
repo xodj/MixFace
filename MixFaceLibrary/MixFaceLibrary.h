@@ -6,14 +6,7 @@
 #include <QThread>
 #include <QTimer>
 #include "MixFaceLinker.h"
-#include "MixFaceKeeper.h"
 #include "DebugLibrary.h"
-#include <boost/thread.hpp>
-#include <boost/signals2.hpp>
-
-#define ANY_PORT -1
-#define OUTPUT_BUFFER_SIZE 1024
-#define PORT 10023
 
 enum MessageType {
     stereoon,  // ch/01/mix/st~~~,i~~
@@ -132,8 +125,6 @@ enum ValueType {
 };
 
 class MixFaceLinker;
-
-class MixFaceKeeper;
 
 class MixFaceLibrary : public QObject
 {
@@ -359,7 +350,7 @@ public:
 
     QString channelNameFromIdx(int idx);
 
-    void processMessage(QString message);
+    void processMessage(std::string message_);
 
     QString getOscAddress(MessageType mtype, ChannelType chtype, int channelN,
                           int sendN);
@@ -376,12 +367,10 @@ public:
     int getIdxFromChNandChType(int chN, ChannelType chtype);
 
     MixFaceLinker *linker;
-    MixFaceKeeper *keeper;
 
 private:
     DebugLibrary *debug;
     void demoThread();
-    void sendDebugMessage(QString msg, int dlvl){ debug->sendMessage(msg.toStdString(),dlvl); }
 
     QThread *thread;
     QTimer *sendRenewMessagesTimer;
