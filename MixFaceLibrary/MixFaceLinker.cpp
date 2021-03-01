@@ -8,11 +8,6 @@ MixFaceLinker::MixFaceLinker() : QThread()
     //listener->s_st.connect(signal_type_st(&MixFaceLinker::processStatus, this, boost::arg<1>()));
     //listener->s_str.connect(signal_type_str(&MixFaceLinker::newMessage, this, boost::arg<1>()));
     //listener->s_debug.connect(signal_type_debug(&MixFaceLinker::debug, this, boost::arg<2>()));
-
-    /*connect(mfl_signals, &MixFaceListenerSignals::snewMessage, this, &MixFaceLinker::newMessage);
-    connect(mfl_signals, &MixFaceListenerSignals::sprocessXinfo, this, &MixFaceLinker::processXinfo);
-    connect(mfl_signals, &MixFaceListenerSignals::snewMeters2, this, &MixFaceLinker::newMeters2);
-    connect(mfl_signals, &MixFaceListenerSignals::sdebug, this, &MixFaceLinker::debug);*/
     reciever = new SocketReceiveMultiplexer;
     udpSocket = new UdpSocket;
     udpSocket->Bind(IpEndpointName(IpEndpointName::ANY_ADDRESS, ANY_PORT));

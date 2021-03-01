@@ -32,7 +32,7 @@ set(MixFaceQtWidgets_QRC
     MixFace.qrc
     )
 
-qt5_add_resources(MixFaceQtWidgets_QRC_SOURCES ${MixFaceUi_QRC})
+qt5_add_resources(MixFaceQtWidgets_QRC_SOURCES ${MixFaceQtWidgets_QRC})
 
 add_executable(MixFaceQtWidgets
     ${MixFaceQtWidgets_SOURCES}

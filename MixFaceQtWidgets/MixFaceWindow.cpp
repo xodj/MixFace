@@ -229,7 +229,7 @@ void MixFaceWindow::resizeEvent(QResizeEvent *e){
 }
 
 void MixFaceWindow::connection(){
-    connected = mf_library->connectTo(mf_topArea->lineIp->text());
+    connected = mf_library->connectTo(mf_topArea->lineIp->text().toStdString());
     if (connected) {
         mf_topArea->syncAction->setEnabled(true);
         mf_topArea->lineIp->setDisabled(true);
@@ -276,7 +276,7 @@ void MixFaceWindow::initControlAreaWidgets() {
 
 void MixFaceWindow::initControlAreaWidgetIdx(int idx, FaderType ftype) {
     scrollWidget[idx] = new FaderWidget(dpiRatio, debug, mf_fonts, this);
-    scrollWidget[idx]->setChannelNativeName(mf_library->channelNameFromIdx(idx));
+    scrollWidget[idx]->setChannelNativeName(QString::fromStdString(mf_library->channelNameFromIdx(idx)));
     scrollWidget[idx]->setFaderType(ftype);
     scrollWidget[idx]->setProperty("idx", idx);
     connect(scrollWidget[idx], &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
@@ -310,7 +310,7 @@ void MixFaceWindow::initMainAreaWidgets() {
 
 void MixFaceWindow::initMainAreaWidgetIdx(int idx) {
     mainWidget[idx] = new FaderWidget(dpiRatio, debug, mf_fonts, this);
-    mainWidget[idx]->setChannelNativeName(mf_library->channelNameFromIdx(idx));
+    mainWidget[idx]->setChannelNativeName(QString::fromStdString(mf_library->channelNameFromIdx(idx)));
     mainWidget[idx]->setFaderType(mf_types.getFaderType(idx));
     mainWidget[idx]->setProperty("idx", idx);
     connect(mainWidget[idx], &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
@@ -350,7 +350,7 @@ void MixFaceWindow::assignMainFader(int idx, int idy) {
 
     QString name = "LR";
     if (idx!=70)
-        name = mf_library->channelNameFromIdx(idx);
+        name = QString::fromStdString(mf_library->channelNameFromIdx(idx));
     mf_rightArea->busButton->setText(name);
 
     currentIdy = idy;
@@ -365,7 +365,7 @@ void MixFaceWindow::assignScrollFaders(int idy) {
 
 void MixFaceWindow::iconButtonClicked(){
     int idx = reinterpret_cast<QObject *>(sender())->property("idx").toInt();
-    mf_picker->showIconPopup(idx, mf_library->db.configicon[idx], mf_library->db.configcolor[idx],mf_library->channelNameFromIdx(idx),QString::fromStdString(mf_library->db.configname[idx]));
+    mf_picker->showIconPopup(idx, mf_library->db.configicon[idx], mf_library->db.configcolor[idx],QString::fromStdString(mf_library->channelNameFromIdx(idx)),QString::fromStdString(mf_library->db.configname[idx]));
 }
 
 void MixFaceWindow::logoChanged(int idx, int value){
@@ -406,7 +406,7 @@ void MixFaceWindow::buttonSrcClicked(){
         if(idx!=70&&idx!=71&&(idx<48||idx>63)){
             srcFader = new FaderWidget(dpiRatio, debug, mf_fonts, this);
             srcLayout->addWidget(srcFader);
-            srcFader->setChannelNativeName(mf_library->channelNameFromIdx(idx));
+            srcFader->setChannelNativeName(QString::fromStdString(mf_library->channelNameFromIdx(idx)));
             srcFader->setFaderType(mf_types.getFaderType(idx));
             srcFader->setProperty("idx", idx);
             connect(srcFader, &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
@@ -457,7 +457,7 @@ void MixFaceWindow::buttonEqClicked(){
         if(idx!=70&&idx!=71&&(idx<48||idx>63)){
             srcFader = new FaderWidget(dpiRatio, debug, mf_fonts, this);
             srcLayout->addWidget(srcFader);
-            srcFader->setChannelNativeName(mf_library->channelNameFromIdx(idx));
+            srcFader->setChannelNativeName(QString::fromStdString(mf_library->channelNameFromIdx(idx)));
             srcFader->setFaderType(mf_types.getFaderType(idx));
             srcFader->setProperty("idx", idx);
             connect(srcFader, &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
@@ -508,7 +508,7 @@ void MixFaceWindow::buttonDynClicked(){
         if(idx!=70&&idx!=71&&(idx<48||idx>63)){
             srcFader = new FaderWidget(dpiRatio, debug, mf_fonts, this);
             srcLayout->addWidget(srcFader);
-            srcFader->setChannelNativeName(mf_library->channelNameFromIdx(idx));
+            srcFader->setChannelNativeName(QString::fromStdString(mf_library->channelNameFromIdx(idx)));
             srcFader->setFaderType(mf_types.getFaderType(idx));
             srcFader->setProperty("idx", idx);
             connect(srcFader, &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
@@ -553,10 +553,8 @@ void MixFaceWindow::panChanged(float value)
     if (connected) {
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
-        QString msg = mf_library->getOscAddress(mtype, chtype, chN, send);
-        QByteArray oscAddressArray = msg.toLatin1();
-        const char *oscAddress = oscAddressArray;
-        mf_library->linker->sendFloat(oscAddress,value);
+        string msg = mf_library->getOscAddress(mtype, chtype, chN, send);
+        mf_library->linker->sendFloat(msg.c_str(),value);
     }
 
     if ((idx>47&&idx<65)||idx==70||idx==71) {
@@ -584,9 +582,8 @@ void MixFaceWindow::faderChanged(float value)
     if (connected) {
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
-        QString msg = mf_library->getOscAddress(mtype, chtype, chN, send);
-        const char *oscAddress = QByteArray(msg.toLatin1());
-        mf_library->linker->sendFloat(oscAddress, value);
+        string msg = mf_library->getOscAddress(mtype, chtype, chN, send);
+        mf_library->linker->sendFloat(msg.c_str(), value);
     }
 
     if ((idx>47&&idx<65)||idx==70||idx==71)
@@ -612,9 +609,8 @@ void MixFaceWindow::muteClicked(int value)
     if (connected) {
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
-        QString msg = mf_library->getOscAddress(mtype, chtype, chN, send);
-        const char *oscAddress = QByteArray(msg.toLatin1());
-        mf_library->linker->sendFloat(oscAddress, value);
+        string msg = mf_library->getOscAddress(mtype, chtype, chN, send);
+        mf_library->linker->sendFloat(msg.c_str(), value);
     }
 
     if ((idx>47&&idx<65)||idx==70||idx==71) {

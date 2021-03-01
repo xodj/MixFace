@@ -19,7 +19,7 @@ MixFaceLibrary::MixFaceLibrary(QObject *parent, DebugLibrary *debug_)
         db.trim[idx] = 0.5;
         db.configicon[idx] = 1;
         db.configcolor[idx] = 1;
-        db.configname[idx] = channelNameFromIdx(idx).toStdString();
+        db.configname[idx] = channelNameFromIdx(idx);
         for(int idy=0;idy<16;idy++){
             db.sendlevel[idx][idy] = 0.75;
             db.sendpan[idx][idy] = 0.5;
@@ -37,10 +37,10 @@ MixFaceLibrary::MixFaceLibrary(QObject *parent, DebugLibrary *debug_)
     //connect(linker, &MixFaceLinker::debug, debug, &DebugLibrary::sendMessage);
 }
 
-bool MixFaceLibrary::connectTo(QString hostNameString){
+bool MixFaceLibrary::connectTo(string hostNameString){
 
     thread->start();
-    connected = linker->connectTo(hostNameString.toStdString());
+    connected = linker->connectTo(hostNameString);
     if (connected) {
         sendRenewMessagesTimer->start(1000);
         linker->listener->s_str.connect(signal_type_str(&MixFaceLibrary::processMessage, this, boost::arg<1>()));
@@ -103,46 +103,34 @@ void MixFaceLibrary::sendSyncMessages() {
         int chN = getChannelNumberFromIdx(idx);
 
         MessageType mtype = fader;
-        QString msg = getOscAddress(mtype, chtype, chN, 0);
-        QByteArray oscAddressArray = msg.toLatin1();
-        const char *oscAddress = oscAddressArray;
-        linker->sendCmdOnly(oscAddress);
+        string msg = getOscAddress(mtype, chtype, chN, 0);
+        linker->sendCmdOnly(msg.c_str());
 
         if (idx<64||idx==70){
             mtype = pan;
             msg = getOscAddress(mtype, chtype, chN, 0);
-            oscAddressArray = msg.toLatin1();
-            oscAddress = oscAddressArray;
-            linker->sendCmdOnly(oscAddress);
+            linker->sendCmdOnly(msg.c_str());
         }
 
         mtype = solo;
         msg = getOscAddress(mtype, chtype, idx+1, 0);
-        oscAddressArray = msg.toLatin1();
-        oscAddress = oscAddressArray;
-        linker->sendCmdOnly(oscAddress);
+        linker->sendCmdOnly(msg.c_str());
 
         mtype = on;
         msg = getOscAddress(mtype, chtype, chN, 0);
-        oscAddressArray = msg.toLatin1();
-        oscAddress = oscAddressArray;
-        linker->sendCmdOnly(oscAddress);
+        linker->sendCmdOnly(msg.c_str());
         if(idx<48){
             for(int sendN=1;sendN<17;sendN++){
                 mtype = sendlevel;
                 msg = getOscAddress(mtype, chtype, chN, sendN);
-                oscAddressArray = msg.toLatin1();
-                oscAddress = oscAddressArray;
-                linker->sendCmdOnly(oscAddress);
+                linker->sendCmdOnly(msg.c_str());
             }
         }
         if((idx>47&&idx<64)||idx==70||idx==71){
             for(int sendN=1;sendN<7;sendN++){
                 mtype = sendlevel;
                 msg = getOscAddress(mtype, chtype, chN, sendN);
-                oscAddressArray = msg.toLatin1();
-                oscAddress = oscAddressArray;
-                linker->sendCmdOnly(oscAddress);
+                linker->sendCmdOnly(msg.c_str());
             }
         }
     }
@@ -190,14 +178,14 @@ void MixFaceLibrary::sendXremoteMessage() {
     linker->sendDynamicMsg(p);*/
 }
 
-QString MixFaceLibrary::channelNameFromIdx(int idx) {
-  QString name;
+string MixFaceLibrary::channelNameFromIdx(int idx) {
+  string name;
   idx = idx + 1;
   if (idx < 33) {
-    name = QString::number(idx);
+    name = to_string(idx);
     name = ("Ch " + name);
   } else if (idx < 41) {
-    name = QString::number(idx - 32);
+    name = to_string(idx - 32);
     name = ("Aux " + name);
   } else if (idx == 41) {
     name = ("FX 1L");
@@ -216,38 +204,37 @@ QString MixFaceLibrary::channelNameFromIdx(int idx) {
   } else if (idx == 48) {
     name = ("FX 4R");
   } else if (idx < 65) {
-    name = QString::number(idx - 48);
+    name = to_string(idx - 48);
     name = ("Bus " + name);
   } else if (idx < 71) {
-    name = QString::number(idx - 64);
+    name = to_string(idx - 64);
     name = ("Matrix " + name);
   } else if (idx == 71) {
     name = ("Main LR");
   } else if (idx == 72) {
     name = ("M/C");
   } else if (idx < 81) {
-    name = QString::number(idx - 72);
+    name = to_string(idx - 72);
     name = ("DCA " + name);
   }
   return name;
 }
 
 void MixFaceLibrary::processMessage(string message) {
-    QString message_ = QString::fromStdString(message);
-    MessageType mtype = getMessageType(message_);
-    ValueType vtype = getValueType(message_);
+    MessageType mtype = getMessageType(message);
+    ValueType vtype = getValueType(message);
 
-    int chN = getChannelNumber(message_);
-    ChannelType chtype = getChannelType(message_);
+    int chN = getChannelNumber(message);
+    ChannelType chtype = getChannelType(message);
     int idx = getIdxFromChNandChType(chN, chtype);
-    int sendN = getSendNumber(message_);
+    int sendN = getSendNumber(message);
     float fval = 0.0;
     int ival = 0;
-    QString sval;
+    string sval;
 
-    if (vtype == floatvalue) fval = getFloatValue(message_);
-    else if (vtype == intvalue) ival = getIntValue(message_);
-    else if (vtype == stringvalue) sval = getStringValue(message_);
+    if (vtype == floatvalue) fval = getFloatValue(message);
+    else if (vtype == intvalue) ival = getIntValue(message);
+    else if (vtype == stringvalue) sval = getStringValue(message);
 
     switch (mtype) {
     case stereoon:
@@ -579,7 +566,7 @@ void MixFaceLibrary::processMessage(string message) {
         valueChanged(mtype,idx,0);
         break;
     case configname:
-        db.configname[idx] = sval.toStdString();
+        db.configname[idx] = sval;
         valueChanged(mtype,idx,0);
         break;
     case merror:
@@ -588,11 +575,11 @@ void MixFaceLibrary::processMessage(string message) {
     }
 }
 
-QString MixFaceLibrary::getOscAddress(MessageType mtype,
+string MixFaceLibrary::getOscAddress(MessageType mtype,
                                    ChannelType chtype,
                                    int channelN, int sendN)
 {
-    QString oscAddress;
+    string oscAddress;
     switch (mtype) {
     case stereoon:
         oscAddress = ("/mix/st");
@@ -608,9 +595,9 @@ QString MixFaceLibrary::getOscAddress(MessageType mtype,
         break;
     case solo:
         if (channelN < 10)
-            oscAddress = ("/-stat/solosw/0" + QString::number(channelN));
+            oscAddress = ("/-stat/solosw/0" + to_string(channelN));
         else
-            oscAddress = ("/-stat/solosw/" + QString::number(channelN));
+            oscAddress = ("/-stat/solosw/" + to_string(channelN));
         break;
     case monoon:
         oscAddress = ("/mix/mono");
@@ -620,31 +607,31 @@ QString MixFaceLibrary::getOscAddress(MessageType mtype,
         break;
     case chlink:
         if (channelN % 2 == 0) channelN = channelN-1;
-        oscAddress = ("/config/chlink/" + QString::number(channelN) + "-" +
-                      QString::number(channelN + 1));
+        oscAddress = ("/config/chlink/" + to_string(channelN) + "-" +
+                      to_string(channelN + 1));
         break;
     case auxlink:
         if (channelN % 2 == 0) channelN = channelN-1;
-        oscAddress = ("/config/auxlink/" + QString::number(channelN) + "-" +
-                      QString::number(channelN + 1));
+        oscAddress = ("/config/auxlink/" + to_string(channelN) + "-" +
+                      to_string(channelN + 1));
         break;
     case buslink:
         if (channelN % 2 == 0) channelN = channelN-1;
-        oscAddress = ("/config/buslink/" + QString::number(channelN) + "-" +
-                      QString::number(channelN + 1));
+        oscAddress = ("/config/buslink/" + to_string(channelN) + "-" +
+                      to_string(channelN + 1));
         break;
     case mtxlink:
         if (channelN % 2 == 0) channelN = channelN-1;
-        oscAddress = ("/config/mtxlink/" + QString::number(channelN) + "-" +
-                      QString::number(channelN + 1));
+        oscAddress = ("/config/mtxlink/" + to_string(channelN) + "-" +
+                      to_string(channelN + 1));
         break;
     case phantom:
         if (channelN < 10)
-            oscAddress = ("/headamp/00" + QString::number(channelN) + "/phantom");
+            oscAddress = ("/headamp/00" + to_string(channelN) + "/phantom");
         else if (channelN < 100)
-            oscAddress = ("/headamp/0" + QString::number(channelN) + "/phantom");
+            oscAddress = ("/headamp/0" + to_string(channelN) + "/phantom");
         else
-            oscAddress = ("/headamp/" + QString::number(channelN) + "/phantom");
+            oscAddress = ("/headamp/" + to_string(channelN) + "/phantom");
         break;
     case invert:
         oscAddress = ("/preamp/invert");
@@ -654,11 +641,11 @@ QString MixFaceLibrary::getOscAddress(MessageType mtype,
         break;
     case gain:
         if (channelN < 10)
-            oscAddress = ("/headamp/00" + QString::number(channelN-1) + "/gain");
+            oscAddress = ("/headamp/00" + to_string(channelN-1) + "/gain");
         else if (channelN < 100)
-            oscAddress = ("/headamp/0" + QString::number(channelN-1) + "/gain");
+            oscAddress = ("/headamp/0" + to_string(channelN-1) + "/gain");
         else
-            oscAddress = ("/headamp/" + QString::number(channelN-1) + "/gain");
+            oscAddress = ("/headamp/" + to_string(channelN-1) + "/gain");
         break;
     case trim:
         oscAddress = ("/preamp/trim");
@@ -842,33 +829,33 @@ QString MixFaceLibrary::getOscAddress(MessageType mtype,
         break;
     case sendlevel:
         if (sendN < 10)
-            oscAddress = ("/mix/0" + QString::number(sendN) + "/level");
+            oscAddress = ("/mix/0" + to_string(sendN) + "/level");
         else
-            oscAddress = ("/mix/" + QString::number(sendN) + "/level");
+            oscAddress = ("/mix/" + to_string(sendN) + "/level");
         break;
     case sendpan:
         if (sendN < 10)
-            oscAddress = ("/mix/0" + QString::number(sendN) + "/pan");
+            oscAddress = ("/mix/0" + to_string(sendN) + "/pan");
         else
-            oscAddress = ("/mix/" + QString::number(sendN) + "/pan");
+            oscAddress = ("/mix/" + to_string(sendN) + "/pan");
         break;
     case sendpanfollow:
         if (sendN < 10)
-            oscAddress = ("/mix/0" + QString::number(sendN) + "/panFollow");
+            oscAddress = ("/mix/0" + to_string(sendN) + "/panFollow");
         else
-            oscAddress = ("/mix/" + QString::number(sendN) + "/panFollow");
+            oscAddress = ("/mix/" + to_string(sendN) + "/panFollow");
         break;
     case sendtype:
         if (sendN < 10)
-            oscAddress = ("/mix/0" + QString::number(sendN) + "/type");
+            oscAddress = ("/mix/0" + to_string(sendN) + "/type");
         else
-            oscAddress = ("/mix/" + QString::number(sendN) + "/type");
+            oscAddress = ("/mix/" + to_string(sendN) + "/type");
         break;
     case sendon:
         if (sendN < 10)
-            oscAddress = ("/mix/0" + QString::number(sendN) + "/on");
+            oscAddress = ("/mix/0" + to_string(sendN) + "/on");
         else
-            oscAddress = ("/mix/" + QString::number(sendN) + "/on");
+            oscAddress = ("/mix/" + to_string(sendN) + "/on");
         break;
     case configicon:
         oscAddress = ("/config/icon");
@@ -880,7 +867,7 @@ QString MixFaceLibrary::getOscAddress(MessageType mtype,
         oscAddress = ("/config/name");
         break;
     case merror:
-        debug->sendMessage("Message type error " + QString::number(channelN).toStdString(),0);
+        debug->sendMessage("Message type error " + to_string(channelN),0);
         oscAddress = nullptr;
         break;
     }
@@ -890,26 +877,26 @@ QString MixFaceLibrary::getOscAddress(MessageType mtype,
         switch (chtype) {
         case channel:
             if (channelN < 10) {
-                oscAddress = ("/ch/0" + QString::number(channelN) + oscAddress);
+                oscAddress = ("/ch/0" + to_string(channelN) + oscAddress);
             } else {
-                oscAddress = ("/ch/" + QString::number(channelN) + oscAddress);
+                oscAddress = ("/ch/" + to_string(channelN) + oscAddress);
             }
             break;
         case auxin:
-            oscAddress = ("/auxin/0" + QString::number(channelN) + oscAddress);
+            oscAddress = ("/auxin/0" + to_string(channelN) + oscAddress);
             break;
         case fxreturn:
-            oscAddress = ("/fxrtn/0" + QString::number(channelN) + oscAddress);
+            oscAddress = ("/fxrtn/0" + to_string(channelN) + oscAddress);
             break;
         case bus:
             if (channelN < 10) {
-                oscAddress = ("/bus/0" + QString::number(channelN) + oscAddress);
+                oscAddress = ("/bus/0" + to_string(channelN) + oscAddress);
             } else {
-                oscAddress = ("/bus/" + QString::number(channelN) + oscAddress);
+                oscAddress = ("/bus/" + to_string(channelN) + oscAddress);
             }
             break;
         case matrix:
-            oscAddress = ("/mtx/0" + QString::number(channelN) + oscAddress);
+            oscAddress = ("/mtx/0" + to_string(channelN) + oscAddress);
             break;
         case lr:
             oscAddress = ("/main/st" + oscAddress);
@@ -919,14 +906,14 @@ QString MixFaceLibrary::getOscAddress(MessageType mtype,
             break;
         case dca:
             if (mtype == fader)
-                oscAddress = ("/dca/" + QString::number(channelN) + "/fader");
+                oscAddress = ("/dca/" + to_string(channelN) + "/fader");
             else if (mtype == on)
-                oscAddress = ("/dca/" + QString::number(channelN) + "/on");
+                oscAddress = ("/dca/" + to_string(channelN) + "/on");
             break;
         case headamp:
             break;
         case cherror:
-            debug->sendMessage("Channel type error " + QString::number(channelN).toStdString(),0);
+            debug->sendMessage("Channel type error " + to_string(channelN),0);
             oscAddress = nullptr;
             break;
         }
@@ -967,223 +954,225 @@ int MixFaceLibrary::getChannelNumberFromIdx(int idx) {
   else return 0;
 }
 
-MessageType MixFaceLibrary::getMessageType(QString message) {
+MessageType MixFaceLibrary::getMessageType(string message) {
     MessageType mtype = merror;
-    if (message.contains(mtqre.stereoon)) mtype = stereoon;
-    else if (message.contains(mtqre.monoon)) mtype = monoon;
-    else if (message.contains(mtqre.mlevel)) mtype = mlevel;
-    else if (message.contains(mtqre.fader)) mtype = fader;
-    else if (message.contains(mtqre.pan)) mtype = pan;
-    else if (message.contains(mtqre.on)) mtype = on;
-    else if (message.contains(mtqre.solo)) mtype = solo;
-    else if (message.contains(mtqre.sendlevel)) mtype = sendlevel;
-    else if (message.contains(mtqre.sendpan)) mtype = sendpan;
-    else if (message.contains(mtqre.sendpanfollow)) mtype = sendpanfollow;
-    else if (message.contains(mtqre.sendtype)) mtype = sendtype;
-    else if (message.contains(mtqre.sendon)) mtype = sendon;
-    else if (message.contains(mtqre.dcaon)) mtype = on;
-    else if (message.contains(mtqre.chlink)) mtype = chlink;
-    else if (message.contains(mtqre.auxlink)) mtype = auxlink;
-    else if (message.contains(mtqre.buslink)) mtype = buslink;
-    else if (message.contains(mtqre.mtxlink)) mtype = mtxlink;
-    else if (message.contains(mtqre.phantom)) mtype = phantom;
-    else if (message.contains(mtqre.invert)) mtype = invert;
-    else if (message.contains(mtqre.source)) mtype = source;
-    else if (message.contains(mtqre.gain)) mtype = gain;
-    else if (message.contains(mtqre.trim)) mtype = trim;
-    else if (message.contains(mtqre.hpf)) mtype = hpf;
-    else if (message.contains(mtqre.hpon)) mtype = hpon;
-    else if (message.contains(mtqre.delayon)) mtype = delayon;
-    else if (message.contains(mtqre.delaytime)) mtype = delaytime;
-    else if (message.contains(mtqre.inserton)) mtype = inserton;
-    else if (message.contains(mtqre.insertsel)) mtype = insertsel;
-    else if (message.contains(mtqre.insertpos)) mtype = insertpos;
-    else if (message.contains(mtqre.gateon)) mtype = gateon;
-    else if (message.contains(mtqre.gatethr)) mtype = gatethr;
-    else if (message.contains(mtqre.gaterange)) mtype = gaterange;
-    else if (message.contains(mtqre.gatemode)) mtype = gatemode;
-    else if (message.contains(mtqre.gateattack)) mtype = gateattack;
-    else if (message.contains(mtqre.gatehold)) mtype = gatehold;
-    else if (message.contains(mtqre.gaterelease)) mtype = gaterelease;
-    else if (message.contains(mtqre.gatekeysrc)) mtype = gatekeysrc;
-    else if (message.contains(mtqre.gatefilteron)) mtype = gatefilteron;
-    else if (message.contains(mtqre.gatefiltertype)) mtype = gatefiltertype;
-    else if (message.contains(mtqre.gatefilterf)) mtype = gatefilterf;
-    else if (message.contains(mtqre.dynon)) mtype = dynon;
-    else if (message.contains(mtqre.dynthr)) mtype = dynthr;
-    else if (message.contains(mtqre.dynratio)) mtype = dynratio;
-    else if (message.contains(mtqre.dynmix)) mtype = dynmix;
-    else if (message.contains(mtqre.dynmgain)) mtype = dynmgain;
-    else if (message.contains(mtqre.dynattack)) mtype = dynattack;
-    else if (message.contains(mtqre.dynhold)) mtype = dynhold;
-    else if (message.contains(mtqre.dynrelease)) mtype = dynrelease;
-    else if (message.contains(mtqre.dynmode)) mtype = dynmode;
-    else if (message.contains(mtqre.dynknee)) mtype = dynknee;
-    else if (message.contains(mtqre.dynenv)) mtype = dynenv;
-    else if (message.contains(mtqre.dyndet)) mtype = dyndet;
-    else if (message.contains(mtqre.dynauto)) mtype = dynauto;
-    else if (message.contains(mtqre.dynkeysrc)) mtype = dynkeysrc;
-    else if (message.contains(mtqre.dynfilteron)) mtype = dynfilteron;
-    else if (message.contains(mtqre.dynfiltertype)) mtype = dynfiltertype;
-    else if (message.contains(mtqre.dynfilterf)) mtype = dynfilterf;
-    else if (message.contains(mtqre.eq1type)) mtype = eq1type;
-    else if (message.contains(mtqre.eq1g)) mtype = eq1g;
-    else if (message.contains(mtqre.eq1f)) mtype = eq1f;
-    else if (message.contains(mtqre.eq1q)) mtype = eq1q;
-    else if (message.contains(mtqre.eq2type)) mtype = eq2type;
-    else if (message.contains(mtqre.eq2g)) mtype = eq2g;
-    else if (message.contains(mtqre.eq2f)) mtype = eq2f;
-    else if (message.contains(mtqre.eq2q)) mtype = eq2q;
-    else if (message.contains(mtqre.eq3type)) mtype = eq3type;
-    else if (message.contains(mtqre.eq3g)) mtype = eq3g;
-    else if (message.contains(mtqre.eq3f)) mtype = eq3f;
-    else if (message.contains(mtqre.eq3q)) mtype = eq3q;
-    else if (message.contains(mtqre.eq4type)) mtype = eq4type;
-    else if (message.contains(mtqre.eq4g)) mtype = eq4g;
-    else if (message.contains(mtqre.eq4f)) mtype = eq4f;
-    else if (message.contains(mtqre.eq4q)) mtype = eq4q;
-    else if (message.contains(mtqre.eq5type)) mtype = eq5type;
-    else if (message.contains(mtqre.eq5g)) mtype = eq5g;
-    else if (message.contains(mtqre.eq5f)) mtype = eq5f;
-    else if (message.contains(mtqre.eq5q)) mtype = eq5q;
-    else if (message.contains(mtqre.eq6type)) mtype = eq6type;
-    else if (message.contains(mtqre.eq6g)) mtype = eq6g;
-    else if (message.contains(mtqre.eq6f)) mtype = eq6f;
-    else if (message.contains(mtqre.eq6q)) mtype = eq6q;
-    else if (message.contains(mtqre.configicon)) mtype = configicon;
-    else if (message.contains(mtqre.configcolor)) mtype = configcolor;
-    else if (message.contains(mtqre.configname)) mtype = configname;
+    if (strstr(message.c_str(), msgTypeStr.stereoon)) mtype = stereoon;
+    else if (strstr(message.c_str(), msgTypeStr.monoon)) mtype = monoon;
+    else if (strstr(message.c_str(), msgTypeStr.mlevel)) mtype = mlevel;
+    else if (strstr(message.c_str(), msgTypeStr.fader)) mtype = fader;
+    else if (strstr(message.c_str(), msgTypeStr.pan)) mtype = pan;
+    else if (strstr(message.c_str(), msgTypeStr.on)) mtype = on;
+    else if (strstr(message.c_str(), msgTypeStr.solo)) mtype = solo;
+    else if (strstr(message.c_str(), msgTypeStr.sendlevel)) mtype = sendlevel;
+    else if (strstr(message.c_str(), msgTypeStr.sendpan)) mtype = sendpan;
+    else if (strstr(message.c_str(), msgTypeStr.sendpanfollow)) mtype = sendpanfollow;
+    else if (strstr(message.c_str(), msgTypeStr.sendtype)) mtype = sendtype;
+    else if (strstr(message.c_str(), msgTypeStr.sendon)) mtype = sendon;
+    else if (strstr(message.c_str(), msgTypeStr.dcaon)) mtype = on;
+    else if (strstr(message.c_str(), msgTypeStr.chlink)) mtype = chlink;
+    else if (strstr(message.c_str(), msgTypeStr.auxlink)) mtype = auxlink;
+    else if (strstr(message.c_str(), msgTypeStr.buslink)) mtype = buslink;
+    else if (strstr(message.c_str(), msgTypeStr.mtxlink)) mtype = mtxlink;
+    else if (strstr(message.c_str(), msgTypeStr.phantom)) mtype = phantom;
+    else if (strstr(message.c_str(), msgTypeStr.invert)) mtype = invert;
+    else if (strstr(message.c_str(), msgTypeStr.source)) mtype = source;
+    else if (strstr(message.c_str(), msgTypeStr.gain)) mtype = gain;
+    else if (strstr(message.c_str(), msgTypeStr.trim)) mtype = trim;
+    else if (strstr(message.c_str(), msgTypeStr.hpf)) mtype = hpf;
+    else if (strstr(message.c_str(), msgTypeStr.hpon)) mtype = hpon;
+    else if (strstr(message.c_str(), msgTypeStr.delayon)) mtype = delayon;
+    else if (strstr(message.c_str(), msgTypeStr.delaytime)) mtype = delaytime;
+    else if (strstr(message.c_str(), msgTypeStr.inserton)) mtype = inserton;
+    else if (strstr(message.c_str(), msgTypeStr.insertsel)) mtype = insertsel;
+    else if (strstr(message.c_str(), msgTypeStr.insertpos)) mtype = insertpos;
+    else if (strstr(message.c_str(), msgTypeStr.gateon)) mtype = gateon;
+    else if (strstr(message.c_str(), msgTypeStr.gatethr)) mtype = gatethr;
+    else if (strstr(message.c_str(), msgTypeStr.gaterange)) mtype = gaterange;
+    else if (strstr(message.c_str(), msgTypeStr.gatemode)) mtype = gatemode;
+    else if (strstr(message.c_str(), msgTypeStr.gateattack)) mtype = gateattack;
+    else if (strstr(message.c_str(), msgTypeStr.gatehold)) mtype = gatehold;
+    else if (strstr(message.c_str(), msgTypeStr.gaterelease)) mtype = gaterelease;
+    else if (strstr(message.c_str(), msgTypeStr.gatekeysrc)) mtype = gatekeysrc;
+    else if (strstr(message.c_str(), msgTypeStr.gatefilteron)) mtype = gatefilteron;
+    else if (strstr(message.c_str(), msgTypeStr.gatefiltertype)) mtype = gatefiltertype;
+    else if (strstr(message.c_str(), msgTypeStr.gatefilterf)) mtype = gatefilterf;
+    else if (strstr(message.c_str(), msgTypeStr.dynon)) mtype = dynon;
+    else if (strstr(message.c_str(), msgTypeStr.dynthr)) mtype = dynthr;
+    else if (strstr(message.c_str(), msgTypeStr.dynratio)) mtype = dynratio;
+    else if (strstr(message.c_str(), msgTypeStr.dynmix)) mtype = dynmix;
+    else if (strstr(message.c_str(), msgTypeStr.dynmgain)) mtype = dynmgain;
+    else if (strstr(message.c_str(), msgTypeStr.dynattack)) mtype = dynattack;
+    else if (strstr(message.c_str(), msgTypeStr.dynhold)) mtype = dynhold;
+    else if (strstr(message.c_str(), msgTypeStr.dynrelease)) mtype = dynrelease;
+    else if (strstr(message.c_str(), msgTypeStr.dynmode)) mtype = dynmode;
+    else if (strstr(message.c_str(), msgTypeStr.dynknee)) mtype = dynknee;
+    else if (strstr(message.c_str(), msgTypeStr.dynenv)) mtype = dynenv;
+    else if (strstr(message.c_str(), msgTypeStr.dyndet)) mtype = dyndet;
+    else if (strstr(message.c_str(), msgTypeStr.dynauto)) mtype = dynauto;
+    else if (strstr(message.c_str(), msgTypeStr.dynkeysrc)) mtype = dynkeysrc;
+    else if (strstr(message.c_str(), msgTypeStr.dynfilteron)) mtype = dynfilteron;
+    else if (strstr(message.c_str(), msgTypeStr.dynfiltertype)) mtype = dynfiltertype;
+    else if (strstr(message.c_str(), msgTypeStr.dynfilterf)) mtype = dynfilterf;
+    else if (strstr(message.c_str(), msgTypeStr.eq1type)) mtype = eq1type;
+    else if (strstr(message.c_str(), msgTypeStr.eq1g)) mtype = eq1g;
+    else if (strstr(message.c_str(), msgTypeStr.eq1f)) mtype = eq1f;
+    else if (strstr(message.c_str(), msgTypeStr.eq1q)) mtype = eq1q;
+    else if (strstr(message.c_str(), msgTypeStr.eq2type)) mtype = eq2type;
+    else if (strstr(message.c_str(), msgTypeStr.eq2g)) mtype = eq2g;
+    else if (strstr(message.c_str(), msgTypeStr.eq2f)) mtype = eq2f;
+    else if (strstr(message.c_str(), msgTypeStr.eq2q)) mtype = eq2q;
+    else if (strstr(message.c_str(), msgTypeStr.eq3type)) mtype = eq3type;
+    else if (strstr(message.c_str(), msgTypeStr.eq3g)) mtype = eq3g;
+    else if (strstr(message.c_str(), msgTypeStr.eq3f)) mtype = eq3f;
+    else if (strstr(message.c_str(), msgTypeStr.eq3q)) mtype = eq3q;
+    else if (strstr(message.c_str(), msgTypeStr.eq4type)) mtype = eq4type;
+    else if (strstr(message.c_str(), msgTypeStr.eq4g)) mtype = eq4g;
+    else if (strstr(message.c_str(), msgTypeStr.eq4f)) mtype = eq4f;
+    else if (strstr(message.c_str(), msgTypeStr.eq4q)) mtype = eq4q;
+    else if (strstr(message.c_str(), msgTypeStr.eq5type)) mtype = eq5type;
+    else if (strstr(message.c_str(), msgTypeStr.eq5g)) mtype = eq5g;
+    else if (strstr(message.c_str(), msgTypeStr.eq5f)) mtype = eq5f;
+    else if (strstr(message.c_str(), msgTypeStr.eq5q)) mtype = eq5q;
+    else if (strstr(message.c_str(), msgTypeStr.eq6type)) mtype = eq6type;
+    else if (strstr(message.c_str(), msgTypeStr.eq6g)) mtype = eq6g;
+    else if (strstr(message.c_str(), msgTypeStr.eq6f)) mtype = eq6f;
+    else if (strstr(message.c_str(), msgTypeStr.eq6q)) mtype = eq6q;
+    else if (strstr(message.c_str(), msgTypeStr.configicon)) mtype = configicon;
+    else if (strstr(message.c_str(), msgTypeStr.configcolor)) mtype = configcolor;
+    else if (strstr(message.c_str(), msgTypeStr.configname)) mtype = configname;
     return mtype;
 }
 
-ChannelType MixFaceLibrary::getChannelType(QString message) {
+ChannelType MixFaceLibrary::getChannelType(string message) {
     ChannelType chtype = cherror;
-    if (message.contains(chtqre.channel)) chtype = channel;
-    else if (message.contains(chtqre.auxin)) chtype = auxin;
-    else if (message.contains(chtqre.fxreturn)) chtype = fxreturn;
-    else if (message.contains(chtqre.bus)) chtype = bus;
-    else if (message.contains(chtqre.matrix)) chtype = matrix;
-    else if (message.contains(chtqre.lr)) chtype = lr;
-    else if (message.contains(chtqre.mc)) chtype = mc;
-    else if (message.contains(chtqre.dca)) chtype = dca;
+    if (strstr(message.c_str(), chTypeStr.channel)) chtype = channel;
+    else if (strstr(message.c_str(), chTypeStr.auxin)) chtype = auxin;
+    else if (strstr(message.c_str(), chTypeStr.fxreturn)) chtype = fxreturn;
+    else if (strstr(message.c_str(), chTypeStr.bus)) chtype = bus;
+    else if (strstr(message.c_str(), chTypeStr.matrix)) chtype = matrix;
+    else if (strstr(message.c_str(), chTypeStr.lr)) chtype = lr;
+    else if (strstr(message.c_str(), chTypeStr.mc)) chtype = mc;
+    else if (strstr(message.c_str(), chTypeStr.dca)) chtype = dca;
     return chtype;
 }
 
-ValueType MixFaceLibrary::getValueType(QString message) {
+ValueType MixFaceLibrary::getValueType(string message) {
     ValueType vtype = verror;
-    if (message.contains(vtqre.intvalue)) vtype = intvalue;
-    else if (message.contains(vtqre.floatvalue)) vtype = floatvalue;
-    else if (message.contains(vtqre.stringvalue)) vtype = stringvalue;
-    else if (message.contains(vtqre.boolvalue)) vtype = boolvalue;
+    if (strstr(message.c_str(), valTypeStr.intvalue)) vtype = intvalue;
+    else if (strstr(message.c_str(), valTypeStr.floatvalue)) vtype = floatvalue;
+    else if (strstr(message.c_str(), valTypeStr.stringvalue)) vtype = stringvalue;
+    else if (strstr(message.c_str(), valTypeStr.boolvalue)) vtype = boolvalue;
     return vtype;
 }
 
-int MixFaceLibrary::getChannelNumber(QString message) {
+int MixFaceLibrary::getChannelNumber(string message) {
+    debug->sendMessage("MixFaceLibrary::getChannelNumber in message: " + message, 3);
     int chN = 0;
-    if (message.contains(QRegExp("/ch/"))) {
-        message.remove("%A/ch/");
+    if (strstr(message.c_str(), busTypeStr.ch)) {
+        message.erase(0,strlen(busTypeStr.ch));
+        debug->sendMessage("MixFaceLibrary::getChannelNumber erase symbols: " + to_string(strlen(busTypeStr.ch)), 3);
         message.resize(2);
-        chN = message.toInt();
-    } else if (message.contains(QRegExp("/auxin/"))) {
-        message.remove("%A/auxin/");
+        chN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.auxin)) {
+        message.erase(0,strlen(busTypeStr.auxin));
         message.resize(2);
-        chN = message.toInt();
-    } else if (message.contains(QRegExp("/fxrtn/"))) {
-        message.remove("%A/fxrtn/");
+        chN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.fxrtn)) {
+        message.erase(0,strlen(busTypeStr.fxrtn));
         message.resize(2);
-        chN = message.toInt();
-    } else if (message.contains(QRegExp("/bus/"))) {
-        message.remove("%A/bus/");
+        chN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.bus)) {
+        message.erase(0,strlen(busTypeStr.bus));
         message.resize(2);
-        chN = message.toInt();
-    } else if (message.contains(QRegExp("/mtx/"))) {
-        message.remove("%A/mtx/");
+        chN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.mtx)) {
+        message.erase(0,strlen(busTypeStr.mtx));
         message.resize(2);
-        chN = message.toInt();
-    } else if (message.contains(QRegExp("/main/st/"))) {
+        chN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.mainst)) {
         chN = 0;
-    } else if (message.contains(QRegExp("/main/m/"))) {
+    } else if (strstr(message.c_str(), busTypeStr.mainm)) {
         chN = 0;
-    } else if (message.contains(QRegExp("/dca/"))) {
-        message.remove("%A/dca/");
+    } else if (strstr(message.c_str(), busTypeStr.dca)) {
+        message.erase(0,strlen(busTypeStr.dca));
         message.resize(1);
-        chN = message.toInt();
-    } else if (message.contains(QRegExp("/headamp/"))) {
-        message.remove("%A/headamp/");
+        chN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.headamp)) {
+        message.erase(0,strlen(busTypeStr.headamp));
         message.resize(3);
-        chN = message.toInt();
-    } else if (message.contains(QRegExp("/-stat/solosw/"))) {
-        message.remove("%A/-stat/solosw/");
+        chN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.statsolosw)) {
+        message.erase(0,strlen(busTypeStr.statsolosw));
         message.resize(2);
-        chN = message.toInt();
+        chN = atoi(message.c_str());
     }
+    debug->sendMessage("MixFaceLibrary::getChannelNumber ch number is: " + to_string(chN), 3);
     return chN;
 }
 
-int MixFaceLibrary::getSendNumber(QString message) {
+int MixFaceLibrary::getSendNumber(string message) {
+    debug->sendMessage("MixFaceLibrary::getSendNumber in message: " + message, 3);
     int sendN = 0;
-    if (message.contains(QRegExp("/ch/"))) {
-        message.remove("%A/ch/");
-        message.remove(0, 2);
-        message.remove("/mix/");
+    if (strstr(message.c_str(), busTypeStr.ch)) {
+        message.erase(0,strlen(busTypeStr.ch) + strlen(busTypeStr.mix) + 2);
         message.resize(2);
-        sendN = message.toInt();
-    } else if (message.contains(QRegExp("/auxin/"))) {
-        message.remove("%A/auxin/");
-        message.remove(0, 2);
-        message.remove("/mix/");
+        sendN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.auxin)) {
+        message.erase(0,strlen(busTypeStr.auxin) + strlen(busTypeStr.mix) + 2);
         message.resize(2);
-        sendN = message.toInt();
-    } else if (message.contains(QRegExp("/fxrtn/"))) {
-        message.remove("%A/fxrtn/");
-        message.remove(0, 2);
-        message.remove("/mix/");
+        sendN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.fxrtn)) {
+        message.erase(0,strlen(busTypeStr.fxrtn) + strlen(busTypeStr.mix) + 2);
         message.resize(2);
-        sendN = message.toInt();
-    } else if (message.contains(QRegExp("/bus/"))) {
-        message.remove("%A/bus/");
-        message.remove(0, 2);
-        message.remove("/mix/");
+        sendN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.bus)) {
+        message.erase(0,strlen(busTypeStr.bus) + strlen(busTypeStr.mix) + 2);
         message.resize(2);
-        sendN = message.toInt();
-    } else if (message.contains(QRegExp("/main/st/"))) {
-        message.remove("%A/main/st/mix/");
+        sendN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.mainst)) {
+        message.erase(0,strlen("%A/main/st/mix/"));
         message.resize(2);
-        sendN = message.toInt();
-    } else if (message.contains(QRegExp("/main/m/"))) {
-        message.remove("%A/main/m/mix/");
+        sendN = atoi(message.c_str());
+    } else if (strstr(message.c_str(), busTypeStr.mainm)) {
+        message.erase(0,strlen("%A/main/m/mix/"));
         message.resize(2);
-        sendN = message.toInt();
+        sendN = atoi(message.c_str());
     }
+    debug->sendMessage("MixFaceLibrary::getSendNumber send number: " + to_string(sendN), 3);
     return sendN;
 }
 
-float MixFaceLibrary::getFloatValue(QString message) {
+float MixFaceLibrary::getFloatValue(string message) {
+    debug->sendMessage("MixFaceLibrary::getFloatValue in message: " + message, 3);
     float fval = 0;
-    QString value = message;
-    message.remove(QRegExp("%F.*"));
-    value = value.remove(message);
-    value.remove("%F");
-    fval = value.toFloat();
+    int i = message.find(valTypeStr.floatvalue) + 2;
+    debug->sendMessage("MixFaceLibrary::getFloatValue find val index: " + to_string(i), 3);
+    message.erase(0,i);
+    debug->sendMessage("MixFaceLibrary::getFloatValue value in str: " + message, 3);
+    fval = atof(message.c_str());
+    debug->sendMessage("MixFaceLibrary::getFloatValue value in float: " + to_string(fval), 3);
     return fval;
 }
 
-int MixFaceLibrary::getIntValue(QString message) {
+int MixFaceLibrary::getIntValue(string message) {
+    debug->sendMessage("MixFaceLibrary::getIntValue in message: " + message, 3);
     int ival = 0;
-    QString value = message;
-    message.remove(QRegExp("%I.*"));
-    value = value.remove(message);
-    value.remove("%I");
-    ival = value.toInt();
+    int i = message.find(valTypeStr.intvalue) + 2;
+    debug->sendMessage("MixFaceLibrary::getIntValue find val index: " + to_string(i), 3);
+    message.erase(0,i);
+    debug->sendMessage("MixFaceLibrary::getIntValue value in str: " + message, 3);
+    ival = atoi(message.c_str());
+    debug->sendMessage("MixFaceLibrary::getIntValue value in int: " + to_string(ival), 3);
     return ival;
 }
 
-QString MixFaceLibrary::getStringValue(QString message) {
-    QString value = message;
-    message.remove(QRegExp("%S.*"));
-    value = value.remove(message);
-    value.remove("%S");
-    return value;
+string MixFaceLibrary::getStringValue(string message) {
+    debug->sendMessage("MixFaceLibrary::getStringValue in message: " + message, 3);
+    int i = message.find(valTypeStr.stringvalue) + 2;
+    debug->sendMessage("MixFaceLibrary::getStringValue find val index: " + to_string(i), 3);
+    message.erase(0,i);
+    debug->sendMessage("MixFaceLibrary::getStringValue value in str: " + message, 3);
+    return message;
 }
 
 int MixFaceLibrary::getIdxFromChNandChType(int chN, ChannelType chtype){

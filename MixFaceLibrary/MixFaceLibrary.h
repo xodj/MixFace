@@ -5,9 +5,12 @@
 #include <QObject>
 #include <QThread>
 #include <QTimer>
+#include <iostream>
+#include <string>
 #include "MixFaceLinker.h"
 #include "DebugLibrary.hpp"
 
+using namespace std;
 typedef boost::signals2::signal<void(int, int, int)> signal_thr_int;
 typedef signal_thr_int::slot_type signal_type_thr_int;
 
@@ -127,6 +130,15 @@ enum ValueType {
     verror
 };
 
+enum SendType {
+    st_level = 0,
+    st_pan,
+    st_panfollow,
+    st_type,
+    st_on,
+    st_error
+};
+
 class MixFaceLinker;
 
 class MixFaceLibrary : public QObject {
@@ -229,145 +241,163 @@ public:
     };
     x32db db;
 
-    struct MessageTypeQRegExp {
-        QRegExp stereoon = QRegExp("/mix/st");
-        QRegExp monoon = QRegExp("/mono");
-        QRegExp mlevel = QRegExp("/mlevel");
-        QRegExp fader = QRegExp("/fader");
-        QRegExp pan = QRegExp("/mix/pan");
-        QRegExp on = QRegExp("/mix/on");
-        QRegExp solo = QRegExp("/-stat/solosw/");
+    struct MessageTypeStruct {
+        const char *stereoon = ("/mix/st");
+        const char *monoon = ("/mono");
+        const char *mlevel = ("/mlevel");
+        const char *fader = ("/fader");
+        const char *pan = ("/mix/pan");
+        const char *on = ("/mix/on");
+        const char *solo = ("/-stat/solosw/");
 
-        QRegExp chlink = QRegExp("/config/chlink/");
-        QRegExp auxlink = QRegExp("/config/auxlink/");
-        QRegExp buslink = QRegExp("/config/buslink/");
-        QRegExp mtxlink = QRegExp("/config/mtxlink/");
+        const char *chlink = ("/config/chlink/");
+        const char *auxlink = ("/config/auxlink/");
+        const char *buslink = ("/config/buslink/");
+        const char *mtxlink = ("/config/mtxlink/");
 
-        QRegExp phantom = QRegExp("/phantom");
-        QRegExp invert = QRegExp("/preamp/invert");
-        QRegExp source = QRegExp("/config/source");
-        QRegExp gain = QRegExp("/gain");
-        QRegExp trim = QRegExp("/trim");
+        const char *phantom = ("/phantom");
+        const char *invert = ("/preamp/invert");
+        const char *source = ("/config/source");
+        const char *gain = ("/gain");
+        const char *trim = ("/trim");
 
-        QRegExp hpf = QRegExp("/hpf");
-        QRegExp hpon = QRegExp("/hpon");
-        QRegExp delayon = QRegExp("/delay/on");
-        QRegExp delaytime = QRegExp("/delay/time");
-        QRegExp inserton = QRegExp("/insert/on");
-        QRegExp insertsel = QRegExp("/insert/sel");
-        QRegExp insertpos = QRegExp("/insert/pos");
+        const char *hpf = ("/hpf");
+        const char *hpon = ("/hpon");
+        const char *delayon = ("/delay/on");
+        const char *delaytime = ("/delay/time");
+        const char *inserton = ("/insert/on");
+        const char *insertsel = ("/insert/sel");
+        const char *insertpos = ("/insert/pos");
 
-        QRegExp gateon = QRegExp("/gate/on");
-        QRegExp gatethr = QRegExp("/gate/thr");
-        QRegExp gaterange = QRegExp("/gate/range");
-        QRegExp gatemode = QRegExp("/gate/mode");
-        QRegExp gateattack = QRegExp("/gate/attack");
-        QRegExp gatehold = QRegExp("/gate/hold");
-        QRegExp gaterelease = QRegExp("/gate/release");
-        QRegExp gatekeysrc = QRegExp("/gate/keysrc");
-        QRegExp gatefilteron = QRegExp("/gate/filter/on");
-        QRegExp gatefiltertype = QRegExp("/gate/filter/type");
-        QRegExp gatefilterf = QRegExp("/gate/filter/f");
+        const char *gateon = ("/gate/on");
+        const char *gatethr = ("/gate/thr");
+        const char *gaterange = ("/gate/range");
+        const char *gatemode = ("/gate/mode");
+        const char *gateattack = ("/gate/attack");
+        const char *gatehold = ("/gate/hold");
+        const char *gaterelease = ("/gate/release");
+        const char *gatekeysrc = ("/gate/keysrc");
+        const char *gatefilteron = ("/gate/filter/on");
+        const char *gatefiltertype = ("/gate/filter/type");
+        const char *gatefilterf = ("/gate/filter/f");
 
-        QRegExp dynon = QRegExp("/dyn/on");
-        QRegExp dynthr = QRegExp("/dyn/thr");
-        QRegExp dynratio = QRegExp("/dyn/ratio");
-        QRegExp dynmix = QRegExp("/dyn/mix");
-        QRegExp dynmgain = QRegExp("/dyn/mgain");
-        QRegExp dynattack = QRegExp("/dyn/attack");
-        QRegExp dynhold = QRegExp("/dyn/hold");
-        QRegExp dynrelease = QRegExp("/dyn/release");
-        QRegExp dynmode = QRegExp("/dyn/mode");
-        QRegExp dynknee = QRegExp("/dyn/knee");
-        QRegExp dynenv = QRegExp("/dyn/env");
-        QRegExp dyndet = QRegExp("/dyn/det");
-        QRegExp dynauto = QRegExp("/dyn/auto");
-        QRegExp dynkeysrc = QRegExp("/dyn/keysrc");
-        QRegExp dynfilteron = QRegExp("/dyn/filter/on");
-        QRegExp dynfiltertype = QRegExp("/dyn/filter/type");
-        QRegExp dynfilterf = QRegExp("/dyn/filter/f");
+        const char *dynon = ("/dyn/on");
+        const char *dynthr = ("/dyn/thr");
+        const char *dynratio = ("/dyn/ratio");
+        const char *dynmix = ("/dyn/mix");
+        const char *dynmgain = ("/dyn/mgain");
+        const char *dynattack = ("/dyn/attack");
+        const char *dynhold = ("/dyn/hold");
+        const char *dynrelease = ("/dyn/release");
+        const char *dynmode = ("/dyn/mode");
+        const char *dynknee = ("/dyn/knee");
+        const char *dynenv = ("/dyn/env");
+        const char *dyndet = ("/dyn/det");
+        const char *dynauto = ("/dyn/auto");
+        const char *dynkeysrc = ("/dyn/keysrc");
+        const char *dynfilteron = ("/dyn/filter/on");
+        const char *dynfiltertype = ("/dyn/filter/type");
+        const char *dynfilterf = ("/dyn/filter/f");
 
-        QRegExp eq1type = QRegExp("/eq/1/type");
-        QRegExp eq1g = QRegExp("/eq/1/g");
-        QRegExp eq1f = QRegExp("/eq/1/f");
-        QRegExp eq1q = QRegExp("/eq/1/q");
-        QRegExp eq2type = QRegExp("/eq/2/type");
-        QRegExp eq2g = QRegExp("/eq/2/g");
-        QRegExp eq2f = QRegExp("/eq/2/f");
-        QRegExp eq2q = QRegExp("/eq/2/q");
-        QRegExp eq3type = QRegExp("/eq/3/type");
-        QRegExp eq3g = QRegExp("/eq/3/g");
-        QRegExp eq3f = QRegExp("/eq/3/f");
-        QRegExp eq3q = QRegExp("/eq/3/q");
-        QRegExp eq4type = QRegExp("/eq/4/type");
-        QRegExp eq4g = QRegExp("/eq/4/g");
-        QRegExp eq4f = QRegExp("/eq/4/f");
-        QRegExp eq4q = QRegExp("/eq/4/q");
-        QRegExp eq5type = QRegExp("/eq/5/type");
-        QRegExp eq5g = QRegExp("/eq/5/g");
-        QRegExp eq5f = QRegExp("/eq/5/f");
-        QRegExp eq5q = QRegExp("/eq/5/q");
-        QRegExp eq6type = QRegExp("/eq/6type");
-        QRegExp eq6g = QRegExp("/eq/6/g");
-        QRegExp eq6f = QRegExp("/eq/6/f");
-        QRegExp eq6q = QRegExp("/eq/6/q");
+        const char *eq1type = ("/eq/1/type");
+        const char *eq1g = ("/eq/1/g");
+        const char *eq1f = ("/eq/1/f");
+        const char *eq1q = ("/eq/1/q");
+        const char *eq2type = ("/eq/2/type");
+        const char *eq2g = ("/eq/2/g");
+        const char *eq2f = ("/eq/2/f");
+        const char *eq2q = ("/eq/2/q");
+        const char *eq3type = ("/eq/3/type");
+        const char *eq3g = ("/eq/3/g");
+        const char *eq3f = ("/eq/3/f");
+        const char *eq3q = ("/eq/3/q");
+        const char *eq4type = ("/eq/4/type");
+        const char *eq4g = ("/eq/4/g");
+        const char *eq4f = ("/eq/4/f");
+        const char *eq4q = ("/eq/4/q");
+        const char *eq5type = ("/eq/5/type");
+        const char *eq5g = ("/eq/5/g");
+        const char *eq5f = ("/eq/5/f");
+        const char *eq5q = ("/eq/5/q");
+        const char *eq6type = ("/eq/6type");
+        const char *eq6g = ("/eq/6/g");
+        const char *eq6f = ("/eq/6/f");
+        const char *eq6q = ("/eq/6/q");
 
-        QRegExp sendlevel = QRegExp("/mix/.*/level.*");
-        QRegExp sendpan = QRegExp("/mix/.*/pan.*");
-        QRegExp sendpanfollow = QRegExp("/mix/.*/panFollow.*");
-        QRegExp sendtype = QRegExp("/mix/.*/type.*");
-        QRegExp sendon = QRegExp("/mix/.*/on.*");
+        const char *send = ("/mix/");
+        const char *sendlevel = ("/level");
+        const char *sendpan = ("/pan");
+        const char *sendpanfollow = ("/panFollow");
+        const char *sendtype = ("/type");
+        const char *sendon = ("/on");
 
-        QRegExp dcaon = QRegExp("/dca/.*/on.*");
+        const char *dca = ("/dca/");
+        const char *dcaon = ("/on");
 
-        QRegExp configicon = QRegExp("/config/icon");
-        QRegExp configcolor = QRegExp("/config/color");
-        QRegExp configname = QRegExp("/config/name");
+        const char *configicon = ("/config/icon");
+        const char *configcolor = ("/config/color");
+        const char *configname = ("/config/name");
     };
-    MessageTypeQRegExp mtqre;
+    MessageTypeStruct msgTypeStr;
 
-    struct ChannelTypeQRegExp{
-        QRegExp channel = QRegExp("/ch/");
-        QRegExp auxin = QRegExp("/auxin/");
-        QRegExp fxreturn = QRegExp("/fxrtn/");
-        QRegExp bus = QRegExp("/bus/");
-        QRegExp matrix = QRegExp("/mtx/");
-        QRegExp lr = QRegExp("/main/st/");
-        QRegExp mc = QRegExp("/main/m/");
-        QRegExp dca = QRegExp("/dca/");
+    struct ChannelTypeStruct{
+        const char *channel = ("/ch/");
+        const char *auxin = ("/auxin/");
+        const char *fxreturn = ("/fxrtn/");
+        const char *bus = ("/bus/");
+        const char *matrix = ("/mtx/");
+        const char *lr = ("/main/st/");
+        const char *mc = ("/main/m/");
+        const char *dca = ("/dca/");
     };
-    ChannelTypeQRegExp chtqre;
+    ChannelTypeStruct chTypeStr;
 
-    struct ValueTypeQRegExp{
-        QRegExp intvalue = QRegExp("%I");
-        QRegExp floatvalue = QRegExp("%F");
-        QRegExp stringvalue = QRegExp("%S");
-        QRegExp boolvalue = QRegExp("%B");
+    struct ValueTypeStruct{
+        const char *intvalue = "%I";
+        const char *floatvalue = "%F";
+        const char *stringvalue = "%S";
+        const char *boolvalue = "%B";
     };
-    ValueTypeQRegExp vtqre;
+    ValueTypeStruct valTypeStr;
+
+    struct BusTypeStruct {
+        const char *ch = ("%A/ch/");
+        const char *auxin = ("%A/auxin/");
+        const char *fxrtn = ("%A/fxrtn/");
+        const char *bus = ("%A/bus/");
+        const char *mtx = ("%A/mtx/");
+        const char *mainst = ("%A/main/st/");
+        const char *mainm = ("%A/main/m/");
+        const char *dca = ("%A/dca/");
+        const char *headamp = ("%A/headamp/");
+        const char *statsolosw = ("%A/-stat/solosw/");
+
+        const char *mix = ("/mix/");
+    };
+    BusTypeStruct busTypeStr;
 
     explicit MixFaceLibrary(QObject *parent = nullptr, DebugLibrary *debug_ = nullptr);
 
-    bool connectTo(QString hostNameString);
+    bool connectTo(string hostNameString);
     void sendSyncMessages();
     void sendXremoteMessage();
 
-    QString channelNameFromIdx(int idx);
+    string channelNameFromIdx(int idx);
 
     void processMessage(string message);
 
-    QString getOscAddress(MessageType mtype, ChannelType chtype, int channelN,
+    string getOscAddress(MessageType mtype, ChannelType chtype, int channelN,
                           int sendN);
     ChannelType getChannelTypeFromIdx(int idx);
     int getChannelNumberFromIdx(int idx);
-    MessageType getMessageType(QString message);
-    ChannelType getChannelType(QString message);
-    ValueType getValueType(QString message);
-    int getChannelNumber(QString message);
-    int getSendNumber(QString message);
-    float getFloatValue(QString message);
-    int getIntValue(QString message);
-    QString getStringValue(QString message);
+    MessageType getMessageType(string message);
+    ChannelType getChannelType(string message);
+    ValueType getValueType(string message);
+    int getChannelNumber(string message);
+    int getSendNumber(string message);
+    float getFloatValue(string message);
+    int getIntValue(string message);
+    string getStringValue(string message);
     int getIdxFromChNandChType(int chN, ChannelType chtype);
 
     MixFaceLinker *linker;
