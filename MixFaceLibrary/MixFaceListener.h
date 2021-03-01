@@ -2,10 +2,10 @@
 #define MIXFACELISTENER_H
 
 #include <iostream>
+#include <boost/signals2.hpp>
 #include "osc/OscOutboundPacketStream.h"
 #include "ip/UdpSocket.h"
 #include "osc/OscPacketListener.h"
-#include <boost/signals2.hpp>
 #include "DebugLibrary.hpp"
 
 #define ANY_PORT -1
@@ -21,6 +21,8 @@ typedef boost::signals2::signal<void(string, int)> signal_str_int;
 typedef boost::signals2::signal<void(string, float)> signal_str_float;
 typedef boost::signals2::signal<void(string, bool)> signal_str_bool;
 typedef boost::signals2::signal<void(string, string)> signal_str_str;
+typedef boost::signals2::signal<void(float*)> signal_float_array;
+typedef boost::signals2::signal<void()> signal_void;
 
 typedef signal_xinfo::slot_type  signal_type_xi;
 typedef signal_status::slot_type  signal_type_st;
@@ -29,6 +31,8 @@ typedef signal_str_int::slot_type  signal_type_str_int;
 typedef signal_str_float::slot_type  signal_type_str_float;
 typedef signal_str_bool::slot_type  signal_type_str_bool;
 typedef signal_str_str::slot_type  signal_type_str_str;
+typedef signal_float_array::slot_type  signal_type_float_array;
+typedef signal_void::slot_type  signal_type_void;
 
 using namespace osc;
 
@@ -41,6 +45,14 @@ public:
     signal_str_float s_str_float;
     signal_str_bool s_str_bool;
     signal_str_str s_str_str;
+    signal_float_array newMeters9;
+    signal_float_array newMeters10;
+    signal_float_array newMeters14;
+    signal_float_array newMeters0;
+    signal_float_array newMeters2;
+    signal_float_array newMeters5;
+    signal_float_array newMeters6;
+    signal_float_array newMeters16;
 
     signal_debug s_debug;
 
@@ -72,14 +84,14 @@ protected:
             } else if (strcmp(m.AddressPattern(), "meters/14") == 0) {
             } else if (strcmp(m.AddressPattern(), "meters/0") == 0) {
             } else if (strcmp(m.AddressPattern(), "meters/2") == 0) {
-                /*const void *bData;
+                const void *bData;
                 osc::osc_bundle_element_size_t bSize;
                 m.ArgumentsBegin()->AsBlob(bData, bSize);
                 float const *mFloatArray = (float const *)bData;
                 int aSize = int(bSize / 4);
                 float floatArray[aSize];
                 for (int i = 1; i < aSize; i++) { floatArray[i-1] = mFloatArray[i]; }
-                emit newMeters2(floatArray);*/
+                newMeters2(floatArray);
             } else if (strcmp(m.AddressPattern(), "meters/5") == 0) {
             } else if (strcmp(m.AddressPattern(), "meters/6") == 0) {
             } else if (strcmp(m.AddressPattern(), "meters/16") == 0) {

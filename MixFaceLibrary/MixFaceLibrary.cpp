@@ -1,8 +1,9 @@
 #include "MixFaceLibrary.h"
 
-MixFaceLibrary::MixFaceLibrary(QObject *parent, DebugLibrary *debug_)
-    : QObject(parent),
-      debug(debug_) {
+MixFaceLibrary::MixFaceLibrary(DebugLibrary *debug_)
+    : debug(debug_) {
+    boost::thread *libraryThread = new boost::thread;
+    libraryThread->join();
     for (int idx=0;idx<80;idx++){
         db.stereoon[idx] = 1;
         db.fader[idx] = 0.75;
@@ -29,20 +30,15 @@ MixFaceLibrary::MixFaceLibrary(QObject *parent, DebugLibrary *debug_)
         }
     }
     linker = new MixFaceLinker;
-    thread = new QThread;
-    linker->moveToThread(thread);
-    connect(thread, SIGNAL(started()), linker, SLOT(processMessages()));
-    sendRenewMessagesTimer = new QTimer(this);
-    QTimer::connect(sendRenewMessagesTimer, &QTimer::timeout, this, &MixFaceLibrary::sendXremoteMessage);
+    sendRenewMessagesTimer = new IntervalThread(1000, false, true);
+    sendRenewMessagesTimer->connect(IntervalThread::interval_slot_t(&MixFaceLibrary::sendXremoteMessage, this));
     //connect(linker, &MixFaceLinker::debug, debug, &DebugLibrary::sendMessage);
 }
 
 bool MixFaceLibrary::connectTo(string hostNameString){
-
-    thread->start();
     connected = linker->connectTo(hostNameString);
     if (connected) {
-        sendRenewMessagesTimer->start(1000);
+        sendRenewMessagesTimer->start();
         linker->listener->s_str.connect(signal_type_str(&MixFaceLibrary::processMessage, this, boost::arg<1>()));
 
         char buffer[OUTPUT_BUFFER_SIZE];
@@ -98,7 +94,7 @@ bool MixFaceLibrary::connectTo(string hostNameString){
 
 void MixFaceLibrary::sendSyncMessages() {
     for (int idx=0;idx<80;idx++){
-        QThread::msleep(1);
+        boost::this_thread::sleep_for(boost::chrono::milliseconds{1});
         ChannelType chtype = getChannelTypeFromIdx(idx);
         int chN = getChannelNumberFromIdx(idx);
 

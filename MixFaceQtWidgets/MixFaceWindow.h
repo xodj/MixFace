@@ -13,6 +13,8 @@
 #include "MixFaceFonts.h"
 #include "MixFaceEnumTypes.h"
 #include "MixFaceLibrary.h"
+#include "MixFaceLinker.h"
+#include "MixFaceListener.h"
 #include "DebugLibrary.hpp"
 #include "MixFaceTopWidget.h"
 #include "MixFaceRightWidget.h"
@@ -102,6 +104,12 @@ private:
     void buttonDynClicked();
 
     void windowRenew();
+    void sendSyncMessages(){
+        mf_library->sendSyncMessages();
+    }
+    void mf_library_init(){
+        mf_library = new MixFaceLibrary(debug);
+    }
 
     void metersDemo();
     float demoStep = -90;

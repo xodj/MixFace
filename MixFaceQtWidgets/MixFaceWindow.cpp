@@ -29,8 +29,10 @@ MixFaceWindow::MixFaceWindow(QApplication *mixFace_, DebugLibrary *debug_)
 
     debug->sendMessage(QString("MixFaceWindow::MixFaceWindow Init MixFaceFonts...").toStdString(),5);
     mf_fonts = new MixFaceFonts;
-    debug->sendMessage(QString("MixFaceWindow::MixFaceWindow Init MixFaceLibrary...").toStdString(),3);
-    mf_library = new MixFaceLibrary(this, debug);
+    //Fun!
+    //boost::thread*libraryThread = new boost::thread{&MixFaceWindow::mf_library_init,this};
+    debug->sendMessage("MixFaceWindow::MixFaceWindow Init MixFaceLibrary...",3);
+    mf_library = new MixFaceLibrary(debug);
 
     initUI();
 
@@ -321,9 +323,9 @@ void MixFaceWindow::initMainAreaWidgetIdx(int idx) {
     connect(mainWidget[idx], &FaderWidget::eqClicked, this, &MixFaceWindow::buttonEqClicked);
     connect(mainWidget[idx], &FaderWidget::dynClicked, this, &MixFaceWindow::buttonDynClicked);
     connect(mainWidget[idx], &FaderWidget::iconButtonClicked, this, &MixFaceWindow::iconButtonClicked);
-    if (idx==70)
-        connect(mf_library, &MixFaceLibrary::processMeter6, scrollWidget[idx], &FaderWidget::setMeter);
-}
+    /*if (idx==70)
+        mf_library->linker->listener->newMeters2.connect(signal_type_float_array(&FaderWidget::setMeter, scrollWidget[idx], boost::arg<1>));
+*/}
 
 void MixFaceWindow::initRightAreaBar(){
     mf_rightArea = new MixFaceRightWidget(dpiRatio, debug, mf_fonts, this);
@@ -336,7 +338,7 @@ void MixFaceWindow::initTopAreaBar(){
     mf_topArea = new MixFaceTopWidget(dpiRatio, debug, mf_fonts, this);
     topArea->setWidget(mf_topArea);
     connect(mf_topArea, &MixFaceTopWidget::connect, this, &MixFaceWindow::connection);
-    connect(mf_topArea, &MixFaceTopWidget::sync, mf_library, &MixFaceLibrary::sendSyncMessages);
+    connect(mf_topArea, &MixFaceTopWidget::sync, this, &MixFaceWindow::sendSyncMessages);
 }
 
 void MixFaceWindow::assignMainFader(int idx, int idy) {
@@ -538,7 +540,6 @@ void MixFaceWindow::buttonDynClicked(){
 
 void MixFaceWindow::panChanged(float value)
 {
-    value = value/10000;
     int idx = reinterpret_cast<QObject *>(sender())->property("idx").toInt();
     MessageType mtype = pan;
     int send = 0;

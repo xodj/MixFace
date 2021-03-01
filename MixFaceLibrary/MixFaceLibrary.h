@@ -2,11 +2,11 @@
 #ifndef MIXFACELIBRARY_H
 #define MIXFACELIBRARY_H
 
-#include <QObject>
-#include <QThread>
-#include <QTimer>
 #include <iostream>
 #include <string>
+#include <boost/thread.hpp>
+#include <boost/signals2.hpp>
+#include "Timer.hpp"
 #include "MixFaceLinker.h"
 #include "DebugLibrary.hpp"
 
@@ -141,8 +141,7 @@ enum SendType {
 
 class MixFaceLinker;
 
-class MixFaceLibrary : public QObject {
-    Q_OBJECT
+class MixFaceLibrary {
 public:
     signal_thr_int valueChanged;
 
@@ -376,7 +375,7 @@ public:
     };
     BusTypeStruct busTypeStr;
 
-    explicit MixFaceLibrary(QObject *parent = nullptr, DebugLibrary *debug_ = nullptr);
+    MixFaceLibrary(DebugLibrary *debug_ = nullptr);
 
     bool connectTo(string hostNameString);
     void sendSyncMessages();
@@ -404,16 +403,8 @@ public:
 
 private:
     DebugLibrary *debug;
-    void demoThread();
-
-    QThread *thread;
-    QTimer *sendRenewMessagesTimer;
-
+    IntervalThread *sendRenewMessagesTimer;
     bool connected = false;
-    bool demo = false;
-
-signals:
-    void processMeter6(float preL_, float preR_, float gate, float comp);
 
 };
 

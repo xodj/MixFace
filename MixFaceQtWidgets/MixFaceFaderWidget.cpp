@@ -263,7 +263,7 @@ void FaderWidget::connectWidgets(){
     QPushButton::connect(eq, &QPushButton::clicked, this, &FaderWidget::eqClicked);
     QPushButton::connect(dyn, &QPushButton::clicked, this, &FaderWidget::dynClicked);
     QPushButton::connect(mute, &QPushButton::clicked, this, &FaderWidget::emitMuteChanged);
-    QSlider::connect(panSlider, &QSlider::valueChanged, this, &FaderWidget::panChanged);
+    QSlider::connect(panSlider, &QSlider::valueChanged, this, &FaderWidget::emitPanChanged);
     QLineEdit::connect(db,&QLineEdit::editingFinished,this,&FaderWidget::dbEditingFinished);
     QSlider::connect(volSlider, &QSlider::valueChanged, this, &FaderWidget::emitFaderChanged);
     QPushButton::connect(solo, &QPushButton::clicked, this, &FaderWidget::emitSoloChanged);
@@ -276,7 +276,7 @@ FaderWidget::~FaderWidget(){
     QPushButton::disconnect(eq, &QPushButton::clicked, this, &FaderWidget::eqClicked);
     QPushButton::disconnect(dyn, &QPushButton::clicked, this, &FaderWidget::dynClicked);
     QPushButton::disconnect(mute, &QPushButton::clicked, this, &FaderWidget::emitMuteChanged);
-    QSlider::disconnect(panSlider, &QSlider::valueChanged, this, &FaderWidget::panChanged);
+    QSlider::disconnect(panSlider, &QSlider::valueChanged, this, &FaderWidget::emitPanChanged);
     QLineEdit::disconnect(db,&QLineEdit::editingFinished,this,&FaderWidget::dbEditingFinished);
     QSlider::disconnect(volSlider, &QSlider::valueChanged, this, &FaderWidget::emitFaderChanged);
     QPushButton::disconnect(solo, &QPushButton::clicked, this, &FaderWidget::emitSoloChanged);
@@ -420,32 +420,48 @@ void FaderWidget::setChannelNativeName(QString value) {
 }
 
 void FaderWidget::setFaderValue(float value) {
+    fader_lock = true;
     volSlider->setValue(value*10000);
 
     //Calculate db value
     //Resize one digit after point and set -inf
-    if (value>0) db->setText(QString::number(round(float2db(value),1)) + " db");
+    if (value > 0) db->setText(QString::number(round(float2db(float(volSlider->value()) / 10000),1)) + " db");
     else db->setText("-inf db");
+    fader_lock = false;
 }
 
 void FaderWidget::emitFaderChanged() {
-    emit faderChanged(volSlider->value());
+    if(!fader_lock) {
+        emit faderChanged(volSlider->value());
 
-    //Calculate db value
-    //Resize one digit after point and set -inf
-    if (volSlider->value()>0) db->setText(QString::number(round(float2db(float(volSlider->value()) / 10000),1)) + " db");
-    else db->setText("-inf db");
+        //Calculate db value
+        //Resize one digit after point and set -inf
+        if (volSlider->value()>0) db->setText(QString::number(round(float2db(float(volSlider->value()) / 10000),1)) + " db");
+        else db->setText("-inf db");
+    }
 }
 
 void FaderWidget::dbEditingFinished(){
-    QString dbs = db->text();
-    dbs.remove(" ");
-    dbs.remove("d");
-    dbs.remove("b");
-    volSlider->setValue(db2float(dbs.toFloat()) * 10000);
+    if(!fader_lock){
+        QString dbs = db->text();
+        dbs.remove(" ");
+        dbs.remove("d");
+        dbs.remove("b");
+        volSlider->setValue(db2float(dbs.toFloat()) * 10000);
+    }
 }
 
-void FaderWidget::setPanValue(float value) {panSlider->setValue(value*10000);}
+void FaderWidget::emitPanChanged(){
+    if(!pan_lock){
+        emit panChanged(float(panSlider->value()) / 10000);
+    }
+}
+
+void FaderWidget::setPanValue(float value) {
+    pan_lock = true;
+    panSlider->setValue(value*10000);
+    pan_lock = false;
+}
 
 void FaderWidget::setMute(bool value) {mute->setChecked(value);}
 

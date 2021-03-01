@@ -79,12 +79,18 @@ private:
     void emitSoloChanged();
 
     void emitFaderChanged();
+    void emitPanChanged();
     void dbEditingFinished();
 
     volMeter *m_vmeter;
     dynMeter *m_dmeter;
     MetersTimer *metersRenew;
     DebugLibrary *debug;
+
+    bool fader_lock = false;
+    bool pan_lock = false;
+    bool mute_lock = false;
+    bool solo_lock = false;
 
 protected:
     void resizeEvent( QResizeEvent *e ) override;

@@ -1,8 +1,6 @@
 #include "MixFaceLinker.h"
-#include <string.h>
 
-MixFaceLinker::MixFaceLinker() : QThread()
-{
+MixFaceLinker::MixFaceLinker() {
     listener = new MixFaceListener;
     listener->s_xi.connect(signal_type_xi(&MixFaceLinker::processXinfo, this, boost::arg<1>()));
     //listener->s_st.connect(signal_type_st(&MixFaceLinker::processStatus, this, boost::arg<1>()));
@@ -12,6 +10,7 @@ MixFaceLinker::MixFaceLinker() : QThread()
     udpSocket = new UdpSocket;
     udpSocket->Bind(IpEndpointName(IpEndpointName::ANY_ADDRESS, ANY_PORT));
     reciever->AttachSocketListener(udpSocket, listener);
+    recieverThread = new boost::thread{&SocketReceiveMultiplexer::Run, reciever};
 }
 
 bool MixFaceLinker::connectTo(string hostNameStr_) {
@@ -19,7 +18,7 @@ bool MixFaceLinker::connectTo(string hostNameStr_) {
         hostNameStr = hostNameStr_;
         sendCmdOnly("/xinfo");
         sendCmdOnly("/status");
-        QThread::msleep(100);
+        boost::this_thread::sleep_for(boost::chrono::milliseconds{100});
         if (hostNameStr_ == xinfo[0] && (atof(xinfo[3].c_str()) >= 4)) {
             connected = true;
             //sendInt("/-stat/lock",1);
