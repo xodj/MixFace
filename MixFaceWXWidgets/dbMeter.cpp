@@ -1,6 +1,13 @@
 #include "dbMeter.h"
 
-singleDBMeterPanel::singleDBMeterPanel(wxFrame* parent) : wxPanel(parent) {
+singleDBMeterPanel::singleDBMeterPanel(wxWindow *parent,
+                                       wxWindowID winid,
+                                       const wxPoint& pos ,
+                                       const wxSize& size ,
+                                       long style,
+                                       const wxString& name)
+    : wxPanel(parent, winid, pos, size, style, name)
+{
     SetSize((meterWSize + (borders * 2)),-1);
     panelWSize = (meterWSize + (borders * 2));
     Connect(wxEVT_PAINT, wxPaintEventHandler(singleDBMeterPanel::paintEvent));
@@ -58,11 +65,19 @@ wxBitmap singleDBMeterPanel::renderPeak(int redraw){
     wxMemoryDC drawControl(peak);
     if (currentPeak == 1.f || (lastPeakRedraw + peakHoldMS) > redraw){
         drawControl.SetBrush(*wxRED_BRUSH);
-        drawControl.SetPen(*wxBLACK_PEN);
+        if (drawFrame){
+            drawControl.SetPen(*wxBLACK_PEN);
+        } else {
+            drawControl.SetPen(*wxRED_PEN);
+        }
         drawControl.DrawRectangle(0, 0, meterWSize, peakHSize);
     } else {
         drawControl.SetBrush(wxBrush(lredColor));
-        drawControl.SetPen(*wxBLACK_PEN);
+        if (drawFrame){
+            drawControl.SetPen(*wxBLACK_PEN);
+        } else {
+            drawControl.SetPen(wxPen(lredColor));
+        }
         drawControl.DrawRectangle(0, 0, meterWSize, peakHSize);
     }
     return peak;

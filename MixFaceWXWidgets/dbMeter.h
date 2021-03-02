@@ -10,7 +10,12 @@
 
 class singleDBMeterPanel : public wxPanel {
 public:    
-    singleDBMeterPanel(wxFrame* parent);
+    singleDBMeterPanel(wxWindow *parent,
+                       wxWindowID winid = wxID_ANY,
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxDefaultSize,
+                       long style = wxTAB_TRAVERSAL | wxNO_BORDER,
+                       const wxString& name = wxPanelNameStr);
     ~singleDBMeterPanel();
     void repaint() { paintEvent(); }
 
@@ -61,7 +66,7 @@ private:
     wxColor lredColor = wxColor(140, 52, 52);
     int panelWSize;
     int panelHSize = -1;
-    int borders = 15;
+    int borders = 0;
     int meterWSize = 16;
     int peakHSize = 8;
     float currentPeak = 0.f;
