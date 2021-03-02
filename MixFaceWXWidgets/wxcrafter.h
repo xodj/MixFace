@@ -59,7 +59,7 @@ public:
     this->SetSizer(mainBoxSizer);
     
     m_fader = new wxSlider(this, wxID_ANY, 0, 0, 1000, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-        wxSL_INVERSE | wxSL_AUTOTICKS | wxSL_VERTICAL);
+        wxSL_INVERSE | wxSL_VERTICAL);
 
     m_fader->SetMinSize(wxSize(-1, 999999));
 
