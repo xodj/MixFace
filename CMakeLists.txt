@@ -2,6 +2,19 @@ cmake_minimum_required(VERSION 3.0.0)
 
 project(MixFace)
 
+set(COMPILER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../MinGW-W64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin")
+set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../Boost/boost_1_75_0")
+set(QT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../Qt/5.15.2/mingw81_32")
+
+#set(CMAKE_CXX_COMPILER "${COMPILER_PATH}/g++.exe")
+#set(CMAKE_C_COMPILER "${COMPILER_PATH}/gcc.exe")
+
+set(BOOST_INCLUDE_DIRS "${BOOST_ROOT}")
+set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/stage/lib")
+
+set(CMAKE_PREFIX_PATH "${QT_DIR}")
+set(QT_QMAKE_EXECUTABLE "${QT_DIR}/bin/qmake.exe")
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 

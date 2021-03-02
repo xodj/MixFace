@@ -392,3 +392,4 @@ cmake-build-debug/cmake_install.cmake
 .idea/modules.xml
 .idea/MixFace.iml
 .idea/misc.xml
+.codelite/MixFace-xodj.tags

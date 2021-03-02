@@ -9,14 +9,14 @@ IF(WIN32)
  set(LIBS ${LIBS} Ws2_32 winmm)
 ENDIF(WIN32)
 
-set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../Boost/boost_1_75_0")
-set(BOOST_INCLUDE_DIRS "${BOOST_ROOT}")
-set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/stage/lib")
-if(CMAKE_BUILD_TYPE="DEBUG")
-    set(LIBS ${LIBS} ${BOOST_LIBRARY_DIRS}/libboost_thread-mgw8-mt-d-x32-1_75.a)
-else()
-    set(LIBS ${LIBS} ${BOOST_LIBRARY_DIRS}/libboost_thread-mgw8-mt-x32-1_75.a)
-endif(CMAKE_BUILD_TYPE="DEBUG")
+string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
+if(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
+    set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-mgw8-mt-d-x32-1_75.a)
+    message(STATUS "Using ${Boost_LIBRARIES} libraries.")
+else(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
+    set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-mgw8-mt-x32-1_75.a)
+    message(STATUS "Using ${Boost_LIBRARIES} libraries.")
+endif(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
 
 set(MixFaceLibrary_HEADERS
 MixFaceKeeper.h
