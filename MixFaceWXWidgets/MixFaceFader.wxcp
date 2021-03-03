@@ -1,7 +1,7 @@
 {
  "metadata": {
   "m_generatedFilesDir": ".",
-  "m_objCounter": 147,
+  "m_objCounter": 157,
   "m_includeFiles": [],
   "m_bitmapFunction": "MixFaceFaderInitBitmapResources",
   "m_bitmapsFile": "MixFaceFaderBitmaps.cpp",
@@ -19,7 +19,7 @@
    "border": 5,
    "gbSpan": "1,1",
    "gbPosition": "0,0",
-   "m_styles": ["wxTAB_TRAVERSAL"],
+   "m_styles": [],
    "m_sizerFlags": ["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
    "m_properties": [{
      "type": "string",
@@ -40,7 +40,7 @@
     }, {
      "type": "colour",
      "m_label": "Bg Colour:",
-     "colour": "<Default>"
+     "colour": "(96,96,96)"
     }, {
      "type": "colour",
      "m_label": "Fg Colour:",
@@ -115,7 +115,7 @@
       }, {
        "type": "string",
        "m_label": "Name:",
-       "m_value": "mainPanelSizer1"
+       "m_value": "faderMainSizer"
       }, {
        "type": "string",
        "m_label": "Style:",
@@ -142,7 +142,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "boxSizer147"
+         "m_value": "faderTopSizer"
         }, {
          "type": "string",
          "m_label": "Style:",
@@ -177,7 +177,7 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_button772"
+           "m_value": "srcButton"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
@@ -265,7 +265,7 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_button793"
+           "m_value": "eqButton"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
@@ -353,7 +353,7 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_button814"
+           "m_value": "dynButton"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
@@ -442,7 +442,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_button835"
+         "m_value": "muteButton"
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
@@ -530,7 +530,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_slider916"
+         "m_value": "panSlider"
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
@@ -601,7 +601,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "boxSizer937"
+         "m_value": "faderCentralSizer"
         }, {
          "type": "string",
          "m_label": "Style:",
@@ -624,7 +624,7 @@
          "m_properties": [{
            "type": "string",
            "m_label": "Name:",
-           "m_value": "Spacer1008"
+           "m_value": "faderCentralSpacer0"
           }, {
            "type": "string",
            "m_label": "Size:",
@@ -647,7 +647,7 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "boxSizer1079"
+           "m_value": "meterSizer0"
           }, {
            "type": "string",
            "m_label": "Style:",
@@ -670,7 +670,7 @@
            "m_properties": [{
              "type": "string",
              "m_label": "Name:",
-             "m_value": "Spacer10910"
+             "m_value": "meterSpacer0"
             }, {
              "type": "string",
              "m_label": "Size:",
@@ -693,7 +693,7 @@
             }, {
              "type": "string",
              "m_label": "Name:",
-             "m_value": "boxSizer10411"
+             "m_value": "meterSizer1"
             }, {
              "type": "string",
              "m_label": "Style:",
@@ -728,7 +728,7 @@
               }, {
                "type": "string",
                "m_label": "Name:",
-               "m_value": "m_panel102212"
+               "m_value": "meterPanel0"
               }, {
                "type": "multi-string",
                "m_label": "Tooltip:",
@@ -795,7 +795,7 @@
               }, {
                "type": "string",
                "m_label": "Name:",
-               "m_value": "m_panel10213"
+               "m_value": "meterPanel1"
               }, {
                "type": "multi-string",
                "m_label": "Tooltip:",
@@ -864,7 +864,7 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_slider75114"
+           "m_value": "faderSlider"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",
@@ -931,7 +931,7 @@
          "m_properties": [{
            "type": "string",
            "m_label": "Name:",
-           "m_value": "Spacer9815"
+           "m_value": "faderCentralSpacer1"
           }, {
            "type": "string",
            "m_label": "Size:",
@@ -963,7 +963,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_button8516"
+         "m_value": "soloButton"
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
@@ -1051,7 +1051,7 @@
         }, {
          "type": "string",
          "m_label": "Name:",
-         "m_value": "m_bmpButton8917"
+         "m_value": "iconButton"
         }, {
          "type": "multi-string",
          "m_label": "Tooltip:",
@@ -1063,7 +1063,7 @@
         }, {
          "type": "colour",
          "m_label": "Fg Colour:",
-         "colour": "<Default>"
+         "colour": "(255,0,0)"
         }, {
          "type": "font",
          "m_label": "Font:",
@@ -1095,7 +1095,7 @@
         }, {
          "type": "bitmapPicker",
          "m_label": "Bitmap File:",
-         "m_path": "../MixFaceQtWidgets/media/fader_icons/33/33W.png"
+         "m_path": "../MixFaceQtWidgets/media/fader_icons/33/33B.png"
         }, {
          "type": "bool",
          "m_label": "Default Button",

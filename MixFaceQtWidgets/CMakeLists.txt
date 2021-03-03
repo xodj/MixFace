@@ -2,6 +2,13 @@ cmake_minimum_required(VERSION 3.0.0)
 
 PROJECT(MixFaceQtWidgets)
 
+set(QT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../Qt/5.15.2/mingw81_32")
+set(CMAKE_PREFIX_PATH "${QT_DIR}")
+set(QT_QMAKE_EXECUTABLE "${QT_DIR}/bin/qmake.exe")
+
+find_package(Qt5Widgets)
+find_package(Qt5Network)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 

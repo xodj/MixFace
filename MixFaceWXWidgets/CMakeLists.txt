@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.0)
 
 project(MixFaceWXWidgets)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-
 IF(WIN32)
  set(LIBS ${LIBS} Ws2_32 winmm)
 ENDIF(WIN32)
@@ -42,7 +39,10 @@ set(MixFaceWXWidgets_SOURCES
 )
 
 
-set(WXCP MixFaceWindow.wxcp)
+set(WXCP
+    MixFaceWindow.wxcp
+    MixFaceFader.wxcp
+    )
 
 if(WIN32)
         set(SRCS ${SRCS}

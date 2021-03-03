@@ -5,6 +5,7 @@
 
 #include "MixFaceWindowBase.h"
 //#include "dbMeter.h"
+#include "MixFaceFader.h"
 
 #include "DebugLibrary.hpp"
 #include "MixFaceLibrary.h"
@@ -17,5 +18,6 @@ public:
 
 private:
     DebugLibrary *debug;
+    MixFaceFader *mf_fader[128];
 };
 #endif // MIXFACEWINDOW_H

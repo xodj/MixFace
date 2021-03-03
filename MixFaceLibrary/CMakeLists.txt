@@ -2,9 +2,6 @@ cmake_minimum_required(VERSION 3.0)
 
 PROJECT(MixFaceLibrary)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-
 IF(WIN32)
  set(LIBS ${LIBS} Ws2_32 winmm)
 ENDIF(WIN32)
