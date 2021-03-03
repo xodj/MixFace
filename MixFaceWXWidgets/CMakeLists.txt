@@ -31,23 +31,18 @@ set(MixFaceWXWidgets_SOURCES
     main.cpp
     MixFaceWindow.cpp
     MixFaceWindowBase.cpp
-    MixFaceWindowBitmaps.cpp
     dbMeter.cpp
     MixFaceFader.cpp
     MixFaceFaderBase.cpp
-    MixFaceFaderBitmaps.cpp
 )
 
-
 set(WXCP
-    MixFaceWindow.wxcp
-    MixFaceFader.wxcp
+    MixFaceWindow.fbp
+    MixFaceFader.fbp
     )
 
 if(WIN32)
         set(SRCS ${SRCS}
-            MixFaceWindowBitmaps.xrc
-            MixFaceFaderBitmaps.xrc
             )
 endif(WIN32)
 
@@ -61,15 +56,15 @@ add_executable(MixFaceWXWidgets
 target_link_libraries(MixFaceWXWidgets
         ${wxWidgets_LIBRARIES}
         DebugLibrary
-        MixFaceLibrary
-        OSCPACK
-        ${LIBS}
-        ${Boost_LIBRARIES}
+        #MixFaceLibrary
+        #OSCPACK
+        #${LIBS}
+        #${Boost_LIBRARIES}
         )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${BOOST_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../OSCPACK)
+#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../OSCPACK)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../DebugLibrary)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../MixFaceLibrary)
+#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../MixFaceLibrary)
 

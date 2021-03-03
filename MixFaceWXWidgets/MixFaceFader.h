@@ -1,6 +1,6 @@
 #ifndef MIXFACEFADER_H
 #define MIXFACEFADER_H
-#include "MixFaceWindowBase.h"
+#include "MixFaceFaderBase.h"
 
 class MixFaceFader : public MixFaceFaderBase
 {

@@ -13,7 +13,6 @@ MixFaceWindowBase::MixFaceWindowBase( wxWindow* parent, wxWindowID id, const wxS
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	this->SetFont( wxFont( 14, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("Arial") ) );
-	this->SetBackgroundColour( wxColour( 96, 96, 96 ) );
 
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
@@ -24,11 +23,14 @@ MixFaceWindowBase::MixFaceWindowBase( wxWindow* parent, wxWindowID id, const wxS
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxHORIZONTAL );
 
-	settingsButton = new wxButton( topPanel, wxID_ANY, wxT("Settings"), wxDefaultPosition, wxSize( 64,28 ), 0|wxBORDER_NONE|wxBORDER_STATIC );
-	settingsButton->SetForegroundColour( wxColour( 255, 255, 255 ) );
-	settingsButton->SetBackgroundColour( wxColour( 96, 96, 96 ) );
 
+	bSizer2->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	settingsButton = new wxButton( topPanel, wxID_ANY, wxT("Settings"), wxDefaultPosition, wxSize( 64,28 ), 0 );
 	bSizer2->Add( settingsButton, 0, wxLEFT|wxTOP|wxBOTTOM, 4 );
+
+
+	bSizer2->Add( 8, 0, 0, wxEXPAND, 5 );
 
 
 	topPanel->SetSizer( bSizer2 );
@@ -42,24 +44,27 @@ MixFaceWindowBase::MixFaceWindowBase( wxWindow* parent, wxWindowID id, const wxS
 	scrollPanel->SetScrollRate( 5, 5 );
 	bSizer3->Add( scrollPanel, 1, wxALL|wxEXPAND, 0 );
 
-	mainPanel = new MixFaceFaderBase( this, wxID_ANY, wxDefaultPosition, wxSize( 128,-1 ), wxTAB_TRAVERSAL|wxBORDER_STATIC );
-	bSizer3->Add( mainPanel, 0, wxALL|wxEXPAND, 0 );
+	mainPanelSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	mainPanelSizer->SetMinSize( wxSize( 128,-1 ) );
+
+	bSizer3->Add( mainPanelSizer, 0, wxALL|wxEXPAND, 0 );
 
 	rightPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 64,-1 ), wxTAB_TRAVERSAL|wxBORDER_STATIC );
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 
-	busButton = new wxButton( rightPanel, wxID_ANY, wxT("LR"), wxDefaultPosition, wxSize( 50,40 ), 0|wxBORDER_NONE );
-	busButton->SetForegroundColour( wxColour( 255, 255, 255 ) );
-	busButton->SetBackgroundColour( wxColour( 96, 96, 96 ) );
 
+	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	busButton = new wxButton( rightPanel, wxID_ANY, wxT("LR"), wxDefaultPosition, wxSize( 50,40 ), 0 );
 	bSizer4->Add( busButton, 0, wxALL|wxALIGN_CENTER, 1 );
 
-	assignButton = new wxButton( rightPanel, wxID_ANY, wxT("A\nB\nC\nD\nE\nF"), wxDefaultPosition, wxSize( 50,150 ), 0|wxBORDER_NONE );
-	assignButton->SetForegroundColour( wxColour( 255, 255, 255 ) );
-	assignButton->SetBackgroundColour( wxColour( 96, 96, 96 ) );
-
+	assignButton = new wxButton( rightPanel, wxID_ANY, wxT("A\nB\nC\nD\nE\nF"), wxDefaultPosition, wxSize( 50,150 ), 0 );
 	bSizer4->Add( assignButton, 0, wxALL|wxALIGN_CENTER, 0 );
+
+
+	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
 
 
 	rightPanel->SetSizer( bSizer4 );

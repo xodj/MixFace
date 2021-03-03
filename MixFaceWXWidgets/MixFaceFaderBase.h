@@ -20,6 +20,7 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>
+#include <wx/tglbtn.h>
 #include <wx/slider.h>
 #include <wx/panel.h>
 #include <wx/bmpbuttn.h>
@@ -38,12 +39,12 @@ class MixFaceFaderBase : public wxPanel
 		wxButton* srcButton;
 		wxButton* eqButton;
 		wxButton* dynButton;
-		wxButton* muteButton;
+		wxToggleButton* muteButton;
 		wxSlider* panSlider;
-		singleDBMeterPanel* meterPanel0;
 		singleDBMeterPanel* meterPanel1;
+		singleDBMeterPanel* meterPanel0;
 		wxSlider* faderSlider;
-		wxButton* soloButton;
+		wxToggleButton* soloButton;
 		wxBitmapButton* iconButton;
 
 	public:

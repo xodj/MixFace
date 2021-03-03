@@ -11,8 +11,6 @@
 
 MixFaceFaderBase::MixFaceFaderBase( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name ) : wxPanel( parent, id, pos, size, style, name )
 {
-	this->SetBackgroundColour( wxColour( 96, 96, 96 ) );
-
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 
@@ -31,7 +29,7 @@ MixFaceFaderBase::MixFaceFaderBase( wxWindow* parent, wxWindowID id, const wxPoi
 
 	bSizer1->Add( bSizer2, 0, wxALL|wxEXPAND, 5 );
 
-	muteButton = new wxButton( this, wxID_ANY, wxT("MUTE"), wxDefaultPosition, wxDefaultSize, 0 );
+	muteButton = new wxToggleButton( this, wxID_ANY, wxT("MUTE"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( muteButton, 0, wxALL|wxEXPAND, 5 );
 
 	panSlider = new wxSlider( this, wxID_ANY, 50, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
@@ -43,17 +41,27 @@ MixFaceFaderBase::MixFaceFaderBase( wxWindow* parent, wxWindowID id, const wxPoi
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 
+
+	bSizer4->Add( 0, 0, 1, wxEXPAND, 5 );
+
 	wxBoxSizer* bSizer5;
 	bSizer5 = new wxBoxSizer( wxHORIZONTAL );
 
-	meterPanel0 = new singleDBMeterPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	bSizer5->Add( meterPanel0, 1, wxALL|wxEXPAND, 0 );
-
+	bSizer5->SetMinSize( wxSize( 16,-1 ) );
 	meterPanel1 = new singleDBMeterPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	meterPanel1->SetMinSize( wxSize( 16,-1 ) );
+	meterPanel1->SetMaxSize( wxSize( 16,-1 ) );
+
 	bSizer5->Add( meterPanel1, 1, wxALL|wxEXPAND, 0 );
 
+	meterPanel0 = new singleDBMeterPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	meterPanel0->SetMinSize( wxSize( 16,-1 ) );
+	meterPanel0->SetMaxSize( wxSize( 16,-1 ) );
 
-	bSizer4->Add( bSizer5, 3, wxALL|wxEXPAND, 5 );
+	bSizer5->Add( meterPanel0, 1, wxALL|wxEXPAND, 0 );
+
+
+	bSizer4->Add( bSizer5, 3, wxALL|wxEXPAND, 0 );
 
 
 	bSizer3->Add( bSizer4, 1, wxALL|wxEXPAND, 5 );
@@ -62,18 +70,15 @@ MixFaceFaderBase::MixFaceFaderBase( wxWindow* parent, wxWindowID id, const wxPoi
 	bSizer3->Add( faderSlider, 1, wxALL|wxEXPAND|wxALIGN_CENTER, 5 );
 
 
+	bSizer3->Add( 0, 0, 1, wxEXPAND, 5 );
+
+
 	bSizer1->Add( bSizer3, 1, wxALL|wxEXPAND, 5 );
 
-	soloButton = new wxButton( this, wxID_ANY, wxT("SOLO"), wxDefaultPosition, wxDefaultSize, 0 );
+	soloButton = new wxToggleButton( this, wxID_ANY, wxT("SOLO"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer1->Add( soloButton, 0, wxALL|wxEXPAND, 5 );
 
-	iconButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 118,118 ), wxBU_AUTODRAW|wxBU_AUTODRAW|wxBORDER_NONE );
-
-	iconButton->SetBitmap( wxBitmap( wxT("../MixFaceQtWidgets/media/fader_icons/33/33W.png"), wxBITMAP_TYPE_ANY ) );
-	iconButton->SetBitmapPressed( wxBitmap( wxT("../MixFaceQtWidgets/media/fader_icons/33/33B.png"), wxBITMAP_TYPE_ANY ) );
-	iconButton->SetForegroundColour( wxColour( 255, 0, 0 ) );
-	iconButton->SetBackgroundColour( wxColour( 96, 96, 96 ) );
-
+	iconButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 118,118 ), wxBU_AUTODRAW|0|wxBORDER_SIMPLE );
 	bSizer1->Add( iconButton, 0, wxALL, 5 );
 
 

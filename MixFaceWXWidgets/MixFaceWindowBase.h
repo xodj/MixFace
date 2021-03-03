@@ -9,7 +9,6 @@
 
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
-#include "MixFaceFaderBase.h"
 #include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
@@ -38,7 +37,7 @@ class MixFaceWindowBase : public wxFrame
 		wxPanel* topPanel;
 		wxButton* settingsButton;
 		wxScrolledWindow* scrollPanel;
-		MixFaceFaderBase* mainPanel;
+		wxBoxSizer* mainPanelSizer;
 		wxPanel* rightPanel;
 		wxButton* busButton;
 		wxButton* assignButton;

@@ -8,7 +8,7 @@
 #include "MixFaceFader.h"
 
 #include "DebugLibrary.hpp"
-#include "MixFaceLibrary.h"
+//#include "MixFaceLibrary.h"
 
 class MixFaceWindow : public MixFaceWindowBase
 {
@@ -18,6 +18,6 @@ public:
 
 private:
     DebugLibrary *debug;
-    MixFaceFader *mf_fader[128];
+    MixFaceFader *mf_fader[80];
 };
 #endif // MIXFACEWINDOW_H
