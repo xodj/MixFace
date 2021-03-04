@@ -20,7 +20,9 @@ singleDBMeterPanel::~singleDBMeterPanel() {
 }
 
 void singleDBMeterPanel::render(wxDC& drawControl) {
-    int redraw = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch() % std::chrono::seconds{ 1000 }).count();
+    int redraw = std::chrono::duration_cast<std::chrono::milliseconds>
+            (std::chrono::system_clock::now().time_since_epoch() %
+             std::chrono::seconds{ 1000 }).count();
     calculateDecay(redraw);
     int hsize = GetSize().GetHeight();
     if (hsize != panelHSize) {
@@ -99,7 +101,8 @@ wxBitmap singleDBMeterPanel::renderMeter(int redraw){
         drawControl.DrawRectangle(0, meterHSize , meterWSize, - greenSize);
         drawControl.SetBrush(wxBrush(yellowColor));
         drawControl.SetPen(wxPen(yellowColor, 1));
-        drawControl.DrawRectangle(0, meterHSize - greenSize, meterWSize, - (peakSize - greenSize));
+        drawControl.DrawRectangle(0, meterHSize - greenSize, meterWSize,
+                                  - (peakSize - greenSize));
     } else {
         drawControl.SetBrush(wxBrush(greenColor));
         drawControl.SetPen(wxPen(greenColor, 1));
@@ -109,7 +112,8 @@ wxBitmap singleDBMeterPanel::renderMeter(int redraw){
         drawControl.DrawRectangle(0, meterHSize - greenSize, meterWSize, - yellowSize);
         drawControl.SetBrush(wxBrush(redColor));
         drawControl.SetPen(wxPen(redColor, 1));
-        drawControl.DrawRectangle(0, meterHSize - greenSize - yellowSize, meterWSize, - (peakSize - greenSize - yellowSize));
+        drawControl.DrawRectangle(0, meterHSize - greenSize - yellowSize,
+                                  meterWSize, - (peakSize - greenSize - yellowSize));
     }
     //Draw peak tick
     if (peakSize > lastTickSize || (lastTickRedraw + tickHoldMS) < redraw) {
@@ -118,7 +122,8 @@ wxBitmap singleDBMeterPanel::renderMeter(int redraw){
     }
     drawControl.SetBrush(*wxYELLOW_BRUSH);
     drawControl.SetPen(*wxYELLOW_PEN);
-    drawControl.DrawLine(0, meterHSize - lastTickSize, meterWSize, meterHSize - lastTickSize);
+    drawControl.DrawLine(0, meterHSize - lastTickSize, meterWSize,
+                         meterHSize - lastTickSize);
     //Draw frame
     if (drawFrame){
         drawControl.SetBrush(*wxTRANSPARENT_BRUSH);

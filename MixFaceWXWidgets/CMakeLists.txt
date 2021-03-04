@@ -20,29 +20,27 @@ find_package(wxWidgets REQUIRED richtext xrc aui html adv core xml net base scin
 include(${wxWidgets_USE_FILE})
 
 set(MixFaceWXWidgets_HEADERS
+    MixFaceBaseObjects.h
+    MixFaceResources.h
     MixFaceWindow.h
-    MixFaceWindowBase.h
     dbMeter.h
     MixFaceFader.h
-    MixFaceFaderBase.h
 )
 
 set(MixFaceWXWidgets_SOURCES
-    main.cpp
+    MixFace.cpp
+    MixFaceBaseObjects.cpp
+    MixFaceResources.cpp
+    MixFaceResourcesBitmaps.cpp
     MixFaceWindow.cpp
-    MixFaceWindowBase.cpp
     dbMeter.cpp
     MixFaceFader.cpp
-    MixFaceFaderBase.cpp
 )
-
-set(WXCP
-    MixFaceWindow.fbp
-    MixFaceFader.fbp
-    )
 
 if(WIN32)
         set(SRCS ${SRCS}
+            MixFaceBaseObjects.fbp
+            MixFaceResources.wxcp
             )
 endif(WIN32)
 
@@ -50,7 +48,6 @@ add_executable(MixFaceWXWidgets
         ${MixFaceWXWidgets_SOURCES}
         ${MixFaceWXWidgets_HEADERS}
         ${SRCS}
-        ${WXCP}
         )
 
 target_link_libraries(MixFaceWXWidgets
@@ -59,7 +56,7 @@ target_link_libraries(MixFaceWXWidgets
         #MixFaceLibrary
         #OSCPACK
         #${LIBS}
-        #${Boost_LIBRARIES}
+        ${Boost_LIBRARIES}
         )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})

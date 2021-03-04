@@ -1,29 +1,31 @@
+#include "MixFaceBaseObjects.h"
 #include "MixFaceWindow.h"
 #include <wx/app.h>
 #include <wx/event.h>
 #include <wx/image.h>
 
-class MainApp : public wxApp
+class MixFace : public wxApp
 {
 public:
-    MainApp() {}
-    virtual ~MainApp() {}
+    MixFace() {}
+    virtual ~MixFace() {}
 
     DebugLibrary *debug;
 
     virtual bool OnInit()
     {
         debug = new DebugLibrary(argc, argv);
-        debug->sendMessage("MainApp::OnInit Init MixFaceWindow...",5);
+        debug->sendMessage("MixFace::OnInit Init MixFaceWindow...",5);
+
         // Add the common image handlers
         wxImage::AddHandler(new wxPNGHandler);
         wxImage::AddHandler(new wxJPEGHandler);
 
-        MixFaceWindow* mf_window = new MixFaceWindow(NULL, debug);
+        MixFaceWindow *mf_window = new MixFaceWindow(debug);
         SetTopWindow(mf_window);
         return GetTopWindow()->Show();
     }
 };
 
-DECLARE_APP(MainApp)
-IMPLEMENT_APP(MainApp)
+DECLARE_APP(MixFace)
+IMPLEMENT_APP(MixFace)

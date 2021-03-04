@@ -3,9 +3,10 @@
 #include <iostream>
 #include <boost/signals2.hpp>
 
-#include "MixFaceWindowBase.h"
+#include "MixFaceBaseObjects.h"
 //#include "dbMeter.h"
 #include "MixFaceFader.h"
+#include "MixFaceResources.h"
 
 #include "DebugLibrary.hpp"
 //#include "MixFaceLibrary.h"
@@ -13,7 +14,7 @@
 class MixFaceWindow : public MixFaceWindowBase
 {
 public:
-    MixFaceWindow(wxWindow* parent, DebugLibrary *debug_);
+    MixFaceWindow(DebugLibrary *debug_);
     virtual ~MixFaceWindow();
 
 private:
