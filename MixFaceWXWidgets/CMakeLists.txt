@@ -22,8 +22,7 @@ include(${wxWidgets_USE_FILE})
 set(MixFaceWXWidgets_HEADERS
     MixFaceBaseObjects.h
     MixFaceResources.h
-    MixFaceWindow.h
-    dbMeter.h
+    MixFaceMeter.h
     MixFaceFader.h
 )
 
@@ -32,8 +31,7 @@ set(MixFaceWXWidgets_SOURCES
     MixFaceBaseObjects.cpp
     MixFaceResources.cpp
     MixFaceResourcesBitmaps.cpp
-    MixFaceWindow.cpp
-    dbMeter.cpp
+    MixFaceMeter.cpp
     MixFaceFader.cpp
 )
 

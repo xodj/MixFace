@@ -1,4 +1,4 @@
-#include "dbMeter.h"
+#include "MixFaceMeter.h"
 
 singleDBMeterPanel::singleDBMeterPanel(wxWindow *parent,
                                        wxWindowID winid,
