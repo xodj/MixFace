@@ -24,6 +24,7 @@ set(MixFaceQtWidgets_HEADERS
     MixFaceIconPicker.h
     MixFaceRightWidget.h
     MixFaceTopWidget.h
+    MixFaceVolumeMeter.h
     )
 set(MixFaceQtWidgets_SOURCES
     MixFaceWindow.cpp
@@ -34,9 +35,10 @@ set(MixFaceQtWidgets_SOURCES
     MixFaceIconPicker.cpp
     MixFaceRightWidget.cpp
     MixFaceTopWidget.cpp
+    MixFaceVolumeMeter.cpp
     )
 set(MixFaceQtWidgets_QRC
-    MixFace.qrc
+    MixFaceResources.qrc
     )
 
 qt5_add_resources(MixFaceQtWidgets_QRC_SOURCES ${MixFaceQtWidgets_QRC})

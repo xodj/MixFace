@@ -30,9 +30,9 @@ MixFaceWindow::MixFaceWindow(QApplication *mixFace_, DebugLibrary *debug_)
     debug->sendMessage(QString("MixFaceWindow::MixFaceWindow Init MixFaceFonts...").toStdString(),5);
     mf_fonts = new MixFaceFonts;
     //Fun!
-    //boost::thread*libraryThread = new boost::thread{&MixFaceWindow::mf_library_init,this};
+    boost::thread*libraryThread = new boost::thread{&MixFaceWindow::mf_library_init,this};
     debug->sendMessage("MixFaceWindow::MixFaceWindow Init MixFaceLibrary...",3);
-    mf_library = new MixFaceLibrary(debug);
+    //mf_library = new MixFaceLibrary(debug);
 
     initUI();
 

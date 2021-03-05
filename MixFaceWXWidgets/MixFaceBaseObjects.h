@@ -16,10 +16,11 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
-#include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
+#include <wx/statbmp.h>
+#include <wx/panel.h>
 #include <wx/button.h>
 #include <wx/scrolwin.h>
 #include <wx/tglbtn.h>
@@ -55,6 +56,7 @@ class MixFaceMainLogo : public wxPanel
 	private:
 
 	protected:
+		wxStaticBitmap* m_bitmapLogo;
 
 	public:
 
@@ -100,11 +102,11 @@ class MixFaceFaderBase : public wxPanel
 		wxToggleButton* muteButton;
 		wxSlider* panSlider;
 		wxBoxSizer* bSizer5;
-		wxSlider* faderSlider;
 		wxToggleButton* soloButton;
 		wxBitmapButton* iconButton;
 
 	public:
+		wxSlider* faderSlider;
 
 		MixFaceFaderBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 128,600 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
 		~MixFaceFaderBase();

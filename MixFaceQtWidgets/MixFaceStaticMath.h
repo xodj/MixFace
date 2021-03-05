@@ -1,5 +1,6 @@
 #ifndef MIXFACESTATICMATH_H
 #define MIXFACESTATICMATH_H
+#include <math.h>
 
 static inline float round(float number, int scale) {
         int pow = 10;

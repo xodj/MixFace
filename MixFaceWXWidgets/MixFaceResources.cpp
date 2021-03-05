@@ -1967,19 +1967,6 @@ MainLogo::MainLogo()
         bBitmapLoaded = true;
     }
     
-    {
-        wxBitmap bmp;
-        wxIcon icn;
-        bmp = wxXmlResource::Get()->LoadBitmap(wxT("x32mixerlogo"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){
-                icn.CopyFromBitmap(bmp);
-                this->Add(icn);
-            }
-            m_bitmaps.insert(std::make_pair(wxT("x32mixerlogo"), bmp));
-        }
-    }
-    
 }
 
 MainLogo::~MainLogo()

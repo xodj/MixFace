@@ -29,8 +29,7 @@ void MixFaceIconPicker::initIconPopup(){
                         "background-color: rgb(64, 64, 64);"
                         "border: 3px solid rgb(0,0,0);}");
     iconButton->setMinimumSize(108,108);
-    QIcon cico(":/f_icons/" + QString::number(1));
-    iconButton->setIcon(cico);
+    iconButton->setIcon(QIcon(":/fader/icons/" + QString::number(1) + "W"));
     iconButton->setIconSize(QSize(72,72));
     hlayout->addWidget(iconButton);
 
@@ -82,8 +81,7 @@ void MixFaceIconPicker::initIconPopup(){
 
     for (int i = 1;i < 75; i++){
         QListWidgetItem *item = new QListWidgetItem;
-        QIcon ico(":/f_icons/" + QString::number(i));
-        item->setIcon(ico);
+        item->setIcon(QIcon(":/fader/icons/" + QString::number(i) + "W"));
         iconsList->insertItem(i,item);
     }
 
@@ -129,8 +127,7 @@ void MixFaceIconPicker::showIconPopup(int idx_, int logoId, int colorId, QString
 
 void MixFaceIconPicker::emitLogoChanged(int idl){
     idl++;
-    QIcon cico(":/f_icons/" + QString::number(idl));
-    iconButton->setIcon(cico);
+    iconButton->setIcon(QIcon(":/fader/icons/" + QString::number(idl) + "W"));
     emit logoChanged(idx, idl);
 }
 

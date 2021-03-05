@@ -34,6 +34,15 @@ MixFaceMainLogo::MixFaceMainLogo( wxWindow* parent, wxWindowID id, const wxPoint
 	this->SetForegroundColour( wxColour( 240, 240, 240 ) );
 	this->SetBackgroundColour( wxColour( 96, 96, 96 ) );
 
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxVERTICAL );
+
+	m_bitmapLogo = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer12->Add( m_bitmapLogo, 0, wxALL|wxEXPAND, 0 );
+
+
+	this->SetSizer( bSizer12 );
+	this->Layout();
 }
 
 MixFaceMainLogo::~MixFaceMainLogo()

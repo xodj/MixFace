@@ -51,15 +51,15 @@ add_executable(MixFaceWXWidgets
 target_link_libraries(MixFaceWXWidgets
         ${wxWidgets_LIBRARIES}
         DebugLibrary
-        #MixFaceLibrary
-        #OSCPACK
-        #${LIBS}
+        MixFaceLibrary
+        OSCPACK
+        ${LIBS}
         ${Boost_LIBRARIES}
         )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${BOOST_INCLUDE_DIRS})
-#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../OSCPACK)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../OSCPACK)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../DebugLibrary)
-#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../MixFaceLibrary)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../MixFaceLibrary)
 
