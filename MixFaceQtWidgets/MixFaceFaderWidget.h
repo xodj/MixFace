@@ -81,7 +81,7 @@ private:
     void emitPanChanged();
     void dbEditingFinished();
 
-    MixFaceVolumeMeter *m_vmeter;
+    SMixFaceVolumeMeter *m_vmeter;
     dynMeter *m_dmeter;
     MetersTimer *metersRenew;
     DebugLibrary *debug;
@@ -148,17 +148,22 @@ class MetersTimer : public QTimer {
     Q_OBJECT
 
 public:
-    MixFaceVolumeMeter *m_vmeter;
-    dynMeter *m_dmeter;
+    MixFaceVolumeMeter *m_vmeter = nullptr;
+    SMixFaceVolumeMeter *sm_vmeter = nullptr;
+    dynMeter *m_dmeter = nullptr;
     inline MetersTimer(MixFaceVolumeMeter *m_vmeter_,dynMeter *m_dmeter_) : QTimer() {
         m_vmeter = m_vmeter_;
+        m_dmeter = m_dmeter_;
+    }
+    inline MetersTimer(SMixFaceVolumeMeter *m_vmeter_,dynMeter *m_dmeter_) : QTimer() {
+        sm_vmeter = m_vmeter_;
         m_dmeter = m_dmeter_;
     }
 
 protected:
     void timerEvent(QTimerEvent *event) override {
         Q_UNUSED(event)
-        m_vmeter->update();
+        sm_vmeter->update();
         m_dmeter->update();
     }
 };

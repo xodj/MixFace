@@ -9,11 +9,15 @@
 #include <QTimer>
 
 #include "DebugLibrary.hpp"
+#include "MixFaceStaticMath.h"
 
 #define MAX_AUDIO_CHANNELS 2
 #define M_INFINITE 3.4e38f
 #define CLIP_FLASH_DURATION_MS 1000
 #define CLAMP(x, min, max) ((x) < (min) ? (min) : ((x) > (max) ? (max) : (x)))
+
+#define peakHoldMS 3000
+#define tickHoldMS 1500
 
 class MixFaceVolumeMeter : public QWidget
 {
@@ -98,6 +102,85 @@ protected:
 private slots:
 
     void ClipEnding();
+
+};
+
+class SMixFaceVolumeMeter : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit SMixFaceVolumeMeter(QWidget *parent = nullptr,
+                                DebugLibrary *debug_ = new DebugLibrary,
+                                float dpiRatio_ = 1.f);
+    ~SMixFaceVolumeMeter(){}
+
+    void setChannels(int channels_){
+        channels = channels_;
+        setMinimumSize(channels * meterWSize, 50);
+        setMaximumWidth(channels * meterWSize);
+    };
+
+    void setMeter(float channel1, float channel2){
+        if (channel1 > 1) channel1 = 1.f;
+        if (channel1 < 0) channel1 = 0.f;
+        if (channel2 > 1) channel2 = 1.f;
+        if (channel2 < 0) channel2 = 0.f;
+        currentPeak = channel1;
+    }
+
+    void setValue(float value) {
+        if (value > 1) value = 1.f;
+        if (value < 0) value = 0.f;
+        currentPeak = value;
+    }
+
+private:
+    void render(QPainter& drawControl, QPaintEvent *event);
+    void renderBackground();
+    QPixmap renderPeak(int redraw);
+    QPixmap renderMeter(int redraw);
+    void calculateDecay(int redraw);
+
+    QPixmap *backgroundMeter;
+
+    QColor bgColor = QColor(227, 227, 227);
+    QColor blackColor = QColor(0, 0, 0);
+    QColor greenColor = QColor(55, 239, 70);
+    QColor yellowColor = QColor(245, 209, 70);
+    QColor redColor = QColor(245, 70, 70);
+    QColor lgreenColor = QColor(45, 137, 52);
+    QColor lyellowColor = QColor(140, 122, 52);
+    QColor lredColor = QColor(140, 52, 52);
+
+    QColor majorTickColor = QColor(255, 255, 255);
+
+    float redAspect = 0.1f;
+    float yellowAspect = 0.15f;
+    int redSize;
+    int yellowSize;
+    int greenSize;
+    int meterHSize;
+    int panelWSize;
+    int panelHSize = -1;
+    int borders = 0;
+    int meterWSize = 16;
+    int peakHSize = 8;
+    float currentPeak = 0.f;
+    float displayPeak = 0.f;
+    int lastRedraw = 0;
+    int lastTickRedraw = 0;
+    int lastTickSize = 0;
+    float lastTickPeak = 0.f;
+    int lastPeakRedraw = 0;
+    int frame = 0;
+    bool drawFrame = true;
+
+    float peakDecayRate = .000365f;
+    int channels = 1;
+    DebugLibrary *debug;
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
 
 };
 

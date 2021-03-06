@@ -126,7 +126,7 @@ void FaderWidget::initWidget(){
     volArea = new QWidget;
     volArea->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Expanding);
 
-    m_vmeter = new MixFaceVolumeMeter;
+    m_vmeter = new SMixFaceVolumeMeter;
     m_vmeter->setParent(volArea);
 
     ticks = new TicksPaint(dpiRatio);

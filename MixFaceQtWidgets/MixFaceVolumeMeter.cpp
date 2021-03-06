@@ -1,5 +1,4 @@
 #include "MixFaceVolumeMeter.h"
-#include "MixFaceStaticMath.h"
 
 MixFaceVolumeMeter::MixFaceVolumeMeter(QWidget *parent, DebugLibrary *debug_,
                                        float dpiRatio_)
@@ -64,7 +63,6 @@ void MixFaceVolumeMeter::setMeter(float preL_, float preR_) {
 
 void MixFaceVolumeMeter::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event)
     const QRect rect = event->region().boundingRect();
     int height = rect.height();
 
@@ -319,3 +317,112 @@ inline void MixFaceVolumeMeter::calculateBallisticsForChannel(int channelNr, uin
 }
 
 void MixFaceVolumeMeter::ClipEnding() { clipping = false; }
+
+SMixFaceVolumeMeter::SMixFaceVolumeMeter(QWidget *parent, DebugLibrary *debug_,
+                                         float dpiRatio_)
+    : QWidget(parent),
+      debug(debug_)
+{
+    Q_UNUSED(dpiRatio_)
+    setMinimumSize(channels * (meterWSize + (borders * 2)), 50);
+    setMaximumWidth(channels * (meterWSize + (borders * 2)));
+    panelWSize = (meterWSize + (borders * 2));
+}
+
+void SMixFaceVolumeMeter::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    int redraw = std::chrono::duration_cast<std::chrono::milliseconds>
+            (std::chrono::system_clock::now().time_since_epoch() %
+             std::chrono::seconds{ 1000 }).count();
+    calculateDecay(redraw);
+    const QRect rect = event->region().boundingRect();
+    int hsize = rect.height();
+    if (hsize != panelHSize) {
+        panelHSize = hsize;
+        meterHSize = int((panelHSize - (borders * 2) - peakHSize) * 0.70f);
+        redSize = int(meterHSize * redAspect);
+        yellowSize = int(meterHSize * yellowAspect);
+        greenSize = int(meterHSize - redSize - yellowSize);
+        renderBackground();
+    }
+    painter.drawPixmap(QRect(borders, borders + int(panelHSize * 0.3f), meterWSize, peakHSize), renderPeak(redraw));
+    painter.drawPixmap(QRect(borders, borders + peakHSize - 1 + int(panelHSize * 0.3f), meterWSize, meterHSize), renderMeter(redraw));
+    if (channels > 1){
+        painter.drawPixmap(QRect(borders + meterWSize, borders + int(panelHSize * 0.3f), meterWSize, peakHSize), renderPeak(redraw));
+        painter.drawPixmap(QRect(borders + meterWSize, borders + peakHSize - 1 + int(panelHSize * 0.3f), meterWSize, meterHSize), renderMeter(redraw));
+    }
+}
+
+void SMixFaceVolumeMeter::renderBackground(){
+    backgroundMeter = new QPixmap(meterWSize, meterHSize);
+    QPainter backgroundMeterDC(backgroundMeter);
+    backgroundMeterDC.fillRect(QRect(0, redSize + yellowSize, meterWSize, greenSize), lgreenColor);
+    backgroundMeterDC.fillRect(QRect(0, redSize, meterWSize, yellowSize), lyellowColor);
+    backgroundMeterDC.fillRect(QRect(0, 0, meterWSize, redSize), lredColor);
+}
+
+QPixmap SMixFaceVolumeMeter::renderPeak(int redraw){
+    if (currentPeak == 1.f)
+        lastPeakRedraw = redraw;
+    QPixmap peak(meterWSize, peakHSize);
+    QPainter drawControl(&peak);
+    if (currentPeak == 1.f || (lastPeakRedraw + peakHoldMS) > redraw){
+        drawControl.fillRect(QRect(0, 0, meterWSize, peakHSize),redColor);
+        if (drawFrame) {
+            drawControl.setPen(blackColor);
+            drawControl.drawRect(0, 0, meterWSize - 1, peakHSize - 1);
+        }
+    } else {
+        drawControl.fillRect(QRect(0, 0, meterWSize, peakHSize),lredColor);
+        if (drawFrame) {
+            drawControl.setPen(blackColor);
+            drawControl.drawRect(0, 0, meterWSize - 1, peakHSize - 1);
+        }
+    }
+    return peak;
+}
+
+QPixmap SMixFaceVolumeMeter::renderMeter(int redraw){
+    QPixmap meter(meterWSize, meterHSize);
+    QPainter drawControl(&meter);
+    drawControl.drawPixmap(QRect(0, 0, meterWSize, meterHSize), *backgroundMeter);
+    int peakSize = meterHSize * displayPeak;
+    if (peakSize <= greenSize){
+        drawControl.fillRect(QRect(0, meterHSize, meterWSize, - peakSize), greenColor);
+    } else if (peakSize <= (greenSize + yellowSize)) {
+        drawControl.fillRect(QRect(0, meterHSize, meterWSize, - greenSize), greenColor);
+        drawControl.fillRect(QRect(0, meterHSize - greenSize, meterWSize,
+                                   - (peakSize - greenSize)), yellowColor);
+    } else {
+        drawControl.fillRect(QRect(0, meterHSize, meterWSize, - greenSize), greenColor);
+        drawControl.fillRect(QRect(0, meterHSize - greenSize, meterWSize, - yellowSize),
+                             yellowColor);
+        drawControl.fillRect(QRect(0, meterHSize - greenSize - yellowSize,
+                                   meterWSize, - (peakSize - greenSize - yellowSize)), redColor);
+    }
+    //Draw peak tick
+    if (peakSize > lastTickSize || (lastTickRedraw + tickHoldMS) < redraw) {
+        lastTickRedraw = redraw;
+        lastTickSize = peakSize;
+    }
+    drawControl.setPen(majorTickColor);
+    drawControl.drawLine(QLine(0, meterHSize - lastTickSize, meterWSize,
+                               meterHSize - lastTickSize));
+    //Draw frame
+    if (drawFrame) {
+        drawControl.setPen(blackColor);
+        drawControl.drawRect(0, 0, meterWSize - 1, meterHSize - 1);
+    }
+    return meter;
+}
+
+void SMixFaceVolumeMeter::calculateDecay(int redraw) {
+    if (currentPeak >= displayPeak || displayPeak == 0.f)
+        displayPeak = currentPeak;
+    else {
+        float decay = float(peakDecayRate * (redraw - lastRedraw));
+        displayPeak = CLAMP(displayPeak - decay, currentPeak, 1.);
+        }
+    lastRedraw = redraw;
+}
