@@ -3,10 +3,9 @@
 #include <QtCore/QVariant>
 #include "MixFaceStaticMath.h"
 
-FaderWidget::FaderWidget(float dpiRatio_, DebugLibrary *debug_,
-                         MixFaceFonts *m_fonts_, QMainWindow *mainWindow_)
-    : dpiRatio(dpiRatio_), m_fonts(m_fonts_),
-      mainWindow(mainWindow_), debug(debug_)
+FaderWidget::FaderWidget(float dpiRatio, MixFaceFonts *m_fonts,
+                         MixFaceMetersTimer *mf_metersTimer, DebugLibrary *debug)
+    : dpiRatio(dpiRatio), m_fonts(m_fonts), mf_metersTimer(mf_metersTimer), debug(debug)
 {
     initWidget();
     connectWidgets();
@@ -126,7 +125,7 @@ void FaderWidget::initWidget(){
     volArea = new QWidget;
     volArea->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Expanding);
 
-    m_vmeter = new SMixFaceVolumeMeter;
+    m_vmeter = new MixFaceVolumeMeter;
     m_vmeter->setParent(volArea);
 
     ticks = new TicksPaint(dpiRatio);
@@ -253,37 +252,56 @@ void FaderWidget::initWidget(){
     m_vmeter->setGeometry(QRect(16*dpiRatio,10,10*dpiRatio,heightV));
     ticks->setGeometry(QRect(68*dpiRatio,10,10*dpiRatio,heightV));
 
-    metersRenew = new MetersTimer(m_vmeter,m_dmeter);
-    metersRenew->start(30);
+    mf_metersTimer->AddVolumeMeter(m_vmeter);
+    mf_metersTimer->AddDynMeter(m_dmeter);
 }
 
 void FaderWidget::connectWidgets(){
-    QPushButton::connect(src, &QPushButton::clicked, this, &FaderWidget::srcClicked);
-    QPushButton::connect(eq, &QPushButton::clicked, this, &FaderWidget::eqClicked);
-    QPushButton::connect(dyn, &QPushButton::clicked, this, &FaderWidget::dynClicked);
-    QPushButton::connect(mute, &QPushButton::clicked, this, &FaderWidget::emitMuteChanged);
-    QSlider::connect(panSlider, &QSlider::valueChanged, this, &FaderWidget::emitPanChanged);
-    QLineEdit::connect(db,&QLineEdit::editingFinished,this,&FaderWidget::dbEditingFinished);
-    QSlider::connect(volSlider, &QSlider::valueChanged, this, &FaderWidget::emitFaderChanged);
-    QPushButton::connect(solo, &QPushButton::clicked, this, &FaderWidget::emitSoloChanged);
-    QPushButton::connect(channelName,&QPushButton::clicked,this,&FaderWidget::iconButtonClicked);
-    QPushButton::connect(icon,&QPushButton::clicked,this,&FaderWidget::iconButtonClicked);
+    QPushButton::connect(src, &QPushButton::clicked, this,
+                         &FaderWidget::srcClicked);
+    QPushButton::connect(eq, &QPushButton::clicked, this,
+                         &FaderWidget::eqClicked);
+    QPushButton::connect(dyn, &QPushButton::clicked, this,
+                         &FaderWidget::dynClicked);
+    QPushButton::connect(mute, &QPushButton::clicked, this,
+                         &FaderWidget::emitMuteChanged);
+    QSlider::connect(panSlider, &QSlider::valueChanged,
+                     this, &FaderWidget::emitPanChanged);
+    QLineEdit::connect(db,&QLineEdit::editingFinished,
+                       this,&FaderWidget::dbEditingFinished);
+    QSlider::connect(volSlider, &QSlider::valueChanged,
+                     this, &FaderWidget::emitFaderChanged);
+    QPushButton::connect(solo, &QPushButton::clicked, this,
+                         &FaderWidget::emitSoloChanged);
+    QPushButton::connect(channelName,&QPushButton::clicked,this,
+                         &FaderWidget::iconButtonClicked);
+    QPushButton::connect(icon,&QPushButton::clicked,this,
+                         &FaderWidget::iconButtonClicked);
 }
 
 FaderWidget::~FaderWidget(){
-    QPushButton::disconnect(src, &QPushButton::clicked, this, &FaderWidget::srcClicked);
-    QPushButton::disconnect(eq, &QPushButton::clicked, this, &FaderWidget::eqClicked);
-    QPushButton::disconnect(dyn, &QPushButton::clicked, this, &FaderWidget::dynClicked);
-    QPushButton::disconnect(mute, &QPushButton::clicked, this, &FaderWidget::emitMuteChanged);
-    QSlider::disconnect(panSlider, &QSlider::valueChanged, this, &FaderWidget::emitPanChanged);
-    QLineEdit::disconnect(db,&QLineEdit::editingFinished,this,&FaderWidget::dbEditingFinished);
-    QSlider::disconnect(volSlider, &QSlider::valueChanged, this, &FaderWidget::emitFaderChanged);
-    QPushButton::disconnect(solo, &QPushButton::clicked, this, &FaderWidget::emitSoloChanged);
-    QPushButton::disconnect(channelName,&QPushButton::clicked,this,&FaderWidget::iconButtonClicked);
-    QPushButton::disconnect(icon,&QPushButton::clicked,this,&FaderWidget::iconButtonClicked);
-
-    metersRenew->stop();
-    delete metersRenew;
+    QPushButton::disconnect(src, &QPushButton::clicked, this,
+                            &FaderWidget::srcClicked);
+    QPushButton::disconnect(eq, &QPushButton::clicked, this,
+                            &FaderWidget::eqClicked);
+    QPushButton::disconnect(dyn, &QPushButton::clicked, this,
+                            &FaderWidget::dynClicked);
+    QPushButton::disconnect(mute, &QPushButton::clicked, this,
+                            &FaderWidget::emitMuteChanged);
+    QSlider::disconnect(panSlider, &QSlider::valueChanged,
+                        this, &FaderWidget::emitPanChanged);
+    QLineEdit::disconnect(db,&QLineEdit::editingFinished,
+                          this, &FaderWidget::dbEditingFinished);
+    QSlider::disconnect(volSlider, &QSlider::valueChanged, this,
+                        &FaderWidget::emitFaderChanged);
+    QPushButton::disconnect(solo, &QPushButton::clicked, this,
+                            &FaderWidget::emitSoloChanged);
+    QPushButton::disconnect(channelName,&QPushButton::clicked,this,
+                            &FaderWidget::iconButtonClicked);
+    QPushButton::disconnect(icon,&QPushButton::clicked,this,
+                            &FaderWidget::iconButtonClicked);
+    mf_metersTimer->RemoveVolumeMeter(m_vmeter);
+    mf_metersTimer->RemoveDynMeter(m_dmeter);
 }
 
 void FaderWidget::resizeEvent(QResizeEvent *e){
@@ -419,47 +437,64 @@ void FaderWidget::setChannelNativeName(QString value) {
 }
 
 void FaderWidget::setFaderValue(float value) {
-    fader_lock = true;
+    QSlider::disconnect(volSlider, &QSlider::valueChanged,
+                     this, &FaderWidget::emitFaderChanged);
+    QLineEdit::disconnect(db,&QLineEdit::editingFinished,
+                          this, &FaderWidget::dbEditingFinished);
     volSlider->setValue(value*10000);
 
     //Calculate db value
     //Resize one digit after point and set -inf
-    if (value > 0) db->setText(QString::number(round(float2db(float(volSlider->value()) / 10000),1)) + " db");
+    if (value > 0.f)
+        db->setText(QString::number(
+                        round(float2db(
+                                  float(volSlider->value()) / 10000),1)) + " db");
     else db->setText("-inf db");
-    fader_lock = false;
+    QLineEdit::connect(db,&QLineEdit::editingFinished,
+                       this,&FaderWidget::dbEditingFinished);
+    QSlider::connect(volSlider, &QSlider::valueChanged,
+                     this, &FaderWidget::emitFaderChanged);
 }
 
 void FaderWidget::emitFaderChanged() {
-    if(!fader_lock) {
-        emit faderChanged(volSlider->value());
+    emit faderChanged(volSlider->value());
 
-        //Calculate db value
-        //Resize one digit after point and set -inf
-        if (volSlider->value()>0) db->setText(QString::number(round(float2db(float(volSlider->value()) / 10000),1)) + " db");
-        else db->setText("-inf db");
-    }
+    //Calculate db value
+    //Resize one digit after point and set -inf
+    QLineEdit::disconnect(db,&QLineEdit::editingFinished,
+                          this, &FaderWidget::dbEditingFinished);
+    if (volSlider->value()>0)
+        db->setText(QString::number(
+                        round(float2db(
+                                  float(volSlider->value()) / 10000),1)) + " db");
+    else db->setText("-inf db");
+    QLineEdit::connect(db,&QLineEdit::editingFinished,
+                          this, &FaderWidget::dbEditingFinished);
 }
 
 void FaderWidget::dbEditingFinished(){
-    if(!fader_lock){
-        QString dbs = db->text();
-        dbs.remove(" ");
-        dbs.remove("d");
-        dbs.remove("b");
-        volSlider->setValue(db2float(dbs.toFloat()) * 10000);
-    }
+    QSlider::disconnect(volSlider, &QSlider::valueChanged, this,
+                        &FaderWidget::emitFaderChanged);
+    QString dbs = db->text();
+    dbs.remove(" ");
+    dbs.remove("d");
+    dbs.remove("b");
+    volSlider->setValue(db2float(dbs.toFloat()) * 10000);
+    QSlider::connect(volSlider, &QSlider::valueChanged, this,
+                        &FaderWidget::emitFaderChanged);
+    emit faderChanged(db2float(dbs.toFloat()) * 10000);
 }
 
 void FaderWidget::emitPanChanged(){
-    if(!pan_lock){
-        emit panChanged(float(panSlider->value()) / 10000);
-    }
+    emit panChanged(float(panSlider->value()) / 10000);
 }
 
 void FaderWidget::setPanValue(float value) {
-    pan_lock = true;
+    QSlider::disconnect(panSlider, &QSlider::valueChanged,
+                        this, &FaderWidget::emitPanChanged);
     panSlider->setValue(value*10000);
-    pan_lock = false;
+    QSlider::connect(panSlider, &QSlider::valueChanged,
+                     this,&FaderWidget::emitPanChanged);
 }
 
 void FaderWidget::setMute(bool value) {mute->setChecked(value);}
@@ -508,7 +543,8 @@ void FaderWidget::setMeter(float preL_, float preR_, float gate, float comp){
     Q_UNUSED(gate)
     Q_UNUSED(comp)
     m_vmeter->setMeter(preL_, preR_);
-    m_dmeter->setlevel(preL_,preL_);
+    if(dyn->isEnabled())
+        m_dmeter->setlevel(gate, comp);
 }
 
 TicksPaint::TicksPaint(float dpiRatio_) : QWidget() {

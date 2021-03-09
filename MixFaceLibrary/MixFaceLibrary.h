@@ -10,8 +10,11 @@
 #include "DebugLibrary.hpp"
 
 using namespace std;
+
 typedef boost::signals2::signal<void(int, int, int)> signal_thr_int;
 typedef signal_thr_int::slot_type signal_type_thr_int;
+typedef boost::signals2::signal<void(bool)> signal_bool;
+typedef signal_bool::slot_type signal_type_bool;
 
 enum MessageType {
     stereoon = 0,  // ch/01/mix/st~~~,i~~
@@ -140,10 +143,8 @@ enum SendType {
 
 class MixFaceLinker;
 
-class MixFaceLibrary {
-public:
-    signal_thr_int valueChanged;
-
+class MixFaceLibrary : public boost::thread {
+protected:
     struct x32db {
         int stereoon[80];
         int monoon[80];
@@ -237,8 +238,6 @@ public:
         int configcolor[80];
         string configname[80];
     };
-    x32db db;
-
     struct MessageTypeStruct {
         const char *stereoon = ("/mix/st");
         const char *monoon = ("/mono");
@@ -336,8 +335,6 @@ public:
         const char *configcolor = ("/config/color");
         const char *configname = ("/config/name");
     };
-    MessageTypeStruct msgTypeStr;
-
     struct ChannelTypeStruct{
         const char *channel = ("/ch/");
         const char *auxin = ("/auxin/");
@@ -348,63 +345,72 @@ public:
         const char *mc = ("/main/m/");
         const char *dca = ("/dca/");
     };
-    ChannelTypeStruct chTypeStr;
-
-    struct ValueTypeStruct{
-        const char *intvalue = "%I";
-        const char *floatvalue = "%F";
-        const char *stringvalue = "%S";
-        const char *boolvalue = "%B";
-    };
-    ValueTypeStruct valTypeStr;
-
     struct BusTypeStruct {
-        const char *ch = ("%A/ch/");
-        const char *auxin = ("%A/auxin/");
-        const char *fxrtn = ("%A/fxrtn/");
-        const char *bus = ("%A/bus/");
-        const char *mtx = ("%A/mtx/");
-        const char *mainst = ("%A/main/st/");
-        const char *mainm = ("%A/main/m/");
-        const char *dca = ("%A/dca/");
-        const char *headamp = ("%A/headamp/");
-        const char *statsolosw = ("%A/-stat/solosw/");
+        const char *ch = ("/ch/");
+        const char *auxin = ("/auxin/");
+        const char *fxrtn = ("/fxrtn/");
+        const char *bus = ("/bus/");
+        const char *mtx = ("/mtx/");
+        const char *mainst = ("/main/st/");
+        const char *mainm = ("/main/m/");
+        const char *dca = ("/dca/");
+        const char *headamp = ("/headamp/");
+        const char *statsolosw = ("/-stat/solosw/");
 
         const char *mix = ("/mix/");
     };
-    BusTypeStruct busTypeStr;
 
+public:
     MixFaceLibrary(DebugLibrary *debug_ = nullptr);
-
-    bool connectTo(string hostNameString);
-    void sendSyncMessages();
-    void sendXremoteMessage();
-
+    //Shared tool
+    MixFaceLinker *linker;
     string channelNameFromIdx(int idx);
-
-    void processMessage(string message);
-
     string getOscAddress(MessageType mtype, ChannelType chtype, int channelN,
                           int sendN);
     ChannelType getChannelTypeFromIdx(int idx);
     int getChannelNumberFromIdx(int idx);
-    MessageType getMessageType(string message);
-    ChannelType getChannelType(string message);
-    ValueType getValueType(string message);
-    int getChannelNumber(string message);
-    int getSendNumber(string message);
-    float getFloatValue(string message);
-    int getIntValue(string message);
-    string getStringValue(string message);
-    int getIdxFromChNandChType(int chN, ChannelType chtype);
-
-    MixFaceLinker *linker;
+    //Struct
+    x32db db;
+    MessageTypeStruct msgTypeStr;
+    ChannelTypeStruct chTypeStr;
+    BusTypeStruct busTypeStr;
+    //Slots
+    signal_thr_int valueChanged;
+    signal_bool slotConnected;
+    //Threads
+    void threadConnect(string hostNameString){
+        boost::thread{&MixFaceLibrary::connect, this, hostNameString};
+    }
+    void threadSendSyncMessages(){
+        boost::thread{&MixFaceLibrary::sendSyncMessages, this};
+    }
 
 private:
+    void connect(string hostNameString);
+    void sendSyncMessages();
+    void sendXremoteMessage();
+
+    void threadStringMessage(string message, string sval){
+        boost::thread{&MixFaceLibrary::processStringMessage, this, message, sval};
+    }
+    void threadIntMessage(string message, int ival){
+        boost::thread{&MixFaceLibrary::processIntMessage, this, message, ival};
+    }
+    void threadFloatMessage(string message, float fval){
+        boost::thread{&MixFaceLibrary::processFloatMessage, this, message, fval};
+    }
+
+    void processStringMessage(string message, string sval);
+    void processIntMessage(string message, int ival);
+    void processFloatMessage(string message, float fval);
+    MessageType getMessageType(string message);
+    ChannelType getChannelType(string message);
+    int getChannelNumber(string message);
+    int getSendNumber(string message);
+    int getIdxFromChNandChType(int chN, ChannelType chtype);
+    //classes
     DebugLibrary *debug;
     IntervalThread *sendRenewMessagesTimer;
-    bool connected = false;
-
 };
 
 #endif // MIXFACELIBRARY_H

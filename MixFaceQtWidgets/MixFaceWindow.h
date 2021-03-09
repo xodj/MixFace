@@ -20,12 +20,14 @@
 #include "MixFaceRightWidget.h"
 #include "MixFaceIconPicker.h"
 
+class MixFaceDemoTimer;
+
 class MixFaceWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MixFaceWindow(QApplication *mixFace_, DebugLibrary *debug_);
+    MixFaceWindow(DebugLibrary *debug_);
     ~MixFaceWindow();
 
 signals:
@@ -38,6 +40,7 @@ public slots:
 
 private:
     void connection();
+    void s_connected(bool stat);
     void initUI();
 
     QScrollBar *bar;
@@ -104,17 +107,8 @@ private:
     void buttonDynClicked();
 
     void windowRenew();
-    void sendSyncMessages(){
-        mf_library->sendSyncMessages();
-    }
-    void mf_library_init(){
-        mf_library = new MixFaceLibrary(debug);
-    }
-
-    void metersDemo();
-    float demoStep = -90;
-    bool demo = true;
-    bool demoissum = true;
+    void sendSyncMessages(){ mf_library->threadSendSyncMessages(); }
+    void threadLibraryInit(){ mf_library = new MixFaceLibrary(debug); }
 
     float dpiRatio;
 
@@ -123,8 +117,61 @@ private:
     MixFaceFonts *mf_fonts;
     DebugLibrary *debug;
     QApplication *mixFace;
+    MixFaceMetersTimer *mf_metersTimer;
+    MixFaceDemoTimer *mf_demoTimer;
 
 protected:
     void resizeEvent( QResizeEvent *e ) override;
+};
+
+class MixFaceDemoTimer : public QTimer {
+    Q_OBJECT
+
+public:
+
+    void AddFader(FaderWidget *meter) {
+        faders.push_back(meter);
+    }
+
+    void RemoveFader(FaderWidget *meter) {
+        faders.removeOne(meter);
+    }
+    bool connected = false;
+
+protected:
+    void timerEvent(QTimerEvent *event) override {
+        Q_UNUSED(event)
+        if(!connected){
+            for(int i = 0;i < 4;i++){
+                if(demoissum[i]&&demoStep[i]==1)
+                    demoissum[i] = false;
+                else
+                    if (!demoissum[i]&&demoStep[i]==-110)
+                        demoissum[i] = true;
+
+                if(demoissum[i])
+                    demoStep[i] += 0.25;
+                else
+                    demoStep[i] -= 0.25;
+                demoValue[i] = pow(10,demoStep[i]/20);
+            }
+
+            for(FaderWidget *fader:faders)
+                fader->setMeter(demoValue[0], demoValue[1], demoValue[2], demoValue[3]);
+        } else
+            this->ResetValues();
+    }
+
+    void ResetValues(){
+        for(FaderWidget *fader:faders)
+            fader->setMeter(.0f, .0f, .0f, .0f);
+        this->stop();
+    }
+
+    float demoStep[4] = {-90, -60, -45, -15};
+    bool demoissum[4] = {true, true, true, true};
+    float demoValue[4] = {.0f, .0f, .0f, .0f};
+
+    QList<FaderWidget *> faders;
 };
 #endif

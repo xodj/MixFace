@@ -14,7 +14,7 @@
 
 class dynMeter;
 
-class MetersTimer;
+class MixFaceMetersTimer;
 
 class TicksPaint;
 
@@ -22,7 +22,8 @@ class FaderWidget : public QWidget {
     Q_OBJECT
 
 public:
-    explicit FaderWidget(float dpiRatio, DebugLibrary *debug = nullptr, MixFaceFonts *m_fonts = nullptr, QMainWindow *mainWindow = nullptr);
+    explicit FaderWidget(float dpiRatio, MixFaceFonts *m_fonts,
+                         MixFaceMetersTimer *mf_metersTimer, DebugLibrary *debug);
     ~FaderWidget();
 
     void setFaderType(FaderType ftype);
@@ -81,9 +82,9 @@ private:
     void emitPanChanged();
     void dbEditingFinished();
 
-    SMixFaceVolumeMeter *m_vmeter;
+    MixFaceVolumeMeter *m_vmeter;
     dynMeter *m_dmeter;
-    MetersTimer *metersRenew;
+    MixFaceMetersTimer *mf_metersTimer;
     DebugLibrary *debug;
 
     bool fader_lock = false;
@@ -144,27 +145,38 @@ protected:
 
 };
 
-class MetersTimer : public QTimer {
+class MixFaceMetersTimer : public QTimer {
     Q_OBJECT
 
 public:
-    MixFaceVolumeMeter *m_vmeter = nullptr;
-    SMixFaceVolumeMeter *sm_vmeter = nullptr;
-    dynMeter *m_dmeter = nullptr;
-    inline MetersTimer(MixFaceVolumeMeter *m_vmeter_,dynMeter *m_dmeter_) : QTimer() {
-        m_vmeter = m_vmeter_;
-        m_dmeter = m_dmeter_;
+    inline MixFaceMetersTimer() : QTimer() {}
+
+    void AddVolumeMeter(MixFaceVolumeMeter *meter) {
+        volumeMeters.push_back(meter);
     }
-    inline MetersTimer(SMixFaceVolumeMeter *m_vmeter_,dynMeter *m_dmeter_) : QTimer() {
-        sm_vmeter = m_vmeter_;
-        m_dmeter = m_dmeter_;
+
+    void RemoveVolumeMeter(MixFaceVolumeMeter *meter) {
+        volumeMeters.removeOne(meter);
+    }
+
+    void AddDynMeter(dynMeter *meter) {
+        dynMeters.push_back(meter);
+    }
+
+    void RemoveDynMeter(dynMeter *meter) {
+        dynMeters.removeOne(meter);
     }
 
 protected:
     void timerEvent(QTimerEvent *event) override {
         Q_UNUSED(event)
-        sm_vmeter->update();
-        m_dmeter->update();
+        for(MixFaceVolumeMeter *v_meter:volumeMeters)
+            v_meter->update();
+        for(dynMeter *d_meter:dynMeters)
+            d_meter->update();
     }
+
+    QList<MixFaceVolumeMeter *> volumeMeters;
+    QList<dynMeter *> dynMeters;
 };
 #endif

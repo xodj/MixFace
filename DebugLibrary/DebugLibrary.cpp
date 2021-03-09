@@ -18,9 +18,12 @@ DebugLibrary::DebugLibrary(int argc_, char *argv_[])
                 if(atoi(argv[i + 1]) > -1 && atoi(argv[i + 1]) < 6)
                     debugLevelArg = atoi(argv[i + 1]);
             //if dpi define
-            if (string(argv[i]) == "-dpi")
-                if(atoi(argv[i + 1]) > -1 && atoi(argv[i + 1]) < 6)
-                    dpi = atof(argv[i + 1]);
+            if (string(argv[i]) == "-dpi"){
+                dpi = atof(argv[i + 1]) / 96;
+                if (dpi < 1) dpi = 1;
+                if (dpi > 2) dpi = 2;
+                sendMessage("DebugLibrary::DebugLibrary DPI ratio set to " + to_string(dpi),1);
+            }
         }
     sendMessage(string("DebugLibrary::DebugLibrary Debuger loaded..."),1);
     setDebugLevel(debugLevelArg);

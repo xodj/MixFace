@@ -1,2 +1,5 @@
 #include "MixFaceKeeper.h"
-MixFaceKeeper::MixFaceKeeper(){}
+MixFaceKeeper::MixFaceKeeper(){
+    boost::thread *keeperThread = new boost::thread{};
+    keeperThread->join();
+}

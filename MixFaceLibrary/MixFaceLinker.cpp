@@ -1,11 +1,11 @@
 #include "MixFaceLinker.h"
 
-MixFaceLinker::MixFaceLinker() {
-    listener = new MixFaceListener;
+MixFaceLinker::MixFaceLinker(DebugLibrary *debug_) : boost::thread(), debug(debug_) {
+    boost::thread *linkerThread = new boost::thread{};
+    linkerThread->join();
+    debug->sendMessage("MixFaceLinker::MixFaceLinker",5);
+    listener = new MixFaceListener(debug);
     listener->s_xi.connect(signal_type_xi(&MixFaceLinker::processXinfo, this, boost::arg<1>()));
-    //listener->s_st.connect(signal_type_st(&MixFaceLinker::processStatus, this, boost::arg<1>()));
-    //listener->s_str.connect(signal_type_str(&MixFaceLinker::newMessage, this, boost::arg<1>()));
-    //listener->s_debug.connect(signal_type_debug(&MixFaceLinker::debug, this, boost::arg<2>()));
     reciever = new SocketReceiveMultiplexer;
     udpSocket = new UdpSocket;
     udpSocket->Bind(IpEndpointName(IpEndpointName::ANY_ADDRESS, ANY_PORT));
@@ -18,7 +18,7 @@ bool MixFaceLinker::connectTo(string hostNameStr_) {
         hostNameStr = hostNameStr_;
         sendCmdOnly("/xinfo");
         sendCmdOnly("/status");
-        boost::this_thread::sleep_for(boost::chrono::milliseconds{100});
+        boost::this_thread::sleep_for(boost::chrono::milliseconds{300});
         if (hostNameStr_ == xinfo[0] && (atof(xinfo[3].c_str()) >= 4)) {
             connected = true;
             //sendInt("/-stat/lock",1);

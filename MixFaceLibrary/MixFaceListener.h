@@ -2,6 +2,7 @@
 #define MIXFACELISTENER_H
 
 #include <iostream>
+#include <boost/thread.hpp>
 #include <boost/signals2.hpp>
 #include "osc/OscOutboundPacketStream.h"
 #include "ip/UdpSocket.h"
@@ -38,6 +39,10 @@ using namespace osc;
 
 class MixFaceListener : public OscPacketListener {
 public:
+    MixFaceListener(DebugLibrary *debug_ = new DebugLibrary) : debug(debug_)
+    {
+        debug->sendMessage("MixFaceListener::MixFaceListener",5);
+    }
     signal_xinfo s_xi;
     signal_status s_st;
     signal_str s_str;
@@ -54,9 +59,9 @@ public:
     signal_float_array newMeters6;
     signal_float_array newMeters16;
 
-    signal_debug s_debug;
-
 private:
+    DebugLibrary *debug;
+
     string xinfo[4];
     string status[3];
 
@@ -103,21 +108,25 @@ protected:
                     (arg)->AsBool() ? value = "1" : value = "0";
                     s_str("%A" + address
                                     + "%B" + value);
+                    s_str_bool(address, (arg)->AsBool());
                 } else if ((arg)->IsInt32()) {
                     s_str("%A" + address
                                     + "%I" + to_string((arg)->AsInt32()));
+                    s_str_int(address, (arg)->AsInt32());
                 } else if ((arg)->IsFloat()) {
                     s_str("%A" + address
                                     + "%F" + to_string((arg)->AsFloat()));
+                    s_str_float(address, (arg)->AsFloat());
                 } else if ((arg)->IsString()) {
                     s_str("%A" + address
                                     + "%S" + string((arg)->AsString()));
+                    s_str_str(address, (arg)->AsString());
                 } else
                     throw WrongArgumentTypeException();
             }
         }
         catch (Exception& e) {
-            s_debug("Error while parsing message:" +
+            debug->sendMessage("Error while parsing message:" +
                           string(m.AddressPattern()) + ":" +
                           string(e.what()),0);
         }

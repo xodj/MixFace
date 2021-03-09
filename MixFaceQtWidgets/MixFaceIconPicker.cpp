@@ -49,7 +49,16 @@ void MixFaceIconPicker::initIconPopup(){
     hlayout->addWidget(channelName);
 
     QPushButton *rename = new QPushButton;
+    rename->setMinimumSize(96*dpiRatio, 32*dpiRatio);
     rename->setText("Rename");
+    rename->setStyleSheet("QPushButton {"
+                          "color: rgb(0,0,0);"
+                          "background-color: rgb(196, 196, 196);"
+                          "border: 2px solid rgb(32,32,32);"
+                          "border-radius: 0px;}"
+                          "QPushButton:pressed {"
+                          "background-color: rgb(128, 128, 128);}");
+    rename->setFont(m_fonts->boldFont);
     hlayout->addWidget(rename);
     QPushButton::connect(rename,&QPushButton::clicked,this,&MixFaceIconPicker::emitNameChanged);
 

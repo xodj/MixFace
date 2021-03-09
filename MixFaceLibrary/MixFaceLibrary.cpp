@@ -1,9 +1,9 @@
 #include "MixFaceLibrary.h"
 
 MixFaceLibrary::MixFaceLibrary(DebugLibrary *debug_)
-    : debug(debug_) {
-    boost::thread *libraryThread = new boost::thread;
-    libraryThread->join();
+    : boost::thread(), debug(debug_) {
+    boost::thread *linkerThread = new boost::thread{};
+    linkerThread->join();
     for (int idx=0;idx<80;idx++){
         db.stereoon[idx] = 1;
         db.fader[idx] = 0.75;
@@ -29,22 +29,23 @@ MixFaceLibrary::MixFaceLibrary(DebugLibrary *debug_)
             db.sendon[idx][idy] = 1;
         }
     }
-    linker = new MixFaceLinker;
+    linker = new MixFaceLinker(debug);
     sendRenewMessagesTimer = new IntervalThread(1000, false, true);
     sendRenewMessagesTimer->connect(IntervalThread::interval_slot_t(&MixFaceLibrary::sendXremoteMessage, this));
-    //connect(linker, &MixFaceLinker::debug, debug, &DebugLibrary::sendMessage);
 }
 
-bool MixFaceLibrary::connectTo(string hostNameString){
-    connected = linker->connectTo(hostNameString);
+void MixFaceLibrary::connect(string hostNameString){
+    bool connected = linker->connectTo(hostNameString);
     if (connected) {
         sendRenewMessagesTimer->start();
-        linker->listener->s_str.connect(signal_type_str(&MixFaceLibrary::processMessage, this, boost::arg<1>()));
+        linker->listener->s_str_str.connect(signal_type_str_str(&MixFaceLibrary::threadStringMessage, this, boost::arg<1>(), boost::arg<2>()));
+        linker->listener->s_str_int.connect(signal_type_str_int(&MixFaceLibrary::threadIntMessage, this, boost::arg<1>(), boost::arg<2>()));
+        linker->listener->s_str_float.connect(signal_type_str_float(&MixFaceLibrary::threadFloatMessage, this, boost::arg<1>(), boost::arg<2>()));
 
         char buffer[OUTPUT_BUFFER_SIZE];
         osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
 
-        /*p.Clear();
+        p.Clear();
         p << osc::BeginMessage("/batchsubscribe") << ("meters/9") << ("/meters/9")
             << (int)7 << (int)7 << (int)1 << osc::EndMessage;
         linker->sendDynamicMsg(p);
@@ -84,12 +85,14 @@ bool MixFaceLibrary::connectTo(string hostNameString){
         p << osc::BeginMessage("/batchsubscribe") << ("meters/16")
           << ("/meters/16") << (int)7 << (int)7 << (int)1
           << osc::EndMessage;
-        linker->sendDynamicMsg(p);*/
+        linker->sendDynamicMsg(p);
     } else {
         sendRenewMessagesTimer->stop();
-        linker->listener->s_str.disconnect_all_slots();
+        linker->listener->s_str_str.disconnect_all_slots();
+        linker->listener->s_str_int.disconnect_all_slots();
+        linker->listener->s_str_float.disconnect_all_slots();
     }
-    return connected;
+    slotConnected(connected);
 }
 
 void MixFaceLibrary::sendSyncMessages() {
@@ -139,7 +142,7 @@ void MixFaceLibrary::sendXremoteMessage() {
     p << osc::BeginMessage("/xremote") << osc::EndMessage;
     linker->sendDynamicMsg(p);
 
-    /*p.Clear();
+    p.Clear();
     p << osc::BeginMessage("/renew") << ("meters/9") <<osc::EndMessage;
     linker->sendDynamicMsg(p);
     p.Clear();
@@ -147,7 +150,7 @@ void MixFaceLibrary::sendXremoteMessage() {
     linker->sendDynamicMsg(p);
     p.Clear();
     p << osc::BeginMessage("/renew") << ("meters/14") <<osc::EndMessage;
-    linker->sendDynamicMsg(p);*/
+    linker->sendDynamicMsg(p);
     p.Clear();
     p << osc::BeginMessage("/renew") << ("hidden/states") <<osc::EndMessage;
     linker->sendDynamicMsg(p);
@@ -163,7 +166,7 @@ void MixFaceLibrary::sendXremoteMessage() {
     p.Clear();
     p << osc::BeginMessage("/renew") << ("meters/2") <<osc::EndMessage;
     linker->sendDynamicMsg(p);
-    /*p.Clear();
+    p.Clear();
     p << osc::BeginMessage("/renew") << ("meters/5") <<osc::EndMessage;
     linker->sendDynamicMsg(p);
     p.Clear();
@@ -171,7 +174,7 @@ void MixFaceLibrary::sendXremoteMessage() {
     linker->sendDynamicMsg(p);
     p.Clear();
     p << osc::BeginMessage("/renew") << ("meters/16") <<osc::EndMessage;
-    linker->sendDynamicMsg(p);*/
+    linker->sendDynamicMsg(p);
 }
 
 string MixFaceLibrary::channelNameFromIdx(int idx) {
@@ -216,21 +219,31 @@ string MixFaceLibrary::channelNameFromIdx(int idx) {
   return name;
 }
 
-void MixFaceLibrary::processMessage(string message) {
+void MixFaceLibrary::processStringMessage(string message, string sval) {
     MessageType mtype = getMessageType(message);
-    ValueType vtype = getValueType(message);
+
+    int chN = getChannelNumber(message);
+    ChannelType chtype = getChannelType(message);
+    int idx = getIdxFromChNandChType(chN, chtype);
+
+    switch (mtype) {
+    case configname:
+        db.configname[idx] = sval;
+        valueChanged(mtype,idx,0);
+        break;
+    case merror:
+        debug->sendMessage("Error message read: " + message + " with string value " + sval,0);
+        break;
+    }
+}
+
+void MixFaceLibrary::processIntMessage(string message, int ival) {
+    MessageType mtype = getMessageType(message);
 
     int chN = getChannelNumber(message);
     ChannelType chtype = getChannelType(message);
     int idx = getIdxFromChNandChType(chN, chtype);
     int sendN = getSendNumber(message);
-    float fval = 0.0;
-    int ival = 0;
-    string sval;
-
-    if (vtype == floatvalue) fval = getFloatValue(message);
-    else if (vtype == intvalue) ival = getIntValue(message);
-    else if (vtype == stringvalue) sval = getStringValue(message);
 
     switch (mtype) {
     case stereoon:
@@ -239,18 +252,6 @@ void MixFaceLibrary::processMessage(string message) {
         break;
     case monoon:
         db.monoon[idx] = ival;
-        valueChanged(mtype,idx,0);
-        break;
-    case mlevel:
-        db.mlevel[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case fader:
-        db.fader[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case pan:
-        db.pan[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case on:
@@ -289,28 +290,12 @@ void MixFaceLibrary::processMessage(string message) {
         db.source[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
-    case gain:
-        db.gain[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case trim:
-        db.trim[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case hpf:
-        db.hpf[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
     case hpon:
         db.hpon[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case delayon:
         db.delayon[idx] = ival;
-        valueChanged(mtype,idx,0);
-        break;
-    case delaytime:
-        db.delaytime[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case inserton:
@@ -329,28 +314,8 @@ void MixFaceLibrary::processMessage(string message) {
         db.gateon[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
-    case gatethr:
-        db.gatethr[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case gaterange:
-        db.gaterange[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
     case gatemode:
         db.gatemode[idx] = ival;
-        valueChanged(mtype,idx,0);
-        break;
-    case gateattack:
-        db.gateattack[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case gatehold:
-        db.gatehold[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case gaterelease:
-        db.gaterelease[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case gatekeysrc:
@@ -365,48 +330,16 @@ void MixFaceLibrary::processMessage(string message) {
         db.gatefiltertype[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
-    case gatefilterf:
-        db.gatefilterf[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
     case dynon:
         db.dynon[idx] = ival;
-        valueChanged(mtype,idx,0);
-        break;
-    case dynthr:
-        db.dynthr[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case dynratio:
         db.dynratio[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
-    case dynmix:
-        db.dynmix[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case dynmgain:
-        db.dynmgain[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case dynattack:
-        db.dynattack[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case dynhold:
-        db.dynhold[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case dynrelease:
-        db.dynrelease[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
     case dynmode:
         db.dynmode[idx] = ival;
-        valueChanged(mtype,idx,0);
-        break;
-    case dynknee:
-        db.dynknee[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case dynenv:
@@ -433,12 +366,149 @@ void MixFaceLibrary::processMessage(string message) {
         db.dynfiltertype[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
-    case dynfilterf:
-        db.dynfilterf[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
     case eq1type:
         db.eq1type[idx] = ival;
+        valueChanged(mtype,idx,0);
+        break;
+    case eq2type:
+        db.eq2type[idx] = ival;
+        valueChanged(mtype,idx,0);
+        break;
+    case eq3type:
+        db.eq3type[idx] = ival;
+        valueChanged(mtype,idx,0);
+        break;
+    case eq4type:
+        db.eq4type[idx] = ival;
+        valueChanged(mtype,idx,0);
+        break;
+    case eq5type:
+        db.eq5type[idx] = ival;
+        valueChanged(mtype,idx,0);
+        break;
+    case eq6type:
+        db.eq6type[idx] = ival;
+        valueChanged(mtype,idx,0);
+        break;
+    case sendpanfollow:
+        db.sendpanfollow[idx][sendN] = ival;
+        valueChanged(mtype,idx,sendN);
+        break;
+    case sendtype:
+        db.sendtype[idx][sendN] = ival;
+        valueChanged(mtype,idx,sendN);
+        break;
+    case sendon:
+        db.sendon[idx][sendN] = ival;
+        valueChanged(mtype,idx,sendN);
+        break;
+    case configicon:
+        db.configicon[idx] = ival;
+        valueChanged(mtype,idx,0);
+        break;
+    case configcolor:
+        db.configcolor[idx] = ival;
+        valueChanged(mtype,idx,0);
+        break;
+    case merror:
+        debug->sendMessage("Error message read: " + message + " with int value " + std::to_string(ival),0);
+        break;
+    }
+}
+
+void MixFaceLibrary::processFloatMessage(string message, float fval) {
+
+    MessageType mtype = getMessageType(message);
+
+    int chN = getChannelNumber(message);
+    ChannelType chtype = getChannelType(message);
+    int idx = getIdxFromChNandChType(chN, chtype);
+    int sendN = getSendNumber(message);
+
+    switch (mtype) {
+    case stereoon:
+    case mlevel:
+        db.mlevel[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case fader:
+        db.fader[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case pan:
+        db.pan[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case gain:
+        db.gain[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case trim:
+        db.trim[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case hpf:
+        db.hpf[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case delaytime:
+        db.delaytime[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case gatethr:
+        db.gatethr[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case gaterange:
+        db.gaterange[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case gateattack:
+        db.gateattack[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case gatehold:
+        db.gatehold[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case gaterelease:
+        db.gaterelease[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case gatefilterf:
+        db.gatefilterf[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case dynthr:
+        db.dynthr[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case dynmix:
+        db.dynmix[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case dynmgain:
+        db.dynmgain[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case dynattack:
+        db.dynattack[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case dynhold:
+        db.dynhold[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case dynrelease:
+        db.dynrelease[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case dynknee:
+        db.dynknee[idx] = fval;
+        valueChanged(mtype,idx,0);
+        break;
+    case dynfilterf:
+        db.dynfilterf[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq1g:
@@ -453,10 +523,6 @@ void MixFaceLibrary::processMessage(string message) {
         db.eq1q[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
-    case eq2type:
-        db.eq2type[idx] = ival;
-        valueChanged(mtype,idx,0);
-        break;
     case eq2g:
         db.eq2g[idx] = fval;
         valueChanged(mtype,idx,0);
@@ -467,10 +533,6 @@ void MixFaceLibrary::processMessage(string message) {
         break;
     case eq2q:
         db.eq2q[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case eq3type:
-        db.eq3type[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case eq3g:
@@ -485,10 +547,6 @@ void MixFaceLibrary::processMessage(string message) {
         db.eq3q[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
-    case eq4type:
-        db.eq4type[idx] = ival;
-        valueChanged(mtype,idx,0);
-        break;
     case eq4g:
         db.eq4g[idx] = fval;
         valueChanged(mtype,idx,0);
@@ -501,10 +559,6 @@ void MixFaceLibrary::processMessage(string message) {
         db.eq4q[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
-    case eq5type:
-        db.eq5type[idx] = ival;
-        valueChanged(mtype,idx,0);
-        break;
     case eq5g:
         db.eq5g[idx] = fval;
         valueChanged(mtype,idx,0);
@@ -515,10 +569,6 @@ void MixFaceLibrary::processMessage(string message) {
         break;
     case eq5q:
         db.eq5q[idx] = fval;
-        valueChanged(mtype,idx,0);
-        break;
-    case eq6type:
-        db.eq6type[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case eq6g:
@@ -541,32 +591,8 @@ void MixFaceLibrary::processMessage(string message) {
         db.sendpan[idx][sendN] = fval;
         valueChanged(mtype,idx,sendN);
         break;
-    case sendpanfollow:
-        db.sendpanfollow[idx][sendN] = ival;
-        valueChanged(mtype,idx,sendN);
-        break;
-    case sendtype:
-        db.sendtype[idx][sendN] = ival;
-        valueChanged(mtype,idx,sendN);
-        break;
-    case sendon:
-        db.sendon[idx][sendN] = ival;
-        valueChanged(mtype,idx,sendN);
-        break;
-    case configicon:
-        db.configicon[idx] = ival;
-        valueChanged(mtype,idx,0);
-        break;
-    case configcolor:
-        db.configcolor[idx] = ival;
-        valueChanged(mtype,idx,0);
-        break;
-    case configname:
-        db.configname[idx] = sval;
-        valueChanged(mtype,idx,0);
-        break;
     case merror:
-        debug->sendMessage("Error message read: " + message,0);
+        debug->sendMessage("Error message read: " + message + " with float value " + std::to_string(fval),0);
         break;
     }
 }
@@ -1052,15 +1078,6 @@ ChannelType MixFaceLibrary::getChannelType(string message) {
     return chtype;
 }
 
-ValueType MixFaceLibrary::getValueType(string message) {
-    ValueType vtype = verror;
-    if (strstr(message.c_str(), valTypeStr.intvalue)) vtype = intvalue;
-    else if (strstr(message.c_str(), valTypeStr.floatvalue)) vtype = floatvalue;
-    else if (strstr(message.c_str(), valTypeStr.stringvalue)) vtype = stringvalue;
-    else if (strstr(message.c_str(), valTypeStr.boolvalue)) vtype = boolvalue;
-    return vtype;
-}
-
 int MixFaceLibrary::getChannelNumber(string message) {
     debug->sendMessage("MixFaceLibrary::getChannelNumber in message: " + message, 3);
     int chN = 0;
@@ -1126,49 +1143,16 @@ int MixFaceLibrary::getSendNumber(string message) {
         message.resize(2);
         sendN = atoi(message.c_str());
     } else if (strstr(message.c_str(), busTypeStr.mainst)) {
-        message.erase(0,strlen("%A/main/st/mix/"));
+        message.erase(0,strlen("/main/st/mix/"));
         message.resize(2);
         sendN = atoi(message.c_str());
     } else if (strstr(message.c_str(), busTypeStr.mainm)) {
-        message.erase(0,strlen("%A/main/m/mix/"));
+        message.erase(0,strlen("/main/m/mix/"));
         message.resize(2);
         sendN = atoi(message.c_str());
     }
     debug->sendMessage("MixFaceLibrary::getSendNumber send number: " + to_string(sendN), 3);
     return sendN;
-}
-
-float MixFaceLibrary::getFloatValue(string message) {
-    debug->sendMessage("MixFaceLibrary::getFloatValue in message: " + message, 3);
-    float fval = 0;
-    int i = message.find(valTypeStr.floatvalue) + 2;
-    debug->sendMessage("MixFaceLibrary::getFloatValue find val index: " + to_string(i), 3);
-    message.erase(0,i);
-    debug->sendMessage("MixFaceLibrary::getFloatValue value in str: " + message, 3);
-    fval = atof(message.c_str());
-    debug->sendMessage("MixFaceLibrary::getFloatValue value in float: " + to_string(fval), 3);
-    return fval;
-}
-
-int MixFaceLibrary::getIntValue(string message) {
-    debug->sendMessage("MixFaceLibrary::getIntValue in message: " + message, 3);
-    int ival = 0;
-    int i = message.find(valTypeStr.intvalue) + 2;
-    debug->sendMessage("MixFaceLibrary::getIntValue find val index: " + to_string(i), 3);
-    message.erase(0,i);
-    debug->sendMessage("MixFaceLibrary::getIntValue value in str: " + message, 3);
-    ival = atoi(message.c_str());
-    debug->sendMessage("MixFaceLibrary::getIntValue value in int: " + to_string(ival), 3);
-    return ival;
-}
-
-string MixFaceLibrary::getStringValue(string message) {
-    debug->sendMessage("MixFaceLibrary::getStringValue in message: " + message, 3);
-    int i = message.find(valTypeStr.stringvalue) + 2;
-    debug->sendMessage("MixFaceLibrary::getStringValue find val index: " + to_string(i), 3);
-    message.erase(0,i);
-    debug->sendMessage("MixFaceLibrary::getStringValue value in str: " + message, 3);
-    return message;
 }
 
 int MixFaceLibrary::getIdxFromChNandChType(int chN, ChannelType chtype){

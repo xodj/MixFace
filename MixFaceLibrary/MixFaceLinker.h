@@ -7,12 +7,14 @@
 #include "ip/UdpSocket.h"
 #include "osc/OscPacketListener.h"
 #include "MixFaceListener.h"
+#include "DebugLibrary.hpp"
+
 
 class MixFaceListener;
 
-class MixFaceLinker : public boost::thread::thread {
+class MixFaceLinker : public boost::thread {
 public:
-    MixFaceLinker();
+    MixFaceLinker(DebugLibrary *debug_ = new DebugLibrary);
     bool connectTo(string hostNameStr_);
     void sendFloat(const char *oscAddress, float value);
     void sendInt(const char *oscAddress, int value);
@@ -30,6 +32,7 @@ public:
 private:
     void processXinfo(string *xinfo_) { for(int i = 0;i < 4; i++) xinfo[i] = xinfo_[i]; }
 
+    DebugLibrary *debug;
     UdpSocket *udpSocket;
     SocketReceiveMultiplexer *reciever;
     boost::thread *recieverThread;

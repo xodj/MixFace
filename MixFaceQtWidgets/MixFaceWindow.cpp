@@ -1,39 +1,27 @@
 #include "MixFaceWindow.h"
 #include <QtNetwork/QNetworkInterface>
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     QApplication *mixFace = new QApplication(argc, argv);
-    DebugLibrary *debug = new DebugLibrary(argc, argv);
-
-    MixFaceWindow *mixFaceWindow = new MixFaceWindow(mixFace,debug);
+    MixFaceWindow *mixFaceWindow = new MixFaceWindow(new DebugLibrary(argc, argv));
     mixFaceWindow->showMaximized();
     return mixFace->exec();
 }
 
-MixFaceWindow::MixFaceWindow(QApplication *mixFace_, DebugLibrary *debug_)
-    : QMainWindow(),
-      debug(debug_),
-      mixFace(mixFace_)
-{
+MixFaceWindow::MixFaceWindow(DebugLibrary *debug)
+    : QMainWindow(), debug(debug) {
     dpiRatio = float(this->logicalDpiX())/96;
-    if (mixFace->arguments().contains("-dpi",Qt::CaseInsensitive)) {
-        QRegExp rxdpi("-dpi");
-        rxdpi.setCaseSensitivity(Qt::CaseInsensitive);
-        int idxdpi = mixFace->arguments().indexOf(rxdpi)+1;
-        dpiRatio = QString(mixFace->arguments().value(idxdpi)).toFloat()/96;
-    }
-    if (dpiRatio < 1) dpiRatio = 1;
-    if (dpiRatio > 2) dpiRatio = 2;
+    if (debug->dpi != -1.f) dpiRatio = debug->dpi;
     debug->sendMessage(QString("MixFaceWindow::MixFaceWindow DPI ratio set to " + QString::number(dpiRatio)).toStdString(),1);
 
     debug->sendMessage(QString("MixFaceWindow::MixFaceWindow Init MixFaceFonts...").toStdString(),5);
     mf_fonts = new MixFaceFonts;
-    //Fun!
-    boost::thread*libraryThread = new boost::thread{&MixFaceWindow::mf_library_init,this};
-    debug->sendMessage("MixFaceWindow::MixFaceWindow Init MixFaceLibrary...",3);
-    //mf_library = new MixFaceLibrary(debug);
 
+    debug->sendMessage("MixFaceWindow::MixFaceWindow Init MixFaceLibrary...",3);
+    new boost::thread{&MixFaceWindow::threadLibraryInit, this};
+
+    mf_metersTimer = new MixFaceMetersTimer;
+    mf_demoTimer = new MixFaceDemoTimer;
     initUI();
 
     mf_library->valueChanged.connect(signal_type_thr_int(&MixFaceWindow::valueChanged, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>()));
@@ -45,9 +33,10 @@ MixFaceWindow::MixFaceWindow(QApplication *mixFace_, DebugLibrary *debug_)
             else
                 assignedFader[idx][idy] = false;
 
-    QTimer *metersDemoTimer = new QTimer();
-    QTimer::connect(metersDemoTimer, &QTimer::timeout, this, &MixFaceWindow::metersDemo);
-    metersDemoTimer->start(5);
+    mf_metersTimer->start(34);
+    mf_demoTimer->start(5);
+
+    mf_library->slotConnected.connect(signal_type_bool(&MixFaceWindow::s_connected,this,boost::arg<1>()));
 }
 
 void MixFaceWindow::initUI(){
@@ -231,11 +220,14 @@ void MixFaceWindow::resizeEvent(QResizeEvent *e){
 }
 
 void MixFaceWindow::connection(){
-    connected = mf_library->connectTo(mf_topArea->lineIp->text().toStdString());
-    if (connected) {
+    mf_library->threadConnect(mf_topArea->lineIp->text().toStdString());
+}
+void MixFaceWindow::s_connected(bool stat){
+    connected = stat;
+    if (stat) {
         mf_topArea->syncAction->setEnabled(true);
         mf_topArea->lineIp->setDisabled(true);
-        //mf_library->sendSyncMessages();
+        //mf_library->threadSendSyncMessages();
         mf_topArea->connectAction->setText("Disconnect...");
         mf_topArea->consoleName->setText(QString::fromStdString(mf_library->linker->xinfo[1]));
         mf_topArea->consoleName->setStyleSheet("QLabel {"
@@ -245,7 +237,7 @@ void MixFaceWindow::connection(){
                                    "border-radius: 0px;"
                                    "}");
         mf_topArea->console->setText(QString::fromStdString(mf_library->linker->xinfo[2]));
-        demo=false;
+        mf_demoTimer->connected = stat;
     } else {
         mf_topArea->syncAction->setDisabled(true);
         mf_topArea->lineIp->setEnabled(true);
@@ -258,7 +250,7 @@ void MixFaceWindow::connection(){
                                    "border-radius: 0px;"
                                    "}");
         mf_topArea->console->setText("MixFace");
-        demo=true;
+        mf_demoTimer->connected = stat;
     }
 }
 
@@ -277,7 +269,8 @@ void MixFaceWindow::initControlAreaWidgets() {
 }
 
 void MixFaceWindow::initControlAreaWidgetIdx(int idx, FaderType ftype) {
-    scrollWidget[idx] = new FaderWidget(dpiRatio, debug, mf_fonts, this);
+    scrollWidget[idx] = new FaderWidget(dpiRatio, mf_fonts, mf_metersTimer, debug);
+    mf_demoTimer->AddFader(scrollWidget[idx]);
     scrollWidget[idx]->setChannelNativeName(QString::fromStdString(mf_library->channelNameFromIdx(idx)));
     scrollWidget[idx]->setFaderType(ftype);
     scrollWidget[idx]->setProperty("idx", idx);
@@ -311,7 +304,8 @@ void MixFaceWindow::initMainAreaWidgets() {
 }
 
 void MixFaceWindow::initMainAreaWidgetIdx(int idx) {
-    mainWidget[idx] = new FaderWidget(dpiRatio, debug, mf_fonts, this);
+    mainWidget[idx] = new FaderWidget(dpiRatio, mf_fonts, mf_metersTimer, debug);
+    mf_demoTimer->AddFader(mainWidget[idx]);
     mainWidget[idx]->setChannelNativeName(QString::fromStdString(mf_library->channelNameFromIdx(idx)));
     mainWidget[idx]->setFaderType(mf_types.getFaderType(idx));
     mainWidget[idx]->setProperty("idx", idx);
@@ -324,8 +318,8 @@ void MixFaceWindow::initMainAreaWidgetIdx(int idx) {
     connect(mainWidget[idx], &FaderWidget::dynClicked, this, &MixFaceWindow::buttonDynClicked);
     connect(mainWidget[idx], &FaderWidget::iconButtonClicked, this, &MixFaceWindow::iconButtonClicked);
     /*if (idx==70)
-        mf_library->linker->listener->newMeters2.connect(signal_type_float_array(&FaderWidget::setMeter, scrollWidget[idx], boost::arg<1>));
-*/}
+        mf_library->linker->listener->newMeters2.connect(signal_type_float_array(&FaderWidget::setMeter, scrollWidget[idx], boost::arg<1>));*/
+}
 
 void MixFaceWindow::initRightAreaBar(){
     mf_rightArea = new MixFaceRightWidget(dpiRatio, debug, mf_fonts, this);
@@ -392,6 +386,7 @@ void MixFaceWindow::buttonSrcClicked(){
     if (eqWidget != nullptr) { delete eqWidget; eqWidget = nullptr; }
     if (srcWidget != nullptr) { delete srcWidget; srcWidget = nullptr; }
     if (srcFader != nullptr) {
+        mf_demoTimer->RemoveFader(srcFader);
         disconnect(srcFader, &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
         disconnect(srcFader, &FaderWidget::panChanged, this, &MixFaceWindow::panChanged);
         disconnect(srcFader, &FaderWidget::muteChanged, this, &MixFaceWindow::muteClicked);
@@ -406,7 +401,8 @@ void MixFaceWindow::buttonSrcClicked(){
 
     if (m_mode != mSrc){
         if(idx!=70&&idx!=71&&(idx<48||idx>63)){
-            srcFader = new FaderWidget(dpiRatio, debug, mf_fonts, this);
+            srcFader = new FaderWidget(dpiRatio, mf_fonts, mf_metersTimer, debug);
+            mf_demoTimer->AddFader(srcFader);
             srcLayout->addWidget(srcFader);
             srcFader->setChannelNativeName(QString::fromStdString(mf_library->channelNameFromIdx(idx)));
             srcFader->setFaderType(mf_types.getFaderType(idx));
@@ -443,6 +439,7 @@ void MixFaceWindow::buttonEqClicked(){
     if (eqWidget != nullptr) { delete eqWidget; eqWidget = nullptr; }
     if (srcWidget != nullptr) { delete srcWidget; srcWidget = nullptr; }
     if (srcFader != nullptr) {
+        mf_demoTimer->RemoveFader(srcFader);
         disconnect(srcFader, &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
         disconnect(srcFader, &FaderWidget::panChanged, this, &MixFaceWindow::panChanged);
         disconnect(srcFader, &FaderWidget::muteChanged, this, &MixFaceWindow::muteClicked);
@@ -457,7 +454,8 @@ void MixFaceWindow::buttonEqClicked(){
 
     if (m_mode != mEq){
         if(idx!=70&&idx!=71&&(idx<48||idx>63)){
-            srcFader = new FaderWidget(dpiRatio, debug, mf_fonts, this);
+            srcFader = new FaderWidget(dpiRatio, mf_fonts, mf_metersTimer, debug);
+            mf_demoTimer->AddFader(srcFader);
             srcLayout->addWidget(srcFader);
             srcFader->setChannelNativeName(QString::fromStdString(mf_library->channelNameFromIdx(idx)));
             srcFader->setFaderType(mf_types.getFaderType(idx));
@@ -494,6 +492,7 @@ void MixFaceWindow::buttonDynClicked(){
     if (eqWidget != nullptr) { delete eqWidget; eqWidget = nullptr; }
     if (srcWidget != nullptr) { delete srcWidget; srcWidget = nullptr; }
     if (srcFader != nullptr) {
+        mf_demoTimer->RemoveFader(srcFader);
         disconnect(srcFader, &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
         disconnect(srcFader, &FaderWidget::panChanged, this, &MixFaceWindow::panChanged);
         disconnect(srcFader, &FaderWidget::muteChanged, this, &MixFaceWindow::muteClicked);
@@ -508,7 +507,8 @@ void MixFaceWindow::buttonDynClicked(){
 
     if (m_mode != mDyn){
         if(idx!=70&&idx!=71&&(idx<48||idx>63)){
-            srcFader = new FaderWidget(dpiRatio, debug, mf_fonts, this);
+            srcFader = new FaderWidget(dpiRatio, mf_fonts, mf_metersTimer, debug);
+            mf_demoTimer->AddFader(srcFader);
             srcLayout->addWidget(srcFader);
             srcFader->setChannelNativeName(QString::fromStdString(mf_library->channelNameFromIdx(idx)));
             srcFader->setFaderType(mf_types.getFaderType(idx));
@@ -890,18 +890,5 @@ void MixFaceWindow::valueChanged(int imtype, int idx, int idy) {
     case merror:
         debug->sendMessage(QString("Error change value!").toStdString(),0);
         break;
-    }
-}
-
-void MixFaceWindow::metersDemo(){
-    if (demo){
-        if(demoissum&&demoStep==1) demoissum = false;
-        else if (!demoissum&&demoStep==-110) demoissum = true;
-        if(demoissum) demoStep = demoStep + 0.25;
-        else demoStep = demoStep - 0.25;
-        for (int idx = 0;idx<80;idx++) {
-            scrollWidget[idx]->setMeter(pow(10,demoStep/20),pow(10,demoStep/20),0,0);
-            if (idx==70||idx==71||(idx>47&&idx<64)) mainWidget[idx]->setMeter(pow(10,demoStep/20),pow(10,demoStep/20),0,0);
-        }
     }
 }
