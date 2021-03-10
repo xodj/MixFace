@@ -1,16 +1,18 @@
 cmake_minimum_required(VERSION 3.0.0)
 
-PROJECT(MixFaceQtWidgets)
+PROJECT(MixFaceQtWidgets LANGUAGES CXX)
 
-set(QT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../Qt/5.15.2/mingw81_32")
-set(CMAKE_PREFIX_PATH "${QT_DIR}")
-set(QT_QMAKE_EXECUTABLE "${QT_DIR}/bin/qmake.exe")
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5Widgets)
 find_package(Qt5Network)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
 
 set(MixFaceQtWidgets_HEADERS
     MixFaceWindow.h
@@ -43,10 +45,20 @@ set(MixFaceQtWidgets_QRC
 
 qt5_add_resources(MixFaceQtWidgets_QRC_SOURCES ${MixFaceQtWidgets_QRC})
 
-add_executable(MixFaceQtWidgets
-    ${MixFaceQtWidgets_SOURCES}
-    ${MixFaceQtWidgets_HEADERS}
-    ${MixFaceQtWidgets_QRC_SOURCES})
+if(ANDROID)
+    set(ANDROID_PACKAGE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/android CACHE INTERNAL "")
+    add_library(MixFaceQtWidgets SHARED
+        ${MixFaceQtWidgets_SOURCES}
+        ${MixFaceQtWidgets_HEADERS}
+        ${MixFaceQtWidgets_QRC_SOURCES}
+        android/AndroidManifest.xml)
+else()
+    add_executable(MixFaceQtWidgets
+        ${MixFaceQtWidgets_SOURCES}
+        ${MixFaceQtWidgets_HEADERS}
+        ${MixFaceQtWidgets_QRC_SOURCES})
+endif()
+
 
 target_link_libraries(MixFaceQtWidgets MixFaceLibrary DebugLibrary OSCPACK Qt5::Widgets Qt5::Network)
 

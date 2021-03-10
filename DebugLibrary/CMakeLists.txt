@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.0)
 
 PROJECT(DebugLibrary)
 
-ADD_LIBRARY(DebugLibrary DebugLibrary.hpp DebugLibrary.cpp)
+
+if(ANDROID)
+    ADD_LIBRARY(DebugLibrary SHARED DebugLibrary.hpp DebugLibrary.cpp)
+else()
+    ADD_LIBRARY(DebugLibrary DebugLibrary.hpp DebugLibrary.cpp)
+endif()
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
