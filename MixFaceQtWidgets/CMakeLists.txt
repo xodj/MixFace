@@ -52,15 +52,14 @@ if(ANDROID)
         ${MixFaceQtWidgets_HEADERS}
         ${MixFaceQtWidgets_QRC_SOURCES}
         android/AndroidManifest.xml)
+    target_link_libraries(MixFaceQtWidgets MixFaceLibrary_${ANDROID_ABI} DebugLibrary_${ANDROID_ABI} OSCPACK_${ANDROID_ABI} Qt5::Widgets Qt5::Network)
 else()
     add_executable(MixFaceQtWidgets
         ${MixFaceQtWidgets_SOURCES}
         ${MixFaceQtWidgets_HEADERS}
         ${MixFaceQtWidgets_QRC_SOURCES})
+    target_link_libraries(MixFaceQtWidgets MixFaceLibrary DebugLibrary OSCPACK Qt5::Widgets Qt5::Network)
 endif()
-
-
-target_link_libraries(MixFaceQtWidgets MixFaceLibrary DebugLibrary OSCPACK Qt5::Widgets Qt5::Network)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../Boost/boost_1_75_0)

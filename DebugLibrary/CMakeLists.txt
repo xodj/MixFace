@@ -4,7 +4,7 @@ PROJECT(DebugLibrary)
 
 
 if(ANDROID)
-    ADD_LIBRARY(DebugLibrary SHARED DebugLibrary.hpp DebugLibrary.cpp)
+    ADD_LIBRARY(DebugLibrary_${ANDROID_ABI} SHARED DebugLibrary.hpp DebugLibrary.cpp)
 else()
     ADD_LIBRARY(DebugLibrary DebugLibrary.hpp DebugLibrary.cpp)
 endif()
