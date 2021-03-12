@@ -9,9 +9,6 @@
 #include "MixFaceListener.h"
 #include "DebugLibrary.hpp"
 
-
-class MixFaceListener;
-
 class MixFaceLinker : public boost::thread {
 public:
     MixFaceLinker(DebugLibrary *debug_ = new DebugLibrary);

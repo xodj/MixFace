@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 project(MixFace)
 
@@ -29,3 +29,6 @@ ENDIF(NOT DISABLE_QTWIDGETS)
 IF(NOT DISABLE_X32ST)
 add_subdirectory(X32-Shutdown)
 ENDIF(NOT DISABLE_X32ST)
+
+#add_subdirectory(nana)
+#add_subdirectory(nanogui)

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 PROJECT(MixFaceLibrary)
 
@@ -11,19 +11,19 @@ message( STATUS "Architecture: ${ARCHITECTURE}" )
 
 if(ANDROID)
     message(STATUS "Using ${ANDROID_ABI} libraries.")
-    if(${ANDROID_ABI} STREQUAL "armeabi-v7a")
+    #if(${ANDROID_ABI} STREQUAL "armeabi-v7a")
         set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-clang-mt-a32-1_74.a)
         set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-clang-mt-a32-1_74.a)
-    elseif(${ANDROID_ABI} STREQUAL "arm64-v8a")
+    #elseif(${ANDROID_ABI} STREQUAL "arm64-v8a")
         set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-clang-mt-a64-1_74.a)
         set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-clang-mt-a64-1_74.a)
-    elseif(${ANDROID_ABI} STREQUAL "x86")
+    #elseif(${ANDROID_ABI} STREQUAL "x86")
         set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-clang-mt-x32-1_74.a)
         set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-clang-mt-x32-1_74.a)
-    elseif(${ANDROID_ABI} STREQUAL "x86_64")
+    #elseif(${ANDROID_ABI} STREQUAL "x86_64")
         set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-clang-mt-x64-1_74.a)
         set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-clang-mt-x64-1_74.a)
-    endif()
+    #endif()
 else()
     string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
     if(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
@@ -49,11 +49,13 @@ MixFaceLinker.cpp
 )
 
 if(ANDROID)
-    ADD_LIBRARY(MixFaceLibrary_${ANDROID_ABI} SHARED
+    ADD_LIBRARY(MixFaceLibrary
+    #ADD_LIBRARY(MixFaceLibrary_${ANDROID_ABI} SHARED
             ${MixFaceLibrary_SOURCES}
             ${MixFaceLibrary_HEADERS}
     )
-    target_link_libraries(MixFaceLibrary_${ANDROID_ABI} DebugLibrary_${ANDROID_ABI} OSCPACK_${ANDROID_ABI} ${LIBS} ${Boost_LIBRARIES})
+    target_link_libraries(MixFaceLibrary DebugLibrary OSCPACK ${LIBS} ${Boost_LIBRARIES})
+    #target_link_libraries(MixFaceLibrary_${ANDROID_ABI} DebugLibrary_${ANDROID_ABI} OSCPACK_${ANDROID_ABI} ${LIBS} ${Boost_LIBRARIES})
 else()
     ADD_LIBRARY(MixFaceLibrary
             ${MixFaceLibrary_SOURCES}

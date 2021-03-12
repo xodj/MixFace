@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.10.0)
 
-PROJECT(MixFaceQtWidgets LANGUAGES CXX)
+PROJECT(MixFace LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -47,12 +47,13 @@ qt5_add_resources(MixFaceQtWidgets_QRC_SOURCES ${MixFaceQtWidgets_QRC})
 
 if(ANDROID)
     set(ANDROID_PACKAGE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/android CACHE INTERNAL "")
-    add_library(MixFaceQtWidgets SHARED
+    add_library(MixFace SHARED
         ${MixFaceQtWidgets_SOURCES}
         ${MixFaceQtWidgets_HEADERS}
         ${MixFaceQtWidgets_QRC_SOURCES}
         android/AndroidManifest.xml)
-    target_link_libraries(MixFaceQtWidgets MixFaceLibrary_${ANDROID_ABI} DebugLibrary_${ANDROID_ABI} OSCPACK_${ANDROID_ABI} Qt5::Widgets Qt5::Network)
+    #target_link_libraries(MixFaceQtWidgets MixFaceLibrary_${ANDROID_ABI} DebugLibrary_${ANDROID_ABI} OSCPACK_${ANDROID_ABI} Qt5::Widgets Qt5::Network)
+    target_link_libraries(MixFace MixFaceLibrary DebugLibrary OSCPACK Qt5::Widgets Qt5::Network)
 else()
     add_executable(MixFaceQtWidgets
         ${MixFaceQtWidgets_SOURCES}

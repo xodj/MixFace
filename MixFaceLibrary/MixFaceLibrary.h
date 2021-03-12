@@ -141,8 +141,6 @@ enum SendType {
     st_error
 };
 
-class MixFaceLinker;
-
 class MixFaceLibrary : public boost::thread {
 protected:
     struct x32db {
