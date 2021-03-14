@@ -7,7 +7,12 @@ OPTION(DISABLE_WXWIDGETS "Disable WX build" ON)
 OPTION(DISABLE_X32ST "Disable shutdown tool" ON)
 
 set(COMPILER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../MinGW-W64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/bin")
-set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../Boost/boost_1_74_0")
+
+if(UNIX)
+    set(BOOST_ROOT "/home/xodj/Boost/boost_1_74_0")
+else()
+    set(BOOST_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../Boost/boost_1_74_0")
+endif()
 
 set(BOOST_INCLUDE_DIRS "${BOOST_ROOT}")
 set(BOOST_LIBRARY_DIRS "${BOOST_ROOT}/stage/lib")
