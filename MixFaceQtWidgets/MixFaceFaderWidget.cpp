@@ -307,9 +307,9 @@ FaderWidget::~FaderWidget(){
 void FaderWidget::resizeEvent(QResizeEvent *e){
     QWidget::resizeEvent(e);
     int heightV = volArea->geometry().height() - 20;
-    volSlider->setGeometry(QRect(42*dpiRatio,10,10*dpiRatio,heightV));
-    m_vmeter->setGeometry(QRect(16*dpiRatio,10,10*dpiRatio,heightV));
-    ticks->setGeometry(QRect(68*dpiRatio,10,10*dpiRatio,heightV));
+    volSlider->setGeometry(QRect(42*dpiRatio, 10, 10*dpiRatio, heightV));
+    m_vmeter->setGeometry(QRect(16*dpiRatio, 10, 10*dpiRatio, heightV));
+    ticks->setGeometry(QRect(68*dpiRatio, 10, 10*dpiRatio, heightV));
 }
 
 void FaderWidget::setFaderType(FaderType ftype) {
@@ -445,11 +445,9 @@ void FaderWidget::setFaderValue(float value) {
 
     //Calculate db value
     //Resize one digit after point and set -inf
-    if (value > 0.f)
-        db->setText(QString::number(
-                        round(float2db(
-                                  float(volSlider->value()) / 10000),1)) + " db");
-    else db->setText("-inf db");
+    /*if (value > 0.f)
+        db->setText(QString::number(round(float2db(value, 1)) + " db");
+    else db->setText("-inf db");*/
     QLineEdit::connect(db,&QLineEdit::editingFinished,
                        this,&FaderWidget::dbEditingFinished);
     QSlider::connect(volSlider, &QSlider::valueChanged,
@@ -463,11 +461,9 @@ void FaderWidget::emitFaderChanged() {
     //Resize one digit after point and set -inf
     QLineEdit::disconnect(db,&QLineEdit::editingFinished,
                           this, &FaderWidget::dbEditingFinished);
-    if (volSlider->value()>0)
-        db->setText(QString::number(
-                        round(float2db(
-                                  float(volSlider->value()) / 10000),1)) + " db");
-    else db->setText("-inf db");
+    /*if (volSlider->value()>0)
+        db->setText(QString::number(round(float2db(value, 1)) + " db");
+    else db->setText("-inf db");*/
     QLineEdit::connect(db,&QLineEdit::editingFinished,
                           this, &FaderWidget::dbEditingFinished);
 }
