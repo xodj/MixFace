@@ -3,11 +3,13 @@ CONFIG -= gui
 
 TEMPLATE = lib
 #Comment for dynamic library
-CONFIG += staticlib
+#CONFIG += staticlib
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
+
+TARGET = MixFaceLibrary
 
 HEADERS += \
     MixFaceKeeper.h \
