@@ -58,15 +58,28 @@ win32:{
 INCLUDEPATH += $$PWD/../../../../../Boost/boost_1_74_0
 DEPENDPATH += $$PWD/../../../../../Boost/boost_1_74_0
 
+win32:!win32-g++*:contains(QMAKE_TARGET.arch, x86_64):{ # x32
+#C
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_thread-mgw8-mt-x32-1_74
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_thread-mgw8-mt-d-x32-1_74
-
+#C++
 win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_thread-mgw8-mt-x32-1_74.a
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_thread-mgw8-mt-d-x32-1_74.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/boost_thread-mgw8-mt-x32-1_74.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/boost_thread-mgw8-mt-d-x32-1_74.lib
+} else: { # x64
+#C
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_thread-mgw8-mt-x64-1_74
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_thread-mgw8-mt-d-x64-1_74
+#C++
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_thread-mgw8-mt-x64-1_74.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_thread-mgw8-mt-d-x64-1_74.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/boost_thread-mgw8-mt-x64-1_74.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/boost_thread-mgw8-mt-d-x64-1_74.lib
+}
 }
 
+#ANDROID
 unix:!macx{
 INCLUDEPATH += $$PWD/../../../Boost/boost_1_74_0/stage/include/boost-1_74
 DEPENDPATH += $$PWD/../../../Boost/boost_1_74_0/stage/include/boost-1_74
@@ -76,4 +89,16 @@ PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_thread-cl
 
 LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_chrono-clang-mt-a32-1_74
 PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_chrono-clang-mt-a32-1_74.a
+
+DISTFILES += \
+    android/AndroidManifest.xml \
+    android/build.gradle \
+    android/gradle.properties \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew \
+    android/gradlew.bat \
+    android/res/values/libs.xml
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
