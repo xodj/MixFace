@@ -1,9 +1,12 @@
+CONFIG -= qt
+
 TEMPLATE = lib
+#Coment for dynamic library
 CONFIG += staticlib
-QT += core
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-CONFIG += c++11
+
 DEFINES += QT_DEPRECATED_WARNINGS
+
+CONFIG += c++11
 
 HEADERS += \
     MixFaceKeeper.h \
@@ -16,12 +19,6 @@ SOURCES += \
     MixFaceKeeper.cpp \
     MixFaceLibrary.cpp \
     MixFaceLinker.cpp
-
-# Default rules for deployment.
-unix {
-    target.path = $$[QT_INSTALL_PLUGINS]/generic
-}
-!isEmpty(target.path): INSTALLS += target
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../OSCPACK/release/ -lOSCPACK
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../OSCPACK/debug/ -lOSCPACK
@@ -102,3 +99,9 @@ DISTFILES += \
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
+
+# Default rules for deployment.
+unix {
+    target.path = /usr/lib
+}
+!isEmpty(target.path): INSTALLS += target
