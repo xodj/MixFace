@@ -1,7 +1,8 @@
 CONFIG -= qt
+CONFIG -= gui
 
 TEMPLATE = lib
-#Coment for dynamic library
+#Comment for dynamic library
 CONFIG += staticlib
 
 DEFINES += QT_DEPRECATED_WARNINGS
