@@ -10,7 +10,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 TARGET = MixFaceLibrary
-RC_ICONS = ../MixFaceMedia/mf_icon.ico
+RC_ICONS = ../MixFaceMedia/mf_icon_16.ico
 #win32:VERSION = 2.0.3.55
 #else:VERSION = 2.0.3
 QMAKE_TARGET_COMPANY = "xo.dj"
