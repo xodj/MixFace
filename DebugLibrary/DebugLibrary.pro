@@ -30,7 +30,3 @@ unix {
     target.path = /usr/lib
 }
 !isEmpty(target.path): INSTALLS += target
-
-message($$TARGET)
-message($$VERSION)
-message($$QMAKE_TARGET_DESCRIPTION)
