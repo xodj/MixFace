@@ -10,6 +10,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 TARGET = MixFaceLibrary
+RC_ICONS = ../MixFaceMedia/mf_icon.ico
+#win32:VERSION = 2.0.3.55
+#else:VERSION = 2.0.3
+QMAKE_TARGET_COMPANY = "xo.dj"
+QMAKE_TARGET_DESCRIPTION = "Manipulating mixing consoles library."
+QMAKE_TARGET_COPYRIGHT = "Commercial license."
+QMAKE_TARGET_PRODUCT = "MixFace Library"
+QMAKE_TARGET_ORIGINAL_FILENAME = MixFaceLibrary.dll
 
 HEADERS += \
     MixFaceKeeper.h \

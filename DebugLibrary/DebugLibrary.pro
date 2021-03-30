@@ -15,7 +15,7 @@ RC_ICONS = ../MixFaceMedia/mf_icon.ico
 #else:VERSION = 1.2.0
 QMAKE_TARGET_COMPANY = "xo.dj"
 QMAKE_TARGET_DESCRIPTION = "Debug messages recorder."
-QMAKE_TARGET_COPYRIGHT = "GPL-3.0"
+QMAKE_TARGET_COPYRIGHT = "GPL-3.0 License."
 QMAKE_TARGET_PRODUCT = "Debug Library"
 QMAKE_TARGET_ORIGINAL_FILENAME = DebugLibrary.dll
 
