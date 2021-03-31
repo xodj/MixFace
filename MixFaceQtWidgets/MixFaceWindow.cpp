@@ -383,11 +383,10 @@ void MixFaceWindow::logoChanged(int idx, int value){
 
 void MixFaceWindow::colorChanged(int idx, int value){
     scrollWidget[idx]->setColor(value);
-    if ((idx>47&&idx<64)||idx==70||idx==71) {
+    if ((idx>47&&idx<64)||idx==70||idx==71)
         mainWidget[idx]->setColor(value);
-    } else if (srcArea->isVisible() && srcFader->property("idx").toInt() == idx) {
+    else if (srcArea->isVisible() && srcFader->property("idx").toInt() == idx)
         srcFader->setColor(value);
-    }
     mf_library->db.configcolor[idx] = value;
 
     if (connected) {

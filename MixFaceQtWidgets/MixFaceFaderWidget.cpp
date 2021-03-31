@@ -322,8 +322,8 @@ void FaderWidget::setFaderType(FaderType ftype) {
         setColor(0);
         break;
     case f_auxin:
-        setColor(1);
         setLogo(55);
+        setColor(1);
         dyn->setDisabled(true);
         dyn->setStyleSheet("QPushButton {"
                            "color: rgba(0,0,0,0);"
@@ -332,8 +332,8 @@ void FaderWidget::setFaderType(FaderType ftype) {
                            "border-radius: 0px;}");
         break;
     case f_fxreturn:
-        setColor(3);
         setLogo(61);
+        setColor(3);
         dyn->setDisabled(true);
         dyn->setStyleSheet("QPushButton {"
                            "color: rgba(0,0,0,0);"
@@ -342,12 +342,12 @@ void FaderWidget::setFaderType(FaderType ftype) {
                            "border-radius: 0px;}");
         break;
     case f_bus:
-        setColor(4);
         setLogo(71);
+        setColor(4);
         break;
     case f_matrix:
-        setColor(5);
         setLogo(72);
+        setColor(5);
         panSlider->setDisabled(true);
         panSlider->setStyleSheet("QSlider {"
                                  "background-color: rgba(0, 0, 0, 0);"
@@ -368,13 +368,13 @@ void FaderWidget::setFaderType(FaderType ftype) {
                                  "}");
         break;
     case f_lr:
+        setLogo(66);
         m_vmeter->setChannels(2);
         setColor(7);
-        setLogo(66);
         break;
     case f_mc:
-        setColor(8);
         setLogo(67);
+        setColor(8);
         panSlider->setDisabled(true);
         panSlider->setStyleSheet("QSlider {"
                                  "background-color: rgba(0, 0, 0, 0);"
@@ -395,8 +395,8 @@ void FaderWidget::setFaderType(FaderType ftype) {
                                  "}");
         break;
     case f_dca:
-        setColor(9);
         setLogo(70);
+        setColor(9);
         dyn->setDisabled(true);
         dyn->setStyleSheet("QPushButton {"
                            "color: rgba(0,0,0,0);"
@@ -600,10 +600,10 @@ void FaderWidget::setColor(int value) {
     icon->setStyleSheet("QPushButton {"
                         "background-color: " + bgcolor + ";"
                         "border: 0px solid rgb(0,0,0);}");
-    botArea->setStyleSheet("QScrollArea {"
+    /*botArea->setStyleSheet("QScrollArea {"
                            "border: 0px solid rgb(0,0,0);"
                            "background-color: " + bgcolor + ";"
-                           "}");
+                           "}");*/
     setLogo(iconNumber);
 }
 
