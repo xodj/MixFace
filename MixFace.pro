@@ -6,5 +6,6 @@ SUBDIRS += \
     MixFaceLibrary \
     MixFaceQtWidgets
 
+MixFace.depends = OSCPACK DebugLibrary MixFaceLibrary
 MixFaceQtWidgets.depends = OSCPACK DebugLibrary MixFaceLibrary
 MixFaceLibrary.depends = OSCPACK DebugLibrary
