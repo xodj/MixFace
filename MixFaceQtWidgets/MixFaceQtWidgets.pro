@@ -51,7 +51,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MixFaceLibrary/release/ -lMixFaceLibrary
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MixFaceLibrary/debug/ -lMixFaceLibrary
-else:unix: LIBS += -L$$OUT_PWD/../MixFaceLibrary/ -lMixFaceLibrary
+else:unix: LIBS += -L$$OUT_PWD/../MixFaceLibrary/ -lMixFaceLibrary_armeabi-v7a
 
 INCLUDEPATH += $$PWD/../MixFaceLibrary
 DEPENDPATH += $$PWD/../MixFaceLibrary
@@ -60,20 +60,7 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MixFace
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/debug/libMixFaceLibrary.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/release/MixFaceLibrary.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/debug/MixFaceLibrary.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/libMixFaceLibrary.a
-
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../OSCPACK/release/ -lOSCPACK
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../OSCPACK/debug/ -lOSCPACK
-else:unix: LIBS += -L$$OUT_PWD/../OSCPACK/ -lOSCPACK
-
-INCLUDEPATH += $$PWD/../OSCPACK
-DEPENDPATH += $$PWD/../OSCPACK
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/release/libOSCPACK.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/debug/libOSCPACK.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/release/OSCPACK.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/debug/OSCPACK.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/libOSCPACK.a
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/libMixFaceLibrary_armeabi-v7a.so
 
 win32{
     LIBS += -lkernel32 -lws2_32 -lwinmm
@@ -81,7 +68,7 @@ win32{
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../DebugLibrary/release/ -lDebugLibrary
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../DebugLibrary/debug/ -lDebugLibrary
-else:unix: LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary
+else:unix: LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary_armeabi-v7a
 
 INCLUDEPATH += $$PWD/../DebugLibrary
 DEPENDPATH += $$PWD/../DebugLibrary
@@ -90,7 +77,10 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLi
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/debug/libDebugLibrary.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/release/DebugLibrary.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/debug/DebugLibrary.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary.a
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary_armeabi-v7a.so
+
+INCLUDEPATH += $$PWD/../OSCPACK
+DEPENDPATH += $$PWD/../OSCPACK
 
 #Boost libraries
 win32:{
@@ -102,12 +92,6 @@ DEPENDPATH += $$PWD/../../../../../Boost/boost_1_74_0
 unix:!macx{
 INCLUDEPATH += $$PWD/../../../Boost/boost_1_74_0/stage/include/boost-1_74
 DEPENDPATH += $$PWD/../../../Boost/boost_1_74_0/stage/include/boost-1_74
-
-LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_thread-clang-mt-a32-1_74
-PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_thread-clang-mt-a32-1_74.a
-
-LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_chrono-clang-mt-a32-1_74
-PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_chrono-clang-mt-a32-1_74.a
 
 DISTFILES += \
     android/AndroidManifest.xml \

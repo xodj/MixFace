@@ -33,7 +33,7 @@ SOURCES += \
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../OSCPACK/release/ -lOSCPACK
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../OSCPACK/debug/ -lOSCPACK
-else:unix: LIBS += -L$$OUT_PWD/../OSCPACK/ -lOSCPACK
+else:unix: LIBS += -L$$OUT_PWD/../OSCPACK/ -lOSCPACK_armeabi-v7a
 
 INCLUDEPATH += $$PWD/../OSCPACK
 DEPENDPATH += $$PWD/../OSCPACK
@@ -42,7 +42,7 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/debug/libOSCPACK.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/release/OSCPACK.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/debug/OSCPACK.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/libOSCPACK.a
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/libOSCPACK_armeabi-v7a.so
 
 win32{
     LIBS += -lkernel32 -lws2_32 -lwinmm
@@ -50,7 +50,7 @@ win32{
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../DebugLibrary/release/ -lDebugLibrary
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../DebugLibrary/debug/ -lDebugLibrary
-else:unix: LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary
+else:unix: LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary_armeabi-v7a
 
 INCLUDEPATH += $$PWD/../DebugLibrary
 DEPENDPATH += $$PWD/../DebugLibrary
@@ -59,7 +59,7 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLi
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/debug/libDebugLibrary.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/release/DebugLibrary.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/debug/DebugLibrary.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary.a
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary_armeabi-v7a.so
 
 #Boost libraries
 win32:{
