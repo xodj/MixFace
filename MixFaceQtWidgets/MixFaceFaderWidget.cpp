@@ -208,8 +208,11 @@ void FaderWidget::initWidget(){
     icon->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
     botLayout->addWidget(icon);
     icon->setHidden(true);
+    icon->setStyleSheet("QPushButton {"
+                        "background-color: rgb(64, 64, 64);"
+                        "border: 0px solid rgb(0,0,0);}");
 
-    QScrollArea *botArea = new QScrollArea;
+    botArea = new QScrollArea;
     botArea->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
     botArea->setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     botArea->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
@@ -366,11 +369,11 @@ void FaderWidget::setFaderType(FaderType ftype) {
         break;
     case f_lr:
         m_vmeter->setChannels(2);
-        setColor(6);
+        setColor(7);
         setLogo(66);
         break;
     case f_mc:
-        setColor(7);
+        setColor(8);
         setLogo(67);
         panSlider->setDisabled(true);
         panSlider->setStyleSheet("QSlider {"
@@ -392,7 +395,7 @@ void FaderWidget::setFaderType(FaderType ftype) {
                                  "}");
         break;
     case f_dca:
-        setColor(8);
+        setColor(9);
         setLogo(70);
         dyn->setDisabled(true);
         dyn->setStyleSheet("QPushButton {"
@@ -498,29 +501,123 @@ void FaderWidget::setMute(bool value) {mute->setChecked(value);}
 void FaderWidget::setSolo(bool value) {solo->setChecked(value);}
 
 void FaderWidget::setLogo(int value) {
-    if (value>0&&value<75) iconNumber = value;
+    if (value >= 1 && value <= 74) iconNumber = value;
     if (iconNumber != 1) icon->setVisible(true);
     else icon->setHidden(true);
 
-    icon->setStyleSheet("QPushButton {"
-                        "background-color: rgb(64, 64, 64);"
-                        "border: 0px solid rgb(0,0,0);}");
-
-    icon->setIcon(QIcon(":/fader/icons/" + QString::number(iconNumber) + "W"));
+    icon->setIcon(QIcon(":/fader/icons/" + QString::number(iconNumber) + BWIcon));
     icon->setIconSize(QSize(72,72));
 }
 
 void FaderWidget::setColor(int value) {
-    Q_UNUSED(value)
+    if (value >= 0 && value <= 15) colorNumber = value;
+    QString fgcolor = "rgb(255,255,255)";
+    QString bgcolor = "rgb(64,64,64)";
+    switch(colorNumber){
+    case 0:
+        BWIcon = "W";
+        break;
+    case 1:
+        BWIcon = "B";
+        bgcolor = "rgb(255,64,64)";
+        fgcolor = "rgb(32,32,32)";
+        break;
+    case 2:
+        BWIcon = "B";
+        bgcolor = "rgb(64,255,64)";
+        fgcolor = "rgb(32,32,32)";
+        break;
+    case 3:
+        BWIcon = "B";
+        bgcolor = "rgb(255,255,64)";
+        fgcolor = "rgb(32,32,32)";
+        break;
+    case 4:
+        BWIcon = "B";
+        bgcolor = "rgb(64,64,255)";
+        fgcolor = "rgb(32,32,32)";
+        break;
+    case 5:
+        BWIcon = "B";
+        bgcolor = "rgb(255,64,255)";
+        fgcolor = "rgb(32,32,32)";
+        break;
+    case 6:
+        BWIcon = "B";
+        bgcolor = "rgb(64,255,255)";
+        fgcolor = "rgb(32,32,32)";
+        break;
+    case 7:
+        BWIcon = "B";
+        bgcolor = "rgb(255,255,255)";
+        fgcolor = "rgb(32,32,32)";
+        break;
+    case 8:
+        BWIcon = "W";
+        bgcolor = "rgb(128,128,128)";
+        break;
+    case 9:
+        BWIcon = "W";
+        bgcolor = "rgb(32,32,32)";
+        fgcolor = "rgb(255,0,0)";
+        break;
+    case 10:
+        BWIcon = "W";
+        bgcolor = "rgb(32,32,32)";
+        fgcolor = "rgb(0,255,0)";
+        break;
+    case 11:
+        BWIcon = "W";
+        bgcolor = "rgb(32,32,32)";
+        fgcolor = "rgb(255,255,0)";
+        break;
+    case 12:
+        BWIcon = "W";
+        bgcolor = "rgb(32,32,32)";
+        fgcolor = "rgb(0,0,255)";
+        break;
+    case 13:
+        BWIcon = "W";
+        bgcolor = "rgb(32,32,32)";
+        fgcolor = "rgb(255,0,255)";
+        break;
+    case 14:
+        BWIcon = "W";
+        bgcolor = "rgb(32,32,32)";
+        fgcolor = "rgb(0,255,255)";
+        break;
+    case 15:
+        BWIcon = "W";
+        bgcolor = "rgb(32,32,32)";
+        fgcolor = "rgb(255,255,255)";
+        break;
+    }
     //set color by number
+    channelName->setStyleSheet("QPushButton {"
+                               "background-color: " + bgcolor + ";"
+                               "color: " + fgcolor + ";"
+                               "border: 0px solid rgb(0,0,0);}");
+    icon->setStyleSheet("QPushButton {"
+                        "background-color: " + bgcolor + ";"
+                        "border: 0px solid rgb(0,0,0);}");
+    botArea->setStyleSheet("QScrollArea {"
+                           "border: 0px solid rgb(0,0,0);"
+                           "background-color: " + bgcolor + ";"
+                           "}");
+    setLogo(iconNumber);
 }
 
 void FaderWidget::setName(QString value) {
-    if (value.size() > 10) {
+    if (value.length() > 10) {
             channelName->setFont(m_fonts->boldFont8);
-            if (value.size() > 17) value.resize(17);
-    }
-    channelName->setText(value);
+            if (value.length() > 17) value.resize(17);
+    } else
+        channelName->setFont(m_fonts->boldFont12);
+
+    if (value.length() < 1)
+        channelName->setText(nativeName->text());
+    else
+        channelName->setText(value);
 }
 
 void FaderWidget::emitMuteChanged(){

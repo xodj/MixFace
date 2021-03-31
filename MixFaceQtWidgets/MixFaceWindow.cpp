@@ -366,17 +366,53 @@ void MixFaceWindow::iconButtonClicked(){
 
 void MixFaceWindow::logoChanged(int idx, int value){
     scrollWidget[idx]->setLogo(value);
+    if ((idx>47&&idx<64)||idx==70||idx==71) {
+        mainWidget[idx]->setLogo(value);
+    } else if (srcArea->isVisible() && srcFader->property("idx").toInt() == idx) {
+        srcFader->setLogo(value);
+    }
     mf_library->db.configicon[idx] = value;
+
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(configicon, chtype, chN, 0);
+        mf_library->linker->sendInt(msg.c_str(), value);
+    }
 }
 
 void MixFaceWindow::colorChanged(int idx, int value){
     scrollWidget[idx]->setColor(value);
+    if ((idx>47&&idx<64)||idx==70||idx==71) {
+        mainWidget[idx]->setColor(value);
+    } else if (srcArea->isVisible() && srcFader->property("idx").toInt() == idx) {
+        srcFader->setColor(value);
+    }
     mf_library->db.configcolor[idx] = value;
+
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(configcolor, chtype, chN, 0);
+        mf_library->linker->sendInt(msg.c_str(), value);
+    }
 }
 
 void MixFaceWindow::nameChanged(int idx, QString value){
     scrollWidget[idx]->setName(value);
+    if ((idx>47&&idx<64)||idx==70||idx==71) {
+        mainWidget[idx]->setName(value);
+    } else if (srcArea->isVisible() && srcFader->property("idx").toInt() == idx) {
+        srcFader->setName(value);
+    }
     mf_library->db.configname[idx] = value.toStdString();
+
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(configname, chtype, chN, 0);
+        mf_library->linker->sendString(msg.c_str(), value.toStdString());
+    }
 }
 
 void MixFaceWindow::buttonSrcClicked(){
@@ -611,7 +647,7 @@ void MixFaceWindow::muteClicked(int value)
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
         string msg = mf_library->getOscAddress(mtype, chtype, chN, send);
-        mf_library->linker->sendFloat(msg.c_str(), value);
+        mf_library->linker->sendInt(msg.c_str(), value);
     }
 
     if ((idx>47&&idx<65)||idx==70||idx==71) {
@@ -882,10 +918,30 @@ void MixFaceWindow::valueChanged(int imtype, int idx, int idy) {
         }
         break;
     case configcolor:
+        scrollWidget[idx]->setColor(mf_library->db.configcolor[idx]);
+        if ((idx>47&&idx<64)||idx==70||idx==71) {
+            mainWidget[idx]->setColor(mf_library->db.configcolor[idx]);
+        } else if (srcArea->isVisible() && srcFader->property("idx").toInt() == idx) {
+            srcFader->setColor(mf_library->db.configcolor[idx]);
+        }
         break;
     case configicon:
+        scrollWidget[idx]->setLogo(mf_library->db.configicon[idx]);
+        if ((idx>47&&idx<64)||idx==70||idx==71) {
+            mainWidget[idx]->setLogo(mf_library->db.configicon[idx]);
+        } else if (srcArea->isVisible() && srcFader->property("idx").toInt() == idx) {
+            srcFader->setLogo(mf_library->db.configicon[idx]);
+        }
         break;
     case configname:
+        if (QString::fromStdString(mf_library->db.configname[idx]).length() <= 0)
+            QString::fromStdString(mf_library->db.configname[idx]) = QString::fromStdString(mf_library->channelNameFromIdx(idx));
+        scrollWidget[idx]->setName(QString::fromStdString(mf_library->db.configname[idx]));
+        if ((idx>47&&idx<64)||idx==70||idx==71) {
+            mainWidget[idx]->setName(QString::fromStdString(mf_library->db.configname[idx]));
+        } else if (srcArea->isVisible() && srcFader->property("idx").toInt() == idx) {
+            srcFader->setName(QString::fromStdString(mf_library->db.configname[idx]));
+        }
         break;
     case merror:
         debug->sendMessage(QString("Error change value!").toStdString(),0);

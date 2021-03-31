@@ -132,6 +132,16 @@ void MixFaceLibrary::sendSyncMessages() {
                 linker->sendCmdOnly(msg.c_str());
             }
         }
+
+        mtype = configcolor;
+        msg = getOscAddress(mtype, chtype, chN, 0);
+        linker->sendCmdOnly(msg.c_str());
+        mtype = configicon;
+        msg = getOscAddress(mtype, chtype, chN, 0);
+        linker->sendCmdOnly(msg.c_str());
+        mtype = configname;
+        msg = getOscAddress(mtype, chtype, chN, 0);
+        linker->sendCmdOnly(msg.c_str());
     }
 }
 
