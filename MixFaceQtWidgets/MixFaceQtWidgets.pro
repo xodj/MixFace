@@ -7,19 +7,23 @@ CONFIG += c++11
 DEFINES += QT_DEPRECATED_WARNINGS
 
 TARGET = MixFace
-RC_ICONS = ../MixFaceMedia/mf_icon.ico
-#win32:VERSION = 2.0.3.55
-#else:VERSION = 2.0.3
+win32: {
+#RC_ICONS = ../MixFaceMedia/mf_icon.ico
+#VERSION = 2.0.3.58
+#TARGET_EXT = .exe
 QMAKE_TARGET_COMPANY = "xo.dj"
 QMAKE_TARGET_DESCRIPTION = "MixFace Qt Widgets GUI for MixFace Library."
 QMAKE_TARGET_COPYRIGHT = "GPL-3.0 License."
 QMAKE_TARGET_PRODUCT = "MixFace Qt Widgets GUI."
-QMAKE_TARGET_ORIGINAL_FILENAME = OSCPACK.dll
+QMAKE_TARGET_ORIGINAL_FILENAME = MixFace.exe
+RC_FILE += MixFace.rc
+} else: VERSION = 2.0.3
 
 RESOURCES += \
     MixFaceResources.qrc
 
 HEADERS += \
+    MixFace.rc \
     MixFaceDynamicsWidget.h \
     MixFaceEnumTypes.h \
     MixFaceEqualizerWidget.h \
