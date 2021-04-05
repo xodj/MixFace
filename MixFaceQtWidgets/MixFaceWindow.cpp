@@ -24,8 +24,6 @@ MixFaceWindow::MixFaceWindow(DebugLibrary *debug)
     mf_demoTimer = new MixFaceDemoTimer;
     initUI();
 
-    mf_library->valueChanged.connect(signal_type_thr_int(&MixFaceWindow::valueChanged, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>()));
-
     for(int idx = 0;idx<80;idx++)
         for (int idy = 0;idy < 7;idy++)
             if(idx!=70&&idx!=71&&(idx<48||idx>63))
@@ -36,6 +34,7 @@ MixFaceWindow::MixFaceWindow(DebugLibrary *debug)
     mf_metersTimer->start(34);
     mf_demoTimer->start(5);
 
+    mf_library->valueChanged.connect(signal_type_thr_int(&MixFaceWindow::valueChanged, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>()));
     mf_library->slotConnected.connect(signal_type_bool(&MixFaceWindow::s_connected,this,boost::arg<1>()));
 }
 
@@ -222,6 +221,7 @@ void MixFaceWindow::resizeEvent(QResizeEvent *e){
 void MixFaceWindow::connection(){
     mf_library->threadConnect(mf_topArea->lineIp->text().toStdString());
 }
+
 void MixFaceWindow::s_connected(bool stat){
     connected = stat;
     if (stat) {
