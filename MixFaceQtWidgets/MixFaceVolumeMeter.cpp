@@ -4,7 +4,8 @@ MixFaceVolumeMeter::MixFaceVolumeMeter(QWidget *parent, DebugLibrary *debug_,
                                          float dpiRatio_)
     : QWidget(parent), debug(debug_)
 {
-    Q_UNUSED(dpiRatio_)
+    meterWSize = meterWSize * dpiRatio_;
+    peakHSize = peakHSize * dpiRatio_;
     setMinimumSize(channels * (meterWSize + (borders * 2)), 50);
     setMaximumWidth(channels * (meterWSize + (borders * 2)));
     panelWSize = (meterWSize + (borders * 2));

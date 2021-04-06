@@ -76,8 +76,8 @@ private:
     int panelWSize;
     int panelHSize = -1;
     const int borders = 0;
-    const int meterWSize = 16;
-    const int peakHSize = 8;
+    int meterWSize = 16;
+    int peakHSize = 8;
     const int frame = 0;
     //Variables
     float currentPeak[2] = {0.f, 0.f};

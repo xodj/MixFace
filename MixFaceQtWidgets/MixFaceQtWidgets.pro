@@ -9,7 +9,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 TARGET = MixFace
 win32: {
 #RC_ICONS = ../MixFaceMedia/mf_icon.ico
-#VERSION = 2.0.3.58
+#VERSION = 0.2.0.65
 #TARGET_EXT = .exe
 QMAKE_TARGET_COMPANY = "xo.dj"
 QMAKE_TARGET_DESCRIPTION = "MixFace Qt Widgets GUI for MixFace Library."
@@ -17,7 +17,7 @@ QMAKE_TARGET_COPYRIGHT = "GPL-3.0 License."
 QMAKE_TARGET_PRODUCT = "MixFace Qt Widgets GUI."
 QMAKE_TARGET_ORIGINAL_FILENAME = MixFace.exe
 RC_FILE += MixFace.rc
-} else: VERSION = 2.0.3
+} else: VERSION = 0.2.0
 
 RESOURCES += \
     MixFaceResources.qrc
@@ -48,54 +48,57 @@ SOURCES += \
     MixFaceVolumeMeter.cpp \
     MixFaceWindow.cpp
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
-
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MixFaceLibrary/release/ -lMixFaceLibrary
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MixFaceLibrary/debug/ -lMixFaceLibrary
-else:unix: LIBS += -L$$OUT_PWD/../MixFaceLibrary/ -lMixFaceLibrary_armeabi-v7a
 
 INCLUDEPATH += $$PWD/../MixFaceLibrary
 DEPENDPATH += $$PWD/../MixFaceLibrary
+INCLUDEPATH += $$PWD/../DebugLibrary
+DEPENDPATH += $$PWD/../DebugLibrary
+INCLUDEPATH += $$PWD/../OSCPACK
+DEPENDPATH += $$PWD/../OSCPACK
 
+# WINDOWS
+win32:{
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../MixFaceLibrary/release/ -lMixFaceLibrary
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../MixFaceLibrary/debug/ -lMixFaceLibrary
 win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/release/libMixFaceLibrary.a
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/debug/libMixFaceLibrary.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/release/MixFaceLibrary.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/debug/MixFaceLibrary.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/libMixFaceLibrary_armeabi-v7a.so
-
-win32{
-    LIBS += -lkernel32 -lws2_32 -lwinmm
-}
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../DebugLibrary/release/ -lDebugLibrary
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../DebugLibrary/debug/ -lDebugLibrary
-else:unix: LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary_armeabi-v7a
-
-INCLUDEPATH += $$PWD/../DebugLibrary
-DEPENDPATH += $$PWD/../DebugLibrary
-
 win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/release/libDebugLibrary.a
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/debug/libDebugLibrary.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/release/DebugLibrary.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/debug/DebugLibrary.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary_armeabi-v7a.so
 
-INCLUDEPATH += $$PWD/../OSCPACK
-DEPENDPATH += $$PWD/../OSCPACK
+LIBS += -lkernel32 -lws2_32 -lwinmm
 
-#Boost libraries
-win32:{
 INCLUDEPATH += $$PWD/../../../../../Boost/boost_1_74_0
 DEPENDPATH += $$PWD/../../../../../Boost/boost_1_74_0
 }
 
-#ANDROID
-unix:!macx{
+# ANDROID
+android {
 INCLUDEPATH += $$PWD/../../../Boost/boost_1_74_0/stage/include/boost-1_74
 DEPENDPATH += $$PWD/../../../Boost/boost_1_74_0/stage/include/boost-1_74
+
+contains(QT_ARCH, armeabi-v7a) {
+    LIBS += -L$$OUT_PWD/../MixFaceLibrary/ -lMixFaceLibrary_armeabi-v7a
+    PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/libMixFaceLibrary_armeabi-v7a.so
+    PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary_armeabi-v7a.so
+    LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary_armeabi-v7a
+} else: contains(QT_ARCH, arm64-v8a) {
+    LIBS += -L$$OUT_PWD/../MixFaceLibrary/ -lMixFaceLibrary_arm64-v8a
+    PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/libMixFaceLibrary_arm64-v8a.so
+    PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary_arm64-v8a.so
+    LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary_arm64-v8a
+} else: contains(QT_ARCH, x86) {
+    LIBS += -L$$OUT_PWD/../MixFaceLibrary/ -lMixFaceLibrary_x86
+    PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/libMixFaceLibrary_x86.so
+    PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary_x86.so
+    LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary_x86
+}
 
 DISTFILES += \
     android/AndroidManifest.xml \
@@ -109,3 +112,24 @@ DISTFILES += \
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
+
+# LINUX
+unix:!android {
+    INCLUDEPATH += /home/xodj/Boost/boost_1_74_0
+    DEPENDPATH += /home/xodj/Boost/boost_1_74_0
+
+    LIBS += -L$$OUT_PWD/../MixFaceLibrary/ -lMixFaceLibrary
+    PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/libMixFaceLibrary.so
+    LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary
+    PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary.so
+
+    LIBS += -L$$OUT_PWD/../OSCPACK/ -lOSCPACK
+    PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/libOSCPACK.so
+    LIBS += -L/home/xodj/Boost/boost_1_74_0/stage/lib/ -lboost_thread
+    PRE_TARGETDEPS += /home/xodj/Boost/boost_1_74_0/stage/lib/libboost_thread.so
+    LIBS += -L/home/xodj/Boost/boost_1_74_0/stage/lib/ -lboost_chrono
+    PRE_TARGETDEPS += /home/xodj/Boost/boost_1_74_0/stage/lib/libboost_chrono.so
+
+    target.path = /usr/lib
+}
+!isEmpty(target.path): INSTALLS += target

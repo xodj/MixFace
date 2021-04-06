@@ -4,7 +4,7 @@ DebugLibrary::DebugLibrary(int argc_, char *argv_[])
     : argc(argc_), argv(argv_)
 {
     int debugLevelArg = 0;
-    if(argc != 0)
+    if(argc != 0){
         for(int i = 0; i < argc; i++) {
             //no caps
             char caps[] = def_caps;
@@ -25,8 +25,13 @@ DebugLibrary::DebugLibrary(int argc_, char *argv_[])
                 sendMessage("DebugLibrary::DebugLibrary DPI ratio set to " + to_string(dpi),1);
             }
         }
+    }
     sendMessage(string("DebugLibrary::DebugLibrary Debuger loaded..."),1);
     setDebugLevel(debugLevelArg);
+
+    if(argc != 0)
+        for(int i = 0; i < argc; i++)
+            sendMessage("DebugLibrary::DebugLibrary argc: " + to_string(i) + " argv: " + string(argv[i]),3);
 }
 
 void DebugLibrary::sendMessage(string message_, int debugLevel_)

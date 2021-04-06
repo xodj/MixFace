@@ -139,7 +139,7 @@ void FaderWidget::initWidget(){
     volSlider->setMaximum(10000);
     volSlider->setValue(7500);
     volSlider->setPageStep(0);
-    volSlider->setStyleSheet(QString::fromUtf8("QSlider {"
+    volSlider->setStyleSheet(QString("QSlider {"
                                                "background-color: rgba(0, 0, 0, 0);"
                                                "}"
                                                "QSlider::groove:vertical\n"
@@ -170,7 +170,7 @@ void FaderWidget::initWidget(){
                                                  "background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(196, 196, 196, 255), stop:0.12 rgba(64, 64, 64, 255), stop:0.480377 rgba(255, 255, 255, 255), stop:0.489564 rgba(0, 0, 0, 255), stop:0.510436 rgba(0, 0, 0, 255), stop:0.52 rgba(255, 255, 255, 255), stop:0.88 rgba(64, 64, 64, 255), stop:1 rgba(196, 196, 196, 255));\n"
                                                  "border: 1px solid rgb(64,64,64);\n"
                                                  "border-radius: 5px;\n"
-                                                 "height: 44px;\n"
+                                                 "height: " + QString::number(44*dpiRatio) + "px;\n"
                                                  "margin: 0 -18px;\n"
                                                  "}"));
 

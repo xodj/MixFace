@@ -2,6 +2,7 @@
 #include <QtNetwork/QNetworkInterface>
 
 int main(int argc, char *argv[]) {
+    qputenv("QT_ENABLE_HIGHDPI_SCALING", "0"); //Disable Auto High DPI
     QApplication *mixFace = new QApplication(argc, argv);
     MixFaceWindow *mixFaceWindow = new MixFaceWindow(new DebugLibrary(argc, argv));
     mixFaceWindow->showMaximized();

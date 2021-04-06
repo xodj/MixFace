@@ -3,8 +3,8 @@
 IDI_ICON1	ICON	"../MixFaceMedia/mf_icon.ico"
 
 VS_VERSION_INFO VERSIONINFO
-	FILEVERSION 2,0,3,58
-	PRODUCTVERSION 2,0,3,58
+    FILEVERSION 0,2,0,65
+    PRODUCTVERSION 0,2,0,65
 	FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
 	FILEFLAGS VS_FF_DEBUG
@@ -21,11 +21,11 @@ VS_VERSION_INFO VERSIONINFO
 			BEGIN
 				VALUE "CompanyName", "xo.dj\0"
 				VALUE "FileDescription", "MixFace Qt Widgets GUI for MixFace Library.\0"
-				VALUE "FileVersion", "2.0.3.58\0"
+                VALUE "FileVersion", "0.2.0.65\0"
 				VALUE "LegalCopyright", "GPL-3.0 License.\0"
 				VALUE "OriginalFilename", "MixFace.exe\0"
 				VALUE "ProductName", "MixFace Qt Widgets GUI.\0"
-				VALUE "ProductVersion", "2.0.3.58\0"
+                VALUE "ProductVersion", "0.2.0.65\0"
 				VALUE "InternalName", "\0"
 				VALUE "Comments", "\0"
 				VALUE "LegalTrademarks", "\0"

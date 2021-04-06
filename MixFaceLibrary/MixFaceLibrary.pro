@@ -34,38 +34,29 @@ SOURCES += \
     MixFaceLibrary.cpp \
     MixFaceLinker.cpp
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../OSCPACK/release/ -lOSCPACK
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../OSCPACK/debug/ -lOSCPACK
-else:unix: LIBS += -L$$OUT_PWD/../OSCPACK/ -lOSCPACK_armeabi-v7a
-
 INCLUDEPATH += $$PWD/../OSCPACK
 DEPENDPATH += $$PWD/../OSCPACK
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/release/libOSCPACK.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/debug/libOSCPACK.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/release/OSCPACK.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/debug/OSCPACK.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/libOSCPACK_armeabi-v7a.so
-
-win32{
-    LIBS += -lkernel32 -lws2_32 -lwinmm
-}
-
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../DebugLibrary/release/ -lDebugLibrary
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../DebugLibrary/debug/ -lDebugLibrary
-else:unix: LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary_armeabi-v7a
-
 INCLUDEPATH += $$PWD/../DebugLibrary
 DEPENDPATH += $$PWD/../DebugLibrary
 
+# WINDOWS
+win32:{
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../DebugLibrary/release/ -lDebugLibrary
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../DebugLibrary/debug/ -lDebugLibrary
 win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/release/libDebugLibrary.a
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/debug/libDebugLibrary.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/release/DebugLibrary.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/debug/DebugLibrary.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary_armeabi-v7a.so
 
-#Boost libraries
-win32:{
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../OSCPACK/release/ -lOSCPACK
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../OSCPACK/debug/ -lOSCPACK
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/release/libOSCPACK.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/debug/libOSCPACK.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/release/OSCPACK.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/debug/OSCPACK.lib
+
+LIBS += -lkernel32 -lws2_32 -lwinmm
+
 INCLUDEPATH += $$PWD/../../../../../Boost/boost_1_74_0
 DEPENDPATH += $$PWD/../../../../../Boost/boost_1_74_0
 
@@ -91,15 +82,47 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../.
 }
 
 #ANDROID
-unix:!macx{
+android {
 INCLUDEPATH += $$PWD/../../../Boost/boost_1_74_0/stage/include/boost-1_74
 DEPENDPATH += $$PWD/../../../Boost/boost_1_74_0/stage/include/boost-1_74
 
-LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_thread-clang-mt-a32-1_74
-PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_thread-clang-mt-a32-1_74.a
-
-LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_chrono-clang-mt-a32-1_74
-PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_chrono-clang-mt-a32-1_74.a
+contains(QT_ARCH, armeabi-v7a) {
+    LIBS += -L$$OUT_PWD/../OSCPACK/ -lOSCPACK_armeabi-v7a
+    PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/libOSCPACK_armeabi-v7a.so
+    LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary_armeabi-v7a
+    PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary_armeabi-v7a.so
+    LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_thread-clang-mt-a32-1_74
+    PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_thread-clang-mt-a32-1_74.a
+    LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_chrono-clang-mt-a32-1_74
+    PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_chrono-clang-mt-a32-1_74.a
+} else: contains(QT_ARCH, arm64-v8a) {
+    LIBS += -L$$OUT_PWD/../OSCPACK/ -lOSCPACK_arm64-v8a
+    PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/libOSCPACK_arm64-v8a.so
+    LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary_arm64-v8a
+    PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary_arm64-v8a.so
+    LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_thread-clang-mt-a64-1_74
+    PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_thread-clang-mt-a64-1_74.a
+    LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_chrono-clang-mt-a64-1_74
+    PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_chrono-clang-mt-a64-1_74.a
+} else: contains(QT_ARCH, x86) {
+    LIBS += -L$$OUT_PWD/../OSCPACK/ -lOSCPACK_x86
+    PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/libOSCPACK_x86.so
+    LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary_x86
+    PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary_x86.so
+    LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_thread-clang-mt-x32-1_74
+    PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_thread-clang-mt-x32-1_74.a
+    LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_chrono-clang-mt-x32-1_74
+    PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_chrono-clang-mt-x32-1_74.a
+} else: contains(QT_ARCH, x86_64) {
+    LIBS += -L$$OUT_PWD/../OSCPACK/ -lOSCPACK_x86_64
+    PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/libOSCPACK_x86_64.so
+    LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary_x86_64
+    PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary_x86_64.so
+    LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_thread-clang-mt-x64-1_74
+    PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_thread-clang-mt-x64-1_74.a
+    LIBS += -L$$PWD/../../../Boost/boost_1_74_0/stage/lib/ -lboost_chrono-clang-mt-x64-1_74
+    PRE_TARGETDEPS += $$PWD/../../../Boost/boost_1_74_0/stage/lib/libboost_chrono-clang-mt-x64-1_74.a
+}
 
 DISTFILES += \
     android/AndroidManifest.xml \
@@ -114,8 +137,20 @@ DISTFILES += \
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 }
 
-# Default rules for deployment.
-unix {
+# LINUX
+unix:!android {
+    INCLUDEPATH += /home/xodj/Boost/boost_1_74_0
+    DEPENDPATH += /home/xodj/Boost/boost_1_74_0
+
+    LIBS += -L$$OUT_PWD/../OSCPACK/ -lOSCPACK
+    PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/libOSCPACK.so
+    LIBS += -L$$OUT_PWD/../DebugLibrary/ -lDebugLibrary
+    PRE_TARGETDEPS += $$OUT_PWD/../DebugLibrary/libDebugLibrary.so
+    LIBS += -L/home/xodj/Boost/boost_1_74_0/stage/lib/ -lboost_thread
+    PRE_TARGETDEPS += /home/xodj/Boost/boost_1_74_0/stage/lib/libboost_thread.so
+    LIBS += -L/home/xodj/Boost/boost_1_74_0/stage/lib/ -lboost_chrono
+    PRE_TARGETDEPS += /home/xodj/Boost/boost_1_74_0/stage/lib/libboost_chrono.so
+
     target.path = /usr/lib
 }
 !isEmpty(target.path): INSTALLS += target
