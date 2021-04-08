@@ -55,17 +55,12 @@ void MixFaceWindow::initUI(){
     verticalLayout->setSpacing(0);
     verticalLayout->setContentsMargins(0, 0, 0, 0);
 
-    topArea = new QScrollArea;
-    topArea->setFrameShape(QFrame::NoFrame);
-    topArea->setLineWidth(0);
-    topArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    topArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    topArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-    topArea->setWidgetResizable(true);
-    topArea->setMaximumHeight(32*dpiRatio);
-    topArea->setMinimumHeight(32*dpiRatio);
-
-    verticalLayout->addWidget(topArea);
+    mf_topArea = new MixFaceTopWidget(dpiRatio, debug, mf_fonts, this);
+    mf_topArea->setMaximumHeight(32*dpiRatio);
+    mf_topArea->setMinimumHeight(32*dpiRatio);
+    verticalLayout->addWidget(mf_topArea);
+    connect(mf_topArea, &MixFaceTopWidget::connect, this, &MixFaceWindow::connection);
+    connect(mf_topArea, &MixFaceTopWidget::sync, this, &MixFaceWindow::sendSyncMessages);
 
     horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(0);
@@ -157,33 +152,27 @@ void MixFaceWindow::initUI(){
 
     horizontalLayout->addWidget(mainArea);
 
-    rightArea = new QScrollArea;
-    QSizePolicy sizePolicy2(QSizePolicy::Maximum, QSizePolicy::Expanding);
-    sizePolicy2.setHorizontalStretch(0);
-    sizePolicy2.setVerticalStretch(0);
-    sizePolicy2.setHeightForWidth(rightArea->sizePolicy().hasHeightForWidth());
-    rightArea->setSizePolicy(sizePolicy2);
-    rightArea->setMaximumSize(QSize(64*dpiRatio, 16777215));
-    rightArea->setFrameShape(QFrame::NoFrame);
-    rightArea->setLineWidth(0);
-    rightArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    rightArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    rightArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-    rightArea->setWidgetResizable(true);
-    rightArea->setAlignment(Qt::AlignHCenter|Qt::AlignTop);
-
-    horizontalLayout->addWidget(rightArea);
+    QWidget *enwidget = new QWidget;
+    enwidget->setMinimumSize(32,32);
+    enwidget->setStyleSheet("QWidget {"
+                        "border: 0px solid rgb(0,0,0);"
+                        "background-color: rgb(96,96,96);"
+                        "}");
+    QVBoxLayout *envlayout = new QVBoxLayout;
+    envlayout->setContentsMargins(0, 0, 0, 0);
+    mf_rightArea = new MixFaceRightWidget(dpiRatio, debug, mf_fonts, this);
+    connect(mf_rightArea, &MixFaceRightWidget::assignMainFader, this, &MixFaceWindow::assignMainFader);
+    connect(mf_rightArea, &MixFaceRightWidget::assignScrollFaders, this, &MixFaceWindow::assignScrollFaders);
+    envlayout->addWidget(mf_rightArea);
+    enwidget->setLayout(envlayout);
+    horizontalLayout->addWidget(enwidget);
 
     verticalLayout->addLayout(horizontalLayout);
 
-    debug->sendMessage(QString("MixFaceWindow::initTopAreaBar...").toStdString(),4);
-    initTopAreaBar();
     debug->sendMessage(QString("MixFaceWindow::initControlAreaWidgets...").toStdString(),4);
     initControlAreaWidgets();
     debug->sendMessage(QString("MixFaceWindow::initMainAreaWidgets...").toStdString(),4);
     initMainAreaWidgets();
-    debug->sendMessage(QString("MixFaceWindow::initRightAreaBar...").toStdString(),4);
-    initRightAreaBar();
     debug->sendMessage(QString("MixFaceWindow::initMixFaceIconPicker...").toStdString(),4);
     mf_picker = new MixFaceIconPicker(dpiRatio, debug, mf_fonts, this);
     connect(mf_picker,&MixFaceIconPicker::logoChanged, this, &MixFaceWindow::logoChanged);
@@ -320,20 +309,6 @@ void MixFaceWindow::initMainAreaWidgetIdx(int idx) {
     connect(mainWidget[idx], &FaderWidget::iconButtonClicked, this, &MixFaceWindow::iconButtonClicked);
     /*if (idx==70)
         mf_library->linker->listener->newMeters2.connect(signal_type_float_array(&FaderWidget::setMeter, scrollWidget[idx], boost::arg<1>));*/
-}
-
-void MixFaceWindow::initRightAreaBar(){
-    mf_rightArea = new MixFaceRightWidget(dpiRatio, debug, mf_fonts, this);
-    rightArea->setWidget(mf_rightArea);
-    connect(mf_rightArea, &MixFaceRightWidget::assignMainFader, this, &MixFaceWindow::assignMainFader);
-    connect(mf_rightArea, &MixFaceRightWidget::assignScrollFaders, this, &MixFaceWindow::assignScrollFaders);
-}
-
-void MixFaceWindow::initTopAreaBar(){
-    mf_topArea = new MixFaceTopWidget(dpiRatio, debug, mf_fonts, this);
-    topArea->setWidget(mf_topArea);
-    connect(mf_topArea, &MixFaceTopWidget::connect, this, &MixFaceWindow::connection);
-    connect(mf_topArea, &MixFaceTopWidget::sync, this, &MixFaceWindow::sendSyncMessages);
 }
 
 void MixFaceWindow::assignMainFader(int idx, int idy) {

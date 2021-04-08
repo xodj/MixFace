@@ -46,12 +46,10 @@ private:
     QScrollBar *bar;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout;
-    QScrollArea *topArea;
     QScrollArea *scrollArea;
     QScrollArea *srcArea;
     QHBoxLayout *srcLayout;
     QScrollArea *mainArea;
-    QScrollArea *rightArea;
 
     MixFaceTopWidget *mf_topArea;
     MixFaceRightWidget *mf_rightArea;
@@ -91,9 +89,6 @@ private:
 
     void initMainAreaWidgets();
     void initMainAreaWidgetIdx(int idx);
-
-    void initRightAreaBar();
-    void initTopAreaBar();
 
     void assignMainFader(int idx, int idy);
     void assignScrollFaders(int idx);

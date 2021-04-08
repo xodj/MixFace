@@ -1,8 +1,8 @@
 #include <windows.h>
 
 VS_VERSION_INFO VERSIONINFO
-	FILEVERSION 1,2,0,80
-	PRODUCTVERSION 1,2,0,80
+    FILEVERSION 1,2,0,81
+    PRODUCTVERSION 1,2,0,81
 	FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
 	FILEFLAGS VS_FF_DEBUG
@@ -19,11 +19,11 @@ VS_VERSION_INFO VERSIONINFO
 			BEGIN
 				VALUE "CompanyName", "xo.dj\0"
 				VALUE "FileDescription", "Debug messages recorder.\0"
-				VALUE "FileVersion", "1.2.0.80\0"
+                VALUE "FileVersion", "1.2.0.81\0"
 				VALUE "LegalCopyright", "GPL-3.0 License.\0"
 				VALUE "OriginalFilename", "DebugLibrary.dll\0"
 				VALUE "ProductName", "Debug Library\0"
-				VALUE "ProductVersion", "1.2.0.80\0"
+                VALUE "ProductVersion", "1.2.0.81\0"
 				VALUE "InternalName", "\0"
 				VALUE "Comments", "\0"
 				VALUE "LegalTrademarks", "\0"

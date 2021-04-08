@@ -9,7 +9,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 TARGET = MixFace
 win32: {
 #RC_ICONS = ../MixFaceMedia/mf_icon.ico
-#VERSION = 0.2.0.65
+#VERSION = 0.2.0.73
 #TARGET_EXT = .exe
 QMAKE_TARGET_COMPANY = "xo.dj"
 QMAKE_TARGET_DESCRIPTION = "MixFace Qt Widgets GUI for MixFace Library."

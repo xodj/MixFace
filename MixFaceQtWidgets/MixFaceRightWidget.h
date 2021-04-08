@@ -17,7 +17,7 @@ class MixFaceRightWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MixFaceRightWidget(float dpiRatio_,DebugLibrary *debug_, MixFaceFonts *mf_fonts_, QMainWindow *mainWindow_);
+    MixFaceRightWidget(float dpiRatio_,DebugLibrary *debug_, MixFaceFonts *mf_fonts_, QMainWindow *mainWindow_);
 
     QPushButton *busButton;
     QPushButton *assignButton;

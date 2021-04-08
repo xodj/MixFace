@@ -16,11 +16,11 @@ MixFaceRightWidget::MixFaceRightWidget(float dpiRatio_,DebugLibrary *debug_,
 void MixFaceRightWidget::initRightAreaBar(){
     this->setMaximumWidth(64*dpiRatio);
     this->setMinimumWidth(64*dpiRatio);
-    QVBoxLayout *vLayout = new QVBoxLayout();
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
     vLayout->setContentsMargins(0, 0, 0, 0);
-    vLayout->setSpacing(1);
+    //vLayout->setSpacing(1);
     vLayout->setAlignment(Qt::AlignCenter);
-    vLayout->addStretch();
+    //vLayout->addStretch();
 
     busButton = new QPushButton("LR");
     busButton->setMinimumSize(50*dpiRatio,40*dpiRatio);
@@ -54,13 +54,15 @@ void MixFaceRightWidget::initRightAreaBar(){
     vLayout->addWidget(assignButton);
     QPushButton::connect(assignButton, &QPushButton::clicked, this, &MixFaceRightWidget::assignButtonClicked);
 
-    vLayout->addStretch();
+    //vLayout->addStretch();
 
     this->setLayout(vLayout);
     this->setStyleSheet("QWidget {"
-                                     "border: 0px solid rgb(0, 0, 0);"
-                                     "background-color: rgb(96, 96, 96);"
-                                     "}");}
+                        "border: 2px solid rgb(0,0,0);"
+                        "background-color: rgb(96,96,96);"
+                        "color: rgb(96,96,96);"
+                        "}");
+}
 
 void MixFaceRightWidget::initBusPopup(){
 

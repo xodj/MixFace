@@ -56,7 +56,7 @@ private:
     int iconNumber = 1;
     int colorNumber = 0;
     QString BWIcon = "W";
-    QScrollArea *botArea;
+    QWidget *botArea;
 
     QSlider *volSlider;
     TicksPaint *ticks;

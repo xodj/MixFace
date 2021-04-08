@@ -11,7 +11,7 @@ CONFIG += c++11
 
 TARGET = DebugLibrary
 win32: {
-#VERSION = 1.2.0.80
+#VERSION = 1.2.0.81
 #TARGET_EXT = .dll
 QMAKE_TARGET_COMPANY = "xo.dj"
 QMAKE_TARGET_DESCRIPTION = "Debug messages recorder."

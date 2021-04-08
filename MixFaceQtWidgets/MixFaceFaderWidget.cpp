@@ -12,6 +12,9 @@ FaderWidget::FaderWidget(float dpiRatio, MixFaceFonts *m_fonts,
 }
 
 void FaderWidget::initWidget(){
+    dpiRatio -= 1;
+    dpiRatio /= 2;
+    dpiRatio += 1;
     QVBoxLayout *vlayout = new QVBoxLayout;
     vlayout->setContentsMargins(2, 2, 2, 2);
     vlayout->setSpacing(6);
@@ -154,7 +157,7 @@ void FaderWidget::initWidget(){
                                                  "background: rgb(64, 64, 64);\n"
                                                  "border: 1px solid rgb(0,0,0);\n"
                                                  "border-radius: 4px;\n"
-                                                 "margin-top:22px;\n"
+                                                 "margin-top: " + QString::number(22*dpiRatio) + "px;\n"
                                                  "}\n"
                                                  "\n"
                                                  "QSlider::add-page\n"
@@ -162,7 +165,7 @@ void FaderWidget::initWidget(){
                                                  "background: rgb(96, 196, 96);\n"
                                                  "border: 1px solid rgb(0,0,0);\n"
                                                  "border-radius: 4px;\n"
-                                                 "margin-bottom: 22px;\n"
+                                                 "margin-bottom: " + QString::number(22*dpiRatio) + "px;\n"
                                                  "}\n"
                                                  "\n"
                                                  "QSlider::handle\n"
@@ -171,7 +174,7 @@ void FaderWidget::initWidget(){
                                                  "border: 1px solid rgb(64,64,64);\n"
                                                  "border-radius: 5px;\n"
                                                  "height: " + QString::number(44*dpiRatio) + "px;\n"
-                                                 "margin: 0 -18px;\n"
+                                                 "margin: 0 -" + QString::number(18*dpiRatio) + "px;\n"
                                                  "}"));
 
     vlayout->addWidget(volArea);
@@ -192,7 +195,7 @@ void FaderWidget::initWidget(){
     vlayout->addWidget(solo);
 
     QVBoxLayout *botLayout = new QVBoxLayout;
-    botLayout->setContentsMargins(0, 4*dpiRatio, 0, 0);
+    botLayout->setContentsMargins(4, 4*dpiRatio, 4, 4);
     botLayout->setSpacing(0);
 
     channelName = new QPushButton();
@@ -212,18 +215,10 @@ void FaderWidget::initWidget(){
                         "background-color: rgb(64, 64, 64);"
                         "border: 0px solid rgb(0,0,0);}");
 
-    botArea = new QScrollArea;
+    botArea = new QWidget;
     botArea->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
-    botArea->setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
-    botArea->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
-    botArea->setWidgetResizable(true);
-    botArea->setMinimumHeight(96*dpiRatio);
+    botArea->setMinimumHeight(96);
     botArea->setMaximumHeight(96*dpiRatio);
-    botArea->setAlignment(Qt::AlignCenter);
-    botArea->setStyleSheet("QScrollArea {"
-                           "border: 0px solid rgb(0, 0, 0);"
-                           "background-color: rgb(64, 64, 64);"
-                           "}");
     botArea->setLayout(botLayout);
     vlayout->addWidget(botArea);
 
@@ -600,10 +595,10 @@ void FaderWidget::setColor(int value) {
     icon->setStyleSheet("QPushButton {"
                         "background-color: " + bgcolor + ";"
                         "border: 0px solid rgb(0,0,0);}");
-    /*botArea->setStyleSheet("QScrollArea {"
-                           "border: 0px solid rgb(0,0,0);"
+    botArea->setStyleSheet("QWidget {"
+                           "border: 2px solid " + fgcolor + ";"
                            "background-color: " + bgcolor + ";"
-                           "}");*/
+                           "}");
     setLogo(iconNumber);
 }
 
