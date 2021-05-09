@@ -20,8 +20,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt5Widgets)
-find_package(Qt5Network)
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Network REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network REQUIRED)
 
 set(MixFaceQtWidgets_HEADERS
     MixFaceWindow.h
@@ -52,7 +52,7 @@ set(MixFaceQtWidgets_QRC
     MixFaceResources.qrc
     )
 
-qt5_add_resources(MixFaceQtWidgets_QRC_SOURCES ${MixFaceQtWidgets_QRC})
+qt_add_resources(MixFaceQtWidgets_QRC_SOURCES ${MixFaceQtWidgets_QRC})
 
 if(ANDROID)
     set(ANDROID_PACKAGE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/android CACHE INTERNAL "")
@@ -62,13 +62,13 @@ if(ANDROID)
         ${MixFaceQtWidgets_QRC_SOURCES}
         android/AndroidManifest.xml)
     #target_link_libraries(MixFaceQtWidgets MixFaceLibrary_${ANDROID_ABI} DebugLibrary_${ANDROID_ABI} OSCPACK_${ANDROID_ABI} Qt5::Widgets Qt5::Network)
-    target_link_libraries(MixFace MixFaceLibrary DebugLibrary OSCPACK Qt5::Widgets Qt5::Network)
+    target_link_libraries(MixFace MixFaceLibrary DebugLibrary OSCPACK Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
 else()
     add_executable(MixFaceQtWidgets
         ${MixFaceQtWidgets_SOURCES}
         ${MixFaceQtWidgets_HEADERS}
         ${MixFaceQtWidgets_QRC_SOURCES})
-    target_link_libraries(MixFaceQtWidgets MixFaceLibrary DebugLibrary OSCPACK Qt5::Widgets Qt5::Network)
+    target_link_libraries(MixFaceQtWidgets MixFaceLibrary DebugLibrary OSCPACK Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
 endif()
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})

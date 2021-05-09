@@ -93,7 +93,7 @@ protected:
                 osc::osc_bundle_element_size_t bSize;
                 m.ArgumentsBegin()->AsBlob(bData, bSize);
                 float const *mFloatArray = (float const *)bData;
-                int aSize = int(bSize / 4);
+                const int aSize = int(bSize / 4);
                 float floatArray[aSize];
                 for (int i = 1; i < aSize; i++) { floatArray[i-1] = mFloatArray[i]; }
                 newMeters2(floatArray);

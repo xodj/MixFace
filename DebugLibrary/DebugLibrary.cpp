@@ -1,4 +1,5 @@
 #include "DebugLibrary.hpp"
+#include "string"
 
 DebugLibrary::DebugLibrary(int argc_, char *argv_[])
     : argc(argc_), argv(argv_)
