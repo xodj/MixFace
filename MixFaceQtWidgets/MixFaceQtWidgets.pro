@@ -81,14 +81,14 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/
 
 LIBS += -lkernel32 -lws2_32 -lwinmm
 
-INCLUDEPATH += $$PWD/../../../../../Boost/boost_1_74_0
-DEPENDPATH += $$PWD/../../../../../Boost/boost_1_74_0
+INCLUDEPATH += $$PWD/../../boost_1_74_0/
+DEPENDPATH += $$PWD/../../boost_1_74_0/
 }
 
 # ANDROID
 android {
-INCLUDEPATH += $$PWD/../../../Boost/boost_1_74_0/stage/include/boost-1_74
-DEPENDPATH += $$PWD/../../../Boost/boost_1_74_0/stage/include/boost-1_74
+INCLUDEPATH += $$PWD/../../boost_1_74_0/stage/include/boost-1_74
+DEPENDPATH += $$PWD/../../boost_1_74_0/stage/include/boost-1_74
 
 contains(QT_ARCH, armeabi-v7a) {
     LIBS += -L$$OUT_PWD/../MixFaceLibrary/ -lMixFaceLibrary_armeabi-v7a
@@ -122,8 +122,8 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 # LINUX
 unix:!android {
-    INCLUDEPATH += /home/xodj/Boost/boost_1_74_0
-    DEPENDPATH += /home/xodj/Boost/boost_1_74_0
+    INCLUDEPATH += $$PWD/../../boost_1_74_0/
+    DEPENDPATH += $$PWD/../../boost_1_74_0/
 
     LIBS += -L$$OUT_PWD/../MixFaceLibrary/ -lMixFaceLibrary
     PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/libMixFaceLibrary.so
@@ -132,10 +132,6 @@ unix:!android {
 
     LIBS += -L$$OUT_PWD/../OSCPACK/ -lOSCPACK
     PRE_TARGETDEPS += $$OUT_PWD/../OSCPACK/libOSCPACK.so
-    LIBS += -L/home/xodj/Boost/boost_1_74_0/stage/lib/ -lboost_thread
-    PRE_TARGETDEPS += /home/xodj/Boost/boost_1_74_0/stage/lib/libboost_thread.so
-    LIBS += -L/home/xodj/Boost/boost_1_74_0/stage/lib/ -lboost_chrono
-    PRE_TARGETDEPS += /home/xodj/Boost/boost_1_74_0/stage/lib/libboost_chrono.so
 
     target.path = /usr/lib
 }
