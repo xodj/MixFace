@@ -1,4 +1,5 @@
 #include "MixFaceLibrary.h"
+#include "osc/OscTypes.h"
 
 MixFaceLibrary::MixFaceLibrary(DebugLibrary *debug_)
     : boost::thread(), debug(debug_) {

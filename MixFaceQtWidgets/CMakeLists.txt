@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
 
-PROJECT(MixFace LANGUAGES CXX)
+PROJECT(MixFace VERSION 0.2.0.73 LANGUAGES CXX)
 
 if(UNIX)
     set(CMAKE_THREAD_LIBS_INIT "-lpthread")
@@ -52,6 +52,24 @@ set(MixFaceQtWidgets_QRC
     MixFaceResources.qrc
     )
 
+if(WIN32)
+    #Place version to .rc
+    set(STR_MF_VERSION ${MixFace_VERSION})
+    string(REPLACE "." "." RC_SPLIT ${STR_MF_VERSION})
+    string(REPLACE "." ";" RC_SPLIT ${RC_SPLIT})
+    message(STATUS "MixFace is now: ${STR_MF_VERSION}")
+    list(GET RC_SPLIT 0 MF_VERSION)
+    list(GET RC_SPLIT 1 MF_MAJOR_VERSION)
+    list(GET RC_SPLIT 2 MF_MINOR_VERSION)
+    list(GET RC_SPLIT 3 MF_PATCH_VERSION)
+    configure_file(MixFace.rc.in ${PROJECT_BINARY_DIR}/MixFace.rc)
+    set(MixFaceQtWidgets_HEADERS
+        ${MixFaceQtWidgets_HEADERS}
+        MixFace.rc.in
+        ${PROJECT_BINARY_DIR}/MixFace.rc
+        )
+endif(WIN32)
+
 qt_add_resources(MixFaceQtWidgets_QRC_SOURCES ${MixFaceQtWidgets_QRC})
 
 if(ANDROID)
@@ -61,7 +79,6 @@ if(ANDROID)
         ${MixFaceQtWidgets_HEADERS}
         ${MixFaceQtWidgets_QRC_SOURCES}
         android/AndroidManifest.xml)
-    #target_link_libraries(MixFaceQtWidgets MixFaceLibrary_${ANDROID_ABI} DebugLibrary_${ANDROID_ABI} OSCPACK_${ANDROID_ABI} Qt5::Widgets Qt5::Network)
     target_link_libraries(MixFace MixFaceLibrary DebugLibrary OSCPACK Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
 else()
     add_executable(MixFaceQtWidgets
@@ -71,8 +88,14 @@ else()
     target_link_libraries(MixFaceQtWidgets MixFaceLibrary DebugLibrary OSCPACK Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
 endif()
 
+if(MSVC)
+set_target_properties(MixFaceQtWidgets
+    PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:CONSOLE"
+    LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+endif()
+
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../../Boost/boost_1_75_0)
+INCLUDE_DIRECTORIES(${BOOST_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../OSCPACK)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../DebugLibrary)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../MixFaceLibrary)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../DebugLibrary)

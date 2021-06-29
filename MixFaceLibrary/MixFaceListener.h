@@ -92,10 +92,10 @@ protected:
                 const void *bData;
                 osc::osc_bundle_element_size_t bSize;
                 m.ArgumentsBegin()->AsBlob(bData, bSize);
-                float const *mFloatArray = (float const *)bData;
-                const int aSize = int(bSize / 4);
-                float floatArray[aSize];
-                for (int i = 1; i < aSize; i++) { floatArray[i-1] = mFloatArray[i]; }
+                const float *mFloatArray = (const float*)bData;
+                osc::osc_bundle_element_size_t aSize = bSize / 4;
+                float *floatArray = (float*)calloc(aSize, sizeof(float));
+                for (osc::osc_bundle_element_size_t i = 1; i < aSize; i++) { floatArray[i-1] = mFloatArray[i]; }
                 newMeters2(floatArray);
             } else if (strcmp(m.AddressPattern(), "meters/5") == 0) {
             } else if (strcmp(m.AddressPattern(), "meters/6") == 0) {
