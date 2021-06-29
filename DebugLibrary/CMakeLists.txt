@@ -32,14 +32,13 @@ if(WIN32)
         )
 endif(WIN32)
 
-if(ANDROID)
-    add_library(DebugLibrary STATIC
+add_library(DebugLibrary SHARED
         ${DebugLibrary_SOURCES}
         )
-else()
-    add_library(DebugLibrary SHARED
-        ${DebugLibrary_SOURCES}
-        )
+
+if(NOT ANDROID)
+    set_target_properties(DebugLibrary
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
 endif()
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})

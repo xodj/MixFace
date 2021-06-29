@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-project(MixFace)
+project(MixFaceProject)
 
 OPTION(DISABLE_QTWIDGETS "Disable QT build" OFF)
 OPTION(DISABLE_WXWIDGETS "Disable WX build" ON)
@@ -27,26 +27,14 @@ add_subdirectory(OSCPACK)
 add_subdirectory(DebugLibrary)
 add_subdirectory(MixFaceLibrary)
 
-if(NOT ANDROID)
-    set_target_properties(OSCPACK
-        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
-    set_target_properties(DebugLibrary
-        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
-    set_target_properties(MixFaceLibrary
-        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
-endif()
-
 if(NOT DISABLE_QTWIDGETS)
-add_subdirectory(MixFaceQtWidgets)
-if(NOT ANDROID)
-set_target_properties(MixFaceQtWidgets
-    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
-include(CopyDependencies.cmake)
-endif()
+    add_subdirectory(MixFaceQtWidgets)
+
+    if(NOT ANDROID)
+        include(CopyDependencies.cmake)
+    endif()
 endif(NOT DISABLE_QTWIDGETS)
 
 if(NOT DISABLE_X32ST)
 add_subdirectory(X32-Shutdown)
-set_target_properties(X32-Shutdown
-    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
 endif(NOT DISABLE_X32ST)

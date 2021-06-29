@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.16.0)
 
 PROJECT(MixFaceLibrary VERSION 2.0.3.58 LANGUAGES CXX)
 
@@ -34,12 +34,8 @@ if(WIN32 AND NOT MSVC)
     string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
     if(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
         set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-mgw8-mt-d-x64-1_74.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_date_time-mgw8-mt-d-x64-1_74.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-mgw8-mt-d-x64-1_74.a)
     else(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
         set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-mgw8-mt-x64-1_74.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_date_time-mgw8-mt-x64-1_74.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-mgw8-mt-x64-1_74.a)
     endif(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
 endif()
 
@@ -101,16 +97,16 @@ if(WIN32)
         )
 endif(WIN32)
 
-if(ANDROID)
-    add_library(MixFaceLibrary STATIC
+add_library(MixFaceLibrary SHARED
         ${MixFaceLibrary_SOURCES}
         ${MixFaceLibrary_HEADERS})
-else()
-    add_library(MixFaceLibrary SHARED
-        ${MixFaceLibrary_SOURCES}
-        ${MixFaceLibrary_HEADERS})
+
+if(NOT ANDROID)
+    set_target_properties(MixFaceLibrary
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
 endif()
-target_link_libraries(MixFaceLibrary DebugLibrary OSCPACK ${LIBS} ${Boost_LIBRARIES})
+
+target_link_libraries(MixFaceLibrary PUBLIC DebugLibrary PRIVATE OSCPACK ${LIBS} ${Boost_LIBRARIES})
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${BOOST_INCLUDE_DIRS})

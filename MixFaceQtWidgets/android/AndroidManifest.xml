@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<manifest package="by.xodj.mixface" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="pre_alpha_0.2.0.65" android:versionCode="65" android:installLocation="auto">
+<manifest package="by.xodj.mixface" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="0.2.0.74" android:versionCode="74" android:installLocation="auto">
     <!-- The following comment will be replaced upon deployment with default permissions based on the dependencies of the application.
          Remove the comment if you do not require these default permissions. -->
     <!-- %%INSERT_PERMISSIONS -->
