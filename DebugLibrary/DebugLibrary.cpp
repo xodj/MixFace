@@ -1,5 +1,6 @@
 #include "DebugLibrary.hpp"
 #include "string"
+#include <fstream>
 
 DebugLibrary::DebugLibrary(int argc_, char *argv_[])
     : argc(argc_), argv(argv_)
@@ -40,6 +41,9 @@ void DebugLibrary::sendMessage(string message_, int debugLevel_)
     string message = getCurrentTime() + " : " + message_;
     if (debugLevel_ <= debugLevel) {
         cout << message << endl;
+        ofstream outfile("debug.log", ios_base::app);
+        outfile << message << endl;
+        outfile.close();
     }
 }
 

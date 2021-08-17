@@ -35,10 +35,6 @@ MixFaceWindow::MixFaceWindow(DebugLibrary *debug)
 
     mf_metersTimer->start(34);
     mf_demoTimer->start(5);
-
-    mf_library->valueChanged.connect(signal_type_thr_int(&MixFaceWindow::slotValueChanged, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>()));
-    mf_library->slotConnected.connect(signal_type_bool(&MixFaceWindow::slotConnected,this,boost::arg<1>()));
-    mf_library->newMeters2.connect(signal_type_float_array(&MixFaceWindow::slotMeter2,this,boost::arg<1>()));
 }
 
 void MixFaceWindow::initUI(){
@@ -202,18 +198,25 @@ void MixFaceWindow::initUI(){
     debug->sendMessage(QString("MixFaceWindow::initUI Set main window widget...").toStdString(),1);
     this->setCentralWidget(centralWidget);
 
-    connectedThread = new ReturnConnectedThread;
-    connectedThread->moveToThread(qApp->thread());
-    connect(connectedThread, &ReturnConnectedThread::returnSignal,
+    returnThread = new ReturnThread;
+    returnThread->moveToThread(qApp->thread());
+    returnThread->start();
+    connect(returnThread, &ReturnThread::connectedSignal,
             this, &MixFaceWindow::threadConnected);
-    valueThread = new ReturnValueThread;
-    valueThread->moveToThread(qApp->thread());
-    connect(valueThread, &ReturnValueThread::returnSignal,
+    connect(returnThread, &ReturnThread::valueSignal,
             this, &MixFaceWindow::threadValueChanged);
-    meter2Thread = new ReturnMeter2Thread;
-    meter2Thread->moveToThread(qApp->thread());
-    connect(meter2Thread, &ReturnMeter2Thread::returnSignal,
+    connect(returnThread, &ReturnThread::meter2Signal,
             this, &MixFaceWindow::threadMeter2);
+
+    mf_library->valueChanged.connect(
+                signal_type_thr_int(&MixFaceWindow::slotValueChanged, this,
+                                    boost::arg<1>(), boost::arg<2>(), boost::arg<3>()));
+    mf_library->slotConnected.connect(
+                signal_type_bool(&MixFaceWindow::slotConnected,
+                                 this,boost::arg<1>()));
+    mf_library->newMeters2.connect(
+                signal_type_float_array(&MixFaceWindow::slotMeter2,
+                                        this,boost::arg<1>()));
 }
 
 MixFaceWindow::~MixFaceWindow() {}
@@ -228,7 +231,7 @@ void MixFaceWindow::connection(){
 }
 
 void MixFaceWindow::slotConnected(bool state){
-    connectedThread->returnSlot(state);
+    returnThread->connectedSlot(state);
 }
 
 void MixFaceWindow::threadConnected(bool state){
@@ -261,7 +264,6 @@ void MixFaceWindow::threadConnected(bool state){
         mf_topArea->console->setText("MixFace");
         mf_demoTimer->connected = state;
     }
-    connectedThread->terminate();
 }
 
 void MixFaceWindow::initControlAreaWidgets() {
@@ -684,7 +686,7 @@ void MixFaceWindow::windowRenew() {
 }
 
 void MixFaceWindow::slotValueChanged(int imtype, int idx, int idy) {
-    valueThread->returnSlot(imtype, idx, idy);
+    returnThread->valueSlot(imtype, idx, idy);
 }
 
 void MixFaceWindow::threadValueChanged(int imtype, int idx, int idy) {
@@ -944,15 +946,12 @@ void MixFaceWindow::threadValueChanged(int imtype, int idx, int idy) {
         debug->sendMessage(QString("Error change value!").toStdString(),0);
         break;
     }
-
-    valueThread->terminate();
 }
 
 void MixFaceWindow::slotMeter2(float *array){
-    meter2Thread->returnSlot(array);
+    returnThread->meter2Slot(array);
 }
 
 void MixFaceWindow::threadMeter2(float *array){
     mainWidget[70]->setMeter(array[22],array[23],array[47],array[47]);
-    meter2Thread->terminate();
 }

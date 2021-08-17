@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-PROJECT(MixFaceLibrary VERSION 2.0.3.70 LANGUAGES CXX)
+PROJECT(MixFaceLibrary VERSION 2.0.3.78 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 

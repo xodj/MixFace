@@ -22,11 +22,7 @@
 
 class MixFaceDemoTimer;
 
-class ReturnConnectedThread;
-
-class ReturnValueThread;
-
-class ReturnMeter2Thread;
+class ReturnThread;
 
 class MixFaceWindow : public QMainWindow
 {
@@ -123,10 +119,7 @@ private:
     QApplication *mixFace;
     MixFaceMetersTimer *mf_metersTimer;
     MixFaceDemoTimer *mf_demoTimer;
-
-    ReturnConnectedThread *connectedThread;
-    ReturnValueThread *valueThread;
-    ReturnMeter2Thread *meter2Thread;
+    ReturnThread *returnThread;
 
 protected:
     void resizeEvent( QResizeEvent *e ) override;
@@ -183,73 +176,23 @@ protected:
     QList<FaderWidget *> faders;
 };
 
-class ReturnConnectedThread : public QThread {
+class ReturnThread : public QThread {
     Q_OBJECT
 public:
-    ReturnConnectedThread(QObject *parent = nullptr) : QThread(parent){
-        connect(this, &ReturnConnectedThread::started,
-                this, &ReturnConnectedThread::emitReturnSignal);
+    ReturnThread(QObject *parent = nullptr) : QThread(parent){};
+    void connectedSlot(bool state){
+        emit connectedSignal(state);
     };
-    void returnSlot(bool state){
-        state_ = state;
-        this->start();
+    void valueSlot(int imtype, int idx, int idy){
+        emit valueSignal(imtype, idx, idy);
+    };
+    void meter2Slot(float *array){
+        emit meter2Signal(array);
     };
 
 signals:
-    void returnSignal(bool state);
-
-private:
-    bool state_;
-    void emitReturnSignal(){
-        emit returnSignal(state_);
-    }
-};
-
-class ReturnValueThread : public QThread {
-    Q_OBJECT
-public:
-    ReturnValueThread(QObject *parent = nullptr) : QThread(parent){
-        connect(this, &ReturnValueThread::started,
-                this, &ReturnValueThread::emitReturnSignal);
-    };
-    void returnSlot(int imtype, int idx, int idy){
-        imtype_ = imtype;
-        idx_ = idx;
-        idy_ = idy;
-        this->start();
-    };
-
-signals:
-    void returnSignal(int imtype, int idx, int idy);
-
-private:
-    int imtype_;
-    int idx_;
-    int idy_;
-    void emitReturnSignal(){
-        emit returnSignal(imtype_, idx_, idy_);
-    }
-};
-
-class ReturnMeter2Thread : public QThread {
-    Q_OBJECT
-public:
-    ReturnMeter2Thread(QObject *parent = nullptr) : QThread(parent){
-        connect(this, &ReturnMeter2Thread::started,
-                this, &ReturnMeter2Thread::emitReturnSignal);
-    };
-    void returnSlot(float *array){
-        array_ = array;
-        this->start();
-    };
-
-signals:
-    void returnSignal(float *array);
-
-private:
-    float *array_;
-    void emitReturnSignal(){
-        emit returnSignal(array_);
-    }
+    void connectedSignal(bool state);
+    void valueSignal(int imtype, int idx, int idy);
+    void meter2Signal(float *array);
 };
 #endif

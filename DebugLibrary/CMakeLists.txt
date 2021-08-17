@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-PROJECT(DebugLibrary VERSION 1.2.0.81 LANGUAGES CXX)
+PROJECT(DebugLibrary VERSION 1.2.0.53 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 

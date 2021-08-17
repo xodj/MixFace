@@ -561,7 +561,7 @@ void FaderWidget::setColor(int value) {
     case 8:
         BWIcon = "W";
         bgcolor = "rgb(128,128,128)";
-        fgcolor = "rgb(32,32,32)"; /*!!!!!!!!!!!!!!!!*/
+        fgcolor = "rgb(255,255,255)";
         break;
     case 9:
         BWIcon = "W";
