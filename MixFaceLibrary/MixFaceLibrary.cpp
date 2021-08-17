@@ -2,9 +2,7 @@
 #include "osc/OscTypes.h"
 
 MixFaceLibrary::MixFaceLibrary(DebugLibrary *debug_)
-    : boost::thread(), debug(debug_) {
-    boost::thread *linkerThread = new boost::thread{};
-    linkerThread->join();
+    : debug(debug_){
     for (int idx=0;idx<80;idx++){
         db.stereoon[idx] = 1;
         db.fader[idx] = 0.75;
@@ -33,65 +31,84 @@ MixFaceLibrary::MixFaceLibrary(DebugLibrary *debug_)
     linker = new MixFaceLinker(debug);
     sendRenewMessagesTimer = new IntervalThread(1000, false, true);
     sendRenewMessagesTimer->connect(IntervalThread::interval_slot_t(&MixFaceLibrary::sendXremoteMessage, this));
+    linker->listener->s_xi.connect(signal_type_xi(&MixFaceLibrary::processXinfo, this, boost::arg<1>()));
 }
 
 void MixFaceLibrary::connect(string hostNameString){
     bool connected = linker->connectTo(hostNameString);
     if (connected) {
         sendRenewMessagesTimer->start();
-        linker->listener->s_str_str.connect(signal_type_str_str(&MixFaceLibrary::threadStringMessage, this, boost::arg<1>(), boost::arg<2>()));
-        linker->listener->s_str_int.connect(signal_type_str_int(&MixFaceLibrary::threadIntMessage, this, boost::arg<1>(), boost::arg<2>()));
-        linker->listener->s_str_float.connect(signal_type_str_float(&MixFaceLibrary::threadFloatMessage, this, boost::arg<1>(), boost::arg<2>()));
+        linker->listener->s_str_str.connect(signal_type_str_str(&MixFaceLibrary::processStringMessage, this, boost::arg<1>(), boost::arg<2>()));
+        linker->listener->s_str_int.connect(signal_type_str_int(&MixFaceLibrary::processIntMessage, this, boost::arg<1>(), boost::arg<2>()));
+        linker->listener->s_str_float.connect(signal_type_str_float(&MixFaceLibrary::processFloatMessage, this, boost::arg<1>(), boost::arg<2>()));
+
+        linker->listener->newMeters9.connect(newMeters9);
+        linker->listener->newMeters10.connect(newMeters10);
+        linker->listener->newMeters14.connect(newMeters14);
+        linker->listener->newMeters0.connect(newMeters0);
+        linker->listener->newMeters2.connect(newMeters2);
+        linker->listener->newMeters5.connect(newMeters5);
+        linker->listener->newMeters6.connect(newMeters6);
+        linker->listener->newMeters16.connect(newMeters16);
 
         char buffer[OUTPUT_BUFFER_SIZE];
         osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
 
         p.Clear();
         p << osc::BeginMessage("/batchsubscribe") << ("meters/9") << ("/meters/9")
-            << (int)7 << (int)7 << (int)1 << osc::EndMessage;
+            << (int)7 << (int)7 << (int)1;
         linker->sendDynamicMsg(p);
 
         p.Clear();
         p << osc::BeginMessage("/batchsubscribe") << ("meters/10") << ("/meters/10")
-            << (int)7 << (int)7 << (int)1 << osc::EndMessage;
+            << (int)7 << (int)7 << (int)1;
         linker->sendDynamicMsg(p);
 
         p.Clear();
         p << osc::BeginMessage("/batchsubscribe") << ("meters/14") << ("/meters/14")
-            << (int)7 << (int)7 << (int)1 << osc::EndMessage;
+            << (int)7 << (int)7 << (int)1;
         linker->sendDynamicMsg(p);
 
         p.Clear();
         p << osc::BeginMessage("/batchsubscribe") << ("meters/0") << ("/meters/0")
-            << (int)7 << (int)7 << (int)1 << osc::EndMessage;
+            << (int)7 << (int)7 << (int)1;
         linker->sendDynamicMsg(p);
 
         p.Clear();
         p << osc::BeginMessage("/batchsubscribe") << ("meters/2") << ("/meters/2")
-            << (int)7 << (int)7 << (int)1 << osc::EndMessage;
+            << (int)7 << (int)7 << (int)1;
         linker->sendDynamicMsg(p);
 
         p.Clear();
         p << osc::BeginMessage("/batchsubscribe") << ("meters/5") << ("/meters/5")
-            << (int)3 << (int)0 << (int)1 << osc::EndMessage;
+            << (int)3 << (int)0 << (int)1;
         linker->sendDynamicMsg(p);
 
         p.Clear();
         p << osc::BeginMessage("/batchsubscribe") << ("meters/6")
           << ("/meters/6") << (int)18 << (int)18 << (int)1
-          << osc::EndMessage;
+         ;
         linker->sendDynamicMsg(p);
 
         p.Clear();
         p << osc::BeginMessage("/batchsubscribe") << ("meters/16")
           << ("/meters/16") << (int)7 << (int)7 << (int)1
-          << osc::EndMessage;
+         ;
         linker->sendDynamicMsg(p);
     } else {
         sendRenewMessagesTimer->stop();
         linker->listener->s_str_str.disconnect_all_slots();
         linker->listener->s_str_int.disconnect_all_slots();
         linker->listener->s_str_float.disconnect_all_slots();
+
+        linker->listener->newMeters9.disconnect_all_slots();
+        linker->listener->newMeters10.disconnect_all_slots();
+        linker->listener->newMeters14.disconnect_all_slots();
+        linker->listener->newMeters0.disconnect_all_slots();
+        linker->listener->newMeters2.disconnect_all_slots();
+        linker->listener->newMeters5.disconnect_all_slots();
+        linker->listener->newMeters6.disconnect_all_slots();
+        linker->listener->newMeters16.disconnect_all_slots();
     }
     slotConnected(connected);
 }
@@ -149,42 +166,43 @@ void MixFaceLibrary::sendSyncMessages() {
 void MixFaceLibrary::sendXremoteMessage() {
     char buffer[OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
+
     p.Clear();
-    p << osc::BeginMessage("/xremote") << osc::EndMessage;
+    p << osc::BeginMessage("/xremote");
     linker->sendDynamicMsg(p);
 
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/9") <<osc::EndMessage;
+    p << osc::BeginMessage("/renew") << ("meters/9");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/10") <<osc::EndMessage;
+    p << osc::BeginMessage("/renew") << ("meters/10");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/14") <<osc::EndMessage;
+    p << osc::BeginMessage("/renew") << ("meters/14");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("hidden/states") <<osc::EndMessage;
+    p << osc::BeginMessage("/renew") << ("hidden/states");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("hidden/prefs") <<osc::EndMessage;
+    p << osc::BeginMessage("/renew") << ("hidden/prefs");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("hidden/solo") <<osc::EndMessage;
+    p << osc::BeginMessage("/renew") << ("hidden/solo");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/0") <<osc::EndMessage;
+    p << osc::BeginMessage("/renew") << ("meters/0");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/2") <<osc::EndMessage;
+    p << osc::BeginMessage("/renew") << ("meters/2");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/5") <<osc::EndMessage;
+    p << osc::BeginMessage("/renew") << ("meters/5");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/6") <<osc::EndMessage;
+    p << osc::BeginMessage("/renew") << ("meters/6");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/16") <<osc::EndMessage;
+    p << osc::BeginMessage("/renew") << ("meters/16");
     linker->sendDynamicMsg(p);
 }
 

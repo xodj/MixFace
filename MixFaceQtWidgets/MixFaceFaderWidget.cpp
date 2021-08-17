@@ -505,51 +505,63 @@ void FaderWidget::setLogo(int value) {
 }
 
 void FaderWidget::setColor(int value) {
-    if (value >= 0 && value <= 15) colorNumber = value;
-    QString fgcolor = "rgb(255,255,255)";
-    QString bgcolor = "rgb(64,64,64)";
+    colorNumber = value;
+    QString fgcolor;
+    QString bgcolor;
+
     switch(colorNumber){
     case 0:
         BWIcon = "W";
+        fgcolor = "rgb(255,255,255)";
+        bgcolor = "rgb(64,64,64)";
+
         break;
     case 1:
         BWIcon = "B";
         bgcolor = "rgb(255,64,64)";
         fgcolor = "rgb(32,32,32)";
+
         break;
     case 2:
         BWIcon = "B";
         bgcolor = "rgb(64,255,64)";
         fgcolor = "rgb(32,32,32)";
+
         break;
     case 3:
         BWIcon = "B";
         bgcolor = "rgb(255,255,64)";
         fgcolor = "rgb(32,32,32)";
+
         break;
     case 4:
-        BWIcon = "B";
+        BWIcon = "W";
         bgcolor = "rgb(64,64,255)";
-        fgcolor = "rgb(32,32,32)";
+        fgcolor = "rgb(255,255,255)";
+
         break;
     case 5:
         BWIcon = "B";
         bgcolor = "rgb(255,64,255)";
         fgcolor = "rgb(32,32,32)";
+
         break;
     case 6:
         BWIcon = "B";
         bgcolor = "rgb(64,255,255)";
         fgcolor = "rgb(32,32,32)";
+
         break;
     case 7:
         BWIcon = "B";
         bgcolor = "rgb(255,255,255)";
         fgcolor = "rgb(32,32,32)";
+
         break;
     case 8:
         BWIcon = "W";
         bgcolor = "rgb(128,128,128)";
+        fgcolor = "rgb(32,32,32)"; /*!!!!!!!!!!!!!!!!*/
         break;
     case 9:
         BWIcon = "W";
@@ -568,7 +580,7 @@ void FaderWidget::setColor(int value) {
         break;
     case 12:
         BWIcon = "W";
-        bgcolor = "rgb(32,32,32)";
+        bgcolor = "rgb(128,128,128)";
         fgcolor = "rgb(0,0,255)";
         break;
     case 13:
@@ -586,7 +598,13 @@ void FaderWidget::setColor(int value) {
         bgcolor = "rgb(32,32,32)";
         fgcolor = "rgb(255,255,255)";
         break;
+    default:
+        BWIcon = "W";
+        fgcolor = "rgb(255,255,255)";
+        bgcolor = "rgb(64,64,64)";
+        break;
     }
+
     //set color by number
     channelName->setStyleSheet("QPushButton {"
                                "background-color: " + bgcolor + ";"
@@ -599,6 +617,7 @@ void FaderWidget::setColor(int value) {
                            "border: 2px solid " + fgcolor + ";"
                            "background-color: " + bgcolor + ";"
                            "}");
+
     setLogo(iconNumber);
 }
 

@@ -5,7 +5,8 @@ int main(int argc, char *argv[]) {
     qputenv("QT_ENABLE_HIGHDPI_SCALING", "0"); //Disable Auto High DPI
     QApplication *mixFace = new QApplication(argc, argv);
     MixFaceWindow *mixFaceWindow = new MixFaceWindow(new DebugLibrary(argc, argv));
-    mixFaceWindow->showMaximized();
+    //mixFaceWindow->showMaximized();
+    mixFaceWindow->show();
     return mixFace->exec();
 }
 
@@ -19,7 +20,7 @@ MixFaceWindow::MixFaceWindow(DebugLibrary *debug)
     mf_fonts = new MixFaceFonts;
 
     debug->sendMessage("MixFaceWindow::MixFaceWindow Init MixFaceLibrary...",3);
-    new boost::thread{&MixFaceWindow::threadLibraryInit, this};
+    mf_library = new MixFaceLibrary(debug);
 
     mf_metersTimer = new MixFaceMetersTimer;
     mf_demoTimer = new MixFaceDemoTimer;
@@ -35,8 +36,9 @@ MixFaceWindow::MixFaceWindow(DebugLibrary *debug)
     mf_metersTimer->start(34);
     mf_demoTimer->start(5);
 
-    mf_library->valueChanged.connect(signal_type_thr_int(&MixFaceWindow::valueChanged, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>()));
-    mf_library->slotConnected.connect(signal_type_bool(&MixFaceWindow::s_connected,this,boost::arg<1>()));
+    mf_library->valueChanged.connect(signal_type_thr_int(&MixFaceWindow::slotValueChanged, this, boost::arg<1>(), boost::arg<2>(), boost::arg<3>()));
+    mf_library->slotConnected.connect(signal_type_bool(&MixFaceWindow::slotConnected,this,boost::arg<1>()));
+    mf_library->newMeters2.connect(signal_type_float_array(&MixFaceWindow::slotMeter2,this,boost::arg<1>()));
 }
 
 void MixFaceWindow::initUI(){
@@ -199,6 +201,19 @@ void MixFaceWindow::initUI(){
 
     debug->sendMessage(QString("MixFaceWindow::initUI Set main window widget...").toStdString(),1);
     this->setCentralWidget(centralWidget);
+
+    connectedThread = new ReturnConnectedThread;
+    connectedThread->moveToThread(qApp->thread());
+    connect(connectedThread, &ReturnConnectedThread::returnSignal,
+            this, &MixFaceWindow::threadConnected);
+    valueThread = new ReturnValueThread;
+    valueThread->moveToThread(qApp->thread());
+    connect(valueThread, &ReturnValueThread::returnSignal,
+            this, &MixFaceWindow::threadValueChanged);
+    meter2Thread = new ReturnMeter2Thread;
+    meter2Thread->moveToThread(qApp->thread());
+    connect(meter2Thread, &ReturnMeter2Thread::returnSignal,
+            this, &MixFaceWindow::threadMeter2);
 }
 
 MixFaceWindow::~MixFaceWindow() {}
@@ -212,22 +227,26 @@ void MixFaceWindow::connection(){
     mf_library->threadConnect(mf_topArea->lineIp->text().toStdString());
 }
 
-void MixFaceWindow::s_connected(bool stat){
-    connected = stat;
-    if (stat) {
+void MixFaceWindow::slotConnected(bool state){
+    connectedThread->returnSlot(state);
+}
+
+void MixFaceWindow::threadConnected(bool state){
+    connected = state;
+    if (state) {
         mf_topArea->syncAction->setEnabled(true);
         mf_topArea->lineIp->setDisabled(true);
         //mf_library->threadSendSyncMessages();
         mf_topArea->connectAction->setText("Disconnect...");
-        mf_topArea->consoleName->setText(QString::fromStdString(mf_library->linker->xinfo[1]));
+        mf_topArea->consoleName->setText(QString::fromStdString(mf_library->xinfo[1]));
         mf_topArea->consoleName->setStyleSheet("QLabel {"
                                    "color: rgb(255,255,255);"
                                    "background-color: rgb(96, 96, 96);"
                                    "border: 0px solid rgb(0,0,0);"
                                    "border-radius: 0px;"
                                    "}");
-        mf_topArea->console->setText(QString::fromStdString(mf_library->linker->xinfo[2]));
-        mf_demoTimer->connected = stat;
+        mf_topArea->console->setText(QString::fromStdString(mf_library->xinfo[2]));
+        mf_demoTimer->connected = state;
     } else {
         mf_topArea->syncAction->setDisabled(true);
         mf_topArea->lineIp->setEnabled(true);
@@ -240,8 +259,9 @@ void MixFaceWindow::s_connected(bool stat){
                                    "border-radius: 0px;"
                                    "}");
         mf_topArea->console->setText("MixFace");
-        mf_demoTimer->connected = stat;
+        mf_demoTimer->connected = state;
     }
+    connectedThread->terminate();
 }
 
 void MixFaceWindow::initControlAreaWidgets() {
@@ -307,8 +327,6 @@ void MixFaceWindow::initMainAreaWidgetIdx(int idx) {
     connect(mainWidget[idx], &FaderWidget::eqClicked, this, &MixFaceWindow::buttonEqClicked);
     connect(mainWidget[idx], &FaderWidget::dynClicked, this, &MixFaceWindow::buttonDynClicked);
     connect(mainWidget[idx], &FaderWidget::iconButtonClicked, this, &MixFaceWindow::iconButtonClicked);
-    /*if (idx==70)
-        mf_library->linker->listener->newMeters2.connect(signal_type_float_array(&FaderWidget::setMeter, scrollWidget[idx], boost::arg<1>));*/
 }
 
 void MixFaceWindow::assignMainFader(int idx, int idy) {
@@ -353,7 +371,7 @@ void MixFaceWindow::logoChanged(int idx, int value){
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
         string msg = mf_library->getOscAddress(configicon, chtype, chN, 0);
-        mf_library->linker->sendInt(msg.c_str(), value);
+        mf_library->sendInt(msg.c_str(), value);
     }
 }
 
@@ -369,7 +387,7 @@ void MixFaceWindow::colorChanged(int idx, int value){
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
         string msg = mf_library->getOscAddress(configcolor, chtype, chN, 0);
-        mf_library->linker->sendInt(msg.c_str(), value);
+        mf_library->sendInt(msg.c_str(), value);
     }
 }
 
@@ -386,7 +404,7 @@ void MixFaceWindow::nameChanged(int idx, QString value){
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
         string msg = mf_library->getOscAddress(configname, chtype, chN, 0);
-        mf_library->linker->sendString(msg.c_str(), value.toStdString());
+        mf_library->sendString(msg.c_str(), value.toStdString());
     }
 }
 
@@ -566,11 +584,11 @@ void MixFaceWindow::panChanged(float value)
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
         string msg = mf_library->getOscAddress(mtype, chtype, chN, send);
-        mf_library->linker->sendFloat(msg.c_str(),value);
+        mf_library->sendFloat(msg.c_str(),value);
     }
 
     if ((idx>47&&idx<65)||idx==70||idx==71) {
-        valueChanged(pan,idx,currentIdy);
+        threadValueChanged(pan,idx,currentIdy);
     }
 }
 
@@ -595,11 +613,11 @@ void MixFaceWindow::faderChanged(float value)
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
         string msg = mf_library->getOscAddress(mtype, chtype, chN, send);
-        mf_library->linker->sendFloat(msg.c_str(), value);
+        mf_library->sendFloat(msg.c_str(), value);
     }
 
     if ((idx>47&&idx<65)||idx==70||idx==71)
-        valueChanged(fader,idx,currentIdy);
+        threadValueChanged(fader,idx,currentIdy);
 }
 
 void MixFaceWindow::muteClicked(int value)
@@ -622,11 +640,11 @@ void MixFaceWindow::muteClicked(int value)
         ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
         int chN = mf_library->getChannelNumberFromIdx(idx);
         string msg = mf_library->getOscAddress(mtype, chtype, chN, send);
-        mf_library->linker->sendInt(msg.c_str(), value);
+        mf_library->sendInt(msg.c_str(), value);
     }
 
     if ((idx>47&&idx<65)||idx==70||idx==71) {
-        valueChanged(on,idx,currentIdy);
+        threadValueChanged(on,idx,currentIdy);
     }
 }
 
@@ -642,10 +660,10 @@ void MixFaceWindow::soloClicked(int value)
         int value = mf_library->db.solo[ids];
         QByteArray oscAddressArray = msg.toLatin1();
         const char *oscAddress = oscAddressArray;
-        mf_library->linker->sendInt(oscAddress,value);
+        mf_library->sendInt(oscAddress,value);
     }
     if ((idx>47&&idx<65)||idx==70||idx==71) {
-        valueChanged(solo,idx,currentIdy);
+        threadValueChanged(solo,idx,currentIdy);
     }
 }
 
@@ -665,7 +683,11 @@ void MixFaceWindow::windowRenew() {
     }
 }
 
-void MixFaceWindow::valueChanged(int imtype, int idx, int idy) {
+void MixFaceWindow::slotValueChanged(int imtype, int idx, int idy) {
+    valueThread->returnSlot(imtype, idx, idy);
+}
+
+void MixFaceWindow::threadValueChanged(int imtype, int idx, int idy) {
     MessageType mtype = MessageType(imtype);
     switch (mtype) {
     case stereoon:
@@ -922,4 +944,15 @@ void MixFaceWindow::valueChanged(int imtype, int idx, int idy) {
         debug->sendMessage(QString("Error change value!").toStdString(),0);
         break;
     }
+
+    valueThread->terminate();
+}
+
+void MixFaceWindow::slotMeter2(float *array){
+    meter2Thread->returnSlot(array);
+}
+
+void MixFaceWindow::threadMeter2(float *array){
+    mainWidget[70]->setMeter(array[22],array[23],array[47],array[47]);
+    meter2Thread->terminate();
 }

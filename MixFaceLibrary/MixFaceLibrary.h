@@ -141,7 +141,7 @@ enum SendType {
     st_error
 };
 
-class MixFaceLibrary : public boost::thread {
+class MixFaceLibrary {
 protected:
     struct x32db {
         int stereoon[80];
@@ -360,8 +360,16 @@ protected:
 
 public:
     MixFaceLibrary(DebugLibrary *debug_ = nullptr);
+    void sendFloat(const char *oscAddress, float value){
+        linker->sendFloat(oscAddress, value);
+    }
+    void sendInt(const char *oscAddress, int value){
+        linker->sendInt(oscAddress, value);
+    }
+    void sendString(const char *oscAddress, string value){
+        linker->sendString(oscAddress, value);
+    }
     //Shared tool
-    MixFaceLinker *linker;
     string channelNameFromIdx(int idx);
     string getOscAddress(MessageType mtype, ChannelType chtype, int channelN,
                           int sendN);
@@ -372,9 +380,19 @@ public:
     MessageTypeStruct msgTypeStr;
     ChannelTypeStruct chTypeStr;
     BusTypeStruct busTypeStr;
+    string xinfo[4];
     //Slots
     signal_thr_int valueChanged;
     signal_bool slotConnected;
+
+    signal_float_array newMeters9;
+    signal_float_array newMeters10;
+    signal_float_array newMeters14;
+    signal_float_array newMeters0;
+    signal_float_array newMeters2;
+    signal_float_array newMeters5;
+    signal_float_array newMeters6;
+    signal_float_array newMeters16;
     //Threads
     void threadConnect(string hostNameString){
         boost::thread{&MixFaceLibrary::connect, this, hostNameString};
@@ -387,20 +405,10 @@ private:
     void connect(string hostNameString);
     void sendSyncMessages();
     void sendXremoteMessage();
-
-    void threadStringMessage(string message, string sval){
-        boost::thread{&MixFaceLibrary::processStringMessage, this, message, sval};
-    }
-    void threadIntMessage(string message, int ival){
-        boost::thread{&MixFaceLibrary::processIntMessage, this, message, ival};
-    }
-    void threadFloatMessage(string message, float fval){
-        boost::thread{&MixFaceLibrary::processFloatMessage, this, message, fval};
-    }
-
     void processStringMessage(string message, string sval);
     void processIntMessage(string message, int ival);
     void processFloatMessage(string message, float fval);
+    void processXinfo(string *xinfo_) { for(int i = 0;i < 4; i++) xinfo[i] = xinfo_[i]; }
     MessageType getMessageType(string message);
     ChannelType getChannelType(string message);
     int getChannelNumber(string message);
@@ -409,6 +417,7 @@ private:
     //classes
     DebugLibrary *debug;
     IntervalThread *sendRenewMessagesTimer;
+    MixFaceLinker *linker;
 };
 
 #endif // MIXFACELIBRARY_H

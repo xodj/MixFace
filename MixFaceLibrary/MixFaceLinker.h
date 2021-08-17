@@ -35,7 +35,7 @@ private:
     boost::thread *recieverThread;
     bool connected = false;
     string hostNameStr = "127.0.0.1";
-
+    const MessageTerminator End;
 };
 
 #endif // MIXFACELINKER_H

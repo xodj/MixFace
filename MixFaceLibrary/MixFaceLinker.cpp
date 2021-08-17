@@ -41,7 +41,7 @@ void MixFaceLinker::sendFloat(const char *oscAddress,float value) {
     char buffer[OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
     p.Clear();
-    p << osc::BeginMessage(oscAddress) << (float)value << osc::EndMessage;
+    p << osc::BeginMessage(oscAddress) << (float)value << End;
     udpSocket->SendTo(host, p.Data(), p.Size());
 }
 
@@ -50,7 +50,7 @@ void MixFaceLinker::sendInt(const char *oscAddress,int value) {
     char buffer[OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
     p.Clear();
-    p << osc::BeginMessage(oscAddress) << (int)value << osc::EndMessage;
+    p << osc::BeginMessage(oscAddress) << (int)value << End;
     udpSocket->SendTo(host, p.Data(), p.Size());
 }
 
@@ -60,7 +60,7 @@ void MixFaceLinker::sendString(const char *oscAddress, string value_) {
     char buffer[OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
     p.Clear();
-    p << osc::BeginMessage(oscAddress) << value << osc::EndMessage;
+    p << osc::BeginMessage(oscAddress) << value << End;
     udpSocket->SendTo(host, p.Data(), p.Size());
 }
 
@@ -69,11 +69,12 @@ void MixFaceLinker::sendCmdOnly(const char *oscAddress) {
     char buffer[OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
     p.Clear();
-    p << osc::BeginMessage(oscAddress) << osc::EndMessage;
+    p << osc::BeginMessage(oscAddress) << End;
     udpSocket->SendTo(host, p.Data(), p.Size());
 }
 
 void MixFaceLinker::sendDynamicMsg(osc::OutboundPacketStream p) {
     IpEndpointName host(hostNameStr.c_str(),PORT);
+    p << End;
     udpSocket->SendTo(host, p.Data(), p.Size());
 }
