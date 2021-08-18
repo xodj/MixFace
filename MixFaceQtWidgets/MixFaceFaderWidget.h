@@ -38,7 +38,9 @@ public:
     void setColor(int value);
     void setName(QString value);
 
-    void setMeter(float preL_, float preR_, float gate, float comp);
+    void setMeter(float preL_, float preR_);
+    void setDynamics(float comp);
+    void setGate(float gate);
 
 signals:
     void faderChanged(float value);
@@ -127,7 +129,8 @@ class dynMeter : public QWidget {
 
 public:
     explicit dynMeter(float dpiRatio_,QWidget *parent_);
-    void setlevel(float comp_, float gate_);
+    void setDynamics(float comp_);
+    void setGate(float gate_);
 
 private:
     QPainter *painter;

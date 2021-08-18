@@ -30,11 +30,15 @@ private:
     void initIconPopup();
 
     void emitLogoChanged(int idl);
-    void emitColorChanged(int idc);
+    void emitColorChanged();
     void emitNameChanged();
+    void setColorPreview(int value);
 
     float dpiRatio = 1;
     int idx = 0;
+    int colorNumber = 0;
+    int iconNumber = 0;
+    QString BWIcon = "W";
 
     QMainWindow *mainWindow;
     DebugLibrary *debug;
@@ -46,7 +50,7 @@ private:
     QPushButton *iconButton;
 
     QListWidget *iconsList;
-    QListWidget *colorsList;
+    QList<QPushButton*> *colorsList;
 
 };
 #endif // MIXFACEICONPICKER_H

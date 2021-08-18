@@ -46,8 +46,12 @@ private:
     void slotValueChanged(int imtype, int idx, int idy);
     void threadValueChanged(int imtype, int idx, int idy);
 
+    void slotMeter1(float *array);
+    void threadMeter1(float *array);
     void slotMeter2(float *array);
     void threadMeter2(float *array);
+    void slotMeter3(float *array);
+    void threadMeter3(float *array);
 
     QScrollBar *bar;
     QVBoxLayout *verticalLayout;
@@ -158,14 +162,14 @@ protected:
             }
 
             for(FaderWidget *fader:faders)
-                fader->setMeter(demoValue[0], demoValue[1], demoValue[2], demoValue[3]);
+                fader->setMeter(demoValue[0], demoValue[1]);
         } else
             this->ResetValues();
     }
 
     void ResetValues(){
         for(FaderWidget *fader:faders)
-            fader->setMeter(.0f, .0f, .0f, .0f);
+            fader->setMeter(.0f, .0f);
         this->stop();
     }
 
@@ -186,13 +190,21 @@ public:
     void valueSlot(int imtype, int idx, int idy){
         emit valueSignal(imtype, idx, idy);
     };
+    void meter1Slot(float *array){
+        emit meter1Signal(array);
+    };
     void meter2Slot(float *array){
         emit meter2Signal(array);
+    };
+    void meter3Slot(float *array){
+        emit meter3Signal(array);
     };
 
 signals:
     void connectedSignal(bool state);
     void valueSignal(int imtype, int idx, int idy);
+    void meter1Signal(float *array);
     void meter2Signal(float *array);
+    void meter3Signal(float *array);
 };
 #endif

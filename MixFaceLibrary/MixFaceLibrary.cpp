@@ -17,8 +17,8 @@ MixFaceLibrary::MixFaceLibrary(DebugLibrary *debug_)
         db.source[idx] = 0;
         db.gain[idx] = 0.5;
         db.trim[idx] = 0.5;
-        db.configicon[idx] = 1;
-        db.configcolor[idx] = 1;
+        db.configicon[idx] = 0;
+        db.configcolor[idx] = 0;
         db.configname[idx] = channelNameFromIdx(idx);
         for(int idy=0;idy<16;idy++){
             db.sendlevel[idx][idy] = 0.75;
@@ -42,35 +42,15 @@ void MixFaceLibrary::connect(string hostNameString){
         linker->listener->s_str_int.connect(signal_type_str_int(&MixFaceLibrary::processIntMessage, this, boost::arg<1>(), boost::arg<2>()));
         linker->listener->s_str_float.connect(signal_type_str_float(&MixFaceLibrary::processFloatMessage, this, boost::arg<1>(), boost::arg<2>()));
 
-        linker->listener->newMeters9.connect(newMeters9);
-        linker->listener->newMeters10.connect(newMeters10);
-        linker->listener->newMeters14.connect(newMeters14);
-        linker->listener->newMeters0.connect(newMeters0);
+        linker->listener->newMeters1.connect(newMeters1);
         linker->listener->newMeters2.connect(newMeters2);
-        linker->listener->newMeters5.connect(newMeters5);
-        linker->listener->newMeters6.connect(newMeters6);
-        linker->listener->newMeters16.connect(newMeters16);
+        linker->listener->newMeters3.connect(newMeters3);
 
         char buffer[OUTPUT_BUFFER_SIZE];
         osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);
 
         p.Clear();
-        p << osc::BeginMessage("/batchsubscribe") << ("meters/9") << ("/meters/9")
-            << (int)7 << (int)7 << (int)1;
-        linker->sendDynamicMsg(p);
-
-        p.Clear();
-        p << osc::BeginMessage("/batchsubscribe") << ("meters/10") << ("/meters/10")
-            << (int)7 << (int)7 << (int)1;
-        linker->sendDynamicMsg(p);
-
-        p.Clear();
-        p << osc::BeginMessage("/batchsubscribe") << ("meters/14") << ("/meters/14")
-            << (int)7 << (int)7 << (int)1;
-        linker->sendDynamicMsg(p);
-
-        p.Clear();
-        p << osc::BeginMessage("/batchsubscribe") << ("meters/0") << ("/meters/0")
+        p << osc::BeginMessage("/batchsubscribe") << ("meters/1") << ("/meters/1")
             << (int)7 << (int)7 << (int)1;
         linker->sendDynamicMsg(p);
 
@@ -80,20 +60,8 @@ void MixFaceLibrary::connect(string hostNameString){
         linker->sendDynamicMsg(p);
 
         p.Clear();
-        p << osc::BeginMessage("/batchsubscribe") << ("meters/5") << ("/meters/5")
-            << (int)3 << (int)0 << (int)1;
-        linker->sendDynamicMsg(p);
-
-        p.Clear();
-        p << osc::BeginMessage("/batchsubscribe") << ("meters/6")
-          << ("/meters/6") << (int)18 << (int)18 << (int)1
-         ;
-        linker->sendDynamicMsg(p);
-
-        p.Clear();
-        p << osc::BeginMessage("/batchsubscribe") << ("meters/16")
-          << ("/meters/16") << (int)7 << (int)7 << (int)1
-         ;
+        p << osc::BeginMessage("/batchsubscribe") << ("meters/3") << ("/meters/3")
+            << (int)7 << (int)7 << (int)1;
         linker->sendDynamicMsg(p);
     } else {
         sendRenewMessagesTimer->stop();
@@ -101,14 +69,9 @@ void MixFaceLibrary::connect(string hostNameString){
         linker->listener->s_str_int.disconnect_all_slots();
         linker->listener->s_str_float.disconnect_all_slots();
 
-        linker->listener->newMeters9.disconnect_all_slots();
-        linker->listener->newMeters10.disconnect_all_slots();
-        linker->listener->newMeters14.disconnect_all_slots();
-        linker->listener->newMeters0.disconnect_all_slots();
+        linker->listener->newMeters1.disconnect_all_slots();
         linker->listener->newMeters2.disconnect_all_slots();
-        linker->listener->newMeters5.disconnect_all_slots();
-        linker->listener->newMeters6.disconnect_all_slots();
-        linker->listener->newMeters16.disconnect_all_slots();
+        linker->listener->newMeters3.disconnect_all_slots();
     }
     slotConnected(connected);
 }
@@ -172,15 +135,6 @@ void MixFaceLibrary::sendXremoteMessage() {
     linker->sendDynamicMsg(p);
 
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/9");
-    linker->sendDynamicMsg(p);
-    p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/10");
-    linker->sendDynamicMsg(p);
-    p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/14");
-    linker->sendDynamicMsg(p);
-    p.Clear();
     p << osc::BeginMessage("/renew") << ("hidden/states");
     linker->sendDynamicMsg(p);
     p.Clear();
@@ -190,19 +144,13 @@ void MixFaceLibrary::sendXremoteMessage() {
     p << osc::BeginMessage("/renew") << ("hidden/solo");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/0");
+    p << osc::BeginMessage("/renew") << ("meters/1");
     linker->sendDynamicMsg(p);
     p.Clear();
     p << osc::BeginMessage("/renew") << ("meters/2");
     linker->sendDynamicMsg(p);
     p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/5");
-    linker->sendDynamicMsg(p);
-    p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/6");
-    linker->sendDynamicMsg(p);
-    p.Clear();
-    p << osc::BeginMessage("/renew") << ("meters/16");
+    p << osc::BeginMessage("/renew") << ("meters/3");
     linker->sendDynamicMsg(p);
 }
 
@@ -960,6 +908,8 @@ string MixFaceLibrary::getOscAddress(MessageType mtype,
                 oscAddress = ("/dca/" + to_string(channelN) + "/fader");
             else if (mtype == on)
                 oscAddress = ("/dca/" + to_string(channelN) + "/on");
+            else
+                oscAddress = ("/dca/" + to_string(channelN) + oscAddress);
             break;
         case headamp:
             break;

@@ -50,14 +50,9 @@ public:
     signal_str_float s_str_float;
     signal_str_bool s_str_bool;
     signal_str_str s_str_str;
-    signal_float_array newMeters9;
-    signal_float_array newMeters10;
-    signal_float_array newMeters14;
-    signal_float_array newMeters0;
+    signal_float_array newMeters1;
     signal_float_array newMeters2;
-    signal_float_array newMeters5;
-    signal_float_array newMeters6;
-    signal_float_array newMeters16;
+    signal_float_array newMeters3;
 
 private:
     DebugLibrary *debug;
@@ -84,10 +79,15 @@ protected:
                 status[2] = (arg++)->AsString();
                 if (arg != m.ArgumentsEnd()) throw ExcessArgumentException();
                 s_st(status);
-            } else if (strcmp(m.AddressPattern(), "meters/9") == 0) {
-            } else if (strcmp(m.AddressPattern(), "meters/10") == 0) {
-            } else if (strcmp(m.AddressPattern(), "meters/14") == 0) {
-            } else if (strcmp(m.AddressPattern(), "meters/0") == 0) {
+            } else if (strcmp(m.AddressPattern(), "meters/1") == 0) {
+                const void *bData;
+                osc::osc_bundle_element_size_t bSize;
+                m.ArgumentsBegin()->AsBlob(bData, bSize);
+                const float *mFloatArray = (const float*)bData;
+                osc::osc_bundle_element_size_t aSize = bSize / 4;
+                float *floatArray = (float*)calloc(aSize, sizeof(float));
+                for (osc::osc_bundle_element_size_t i = 1; i < aSize; i++) { floatArray[i-1] = mFloatArray[i]; }
+                newMeters1(floatArray);
             } else if (strcmp(m.AddressPattern(), "meters/2") == 0) {
                 const void *bData;
                 osc::osc_bundle_element_size_t bSize;
@@ -97,9 +97,15 @@ protected:
                 float *floatArray = (float*)calloc(aSize, sizeof(float));
                 for (osc::osc_bundle_element_size_t i = 1; i < aSize; i++) { floatArray[i-1] = mFloatArray[i]; }
                 newMeters2(floatArray);
-            } else if (strcmp(m.AddressPattern(), "meters/5") == 0) {
-            } else if (strcmp(m.AddressPattern(), "meters/6") == 0) {
-            } else if (strcmp(m.AddressPattern(), "meters/16") == 0) {
+            } else if (strcmp(m.AddressPattern(), "meters/3") == 0) {
+                const void *bData;
+                osc::osc_bundle_element_size_t bSize;
+                m.ArgumentsBegin()->AsBlob(bData, bSize);
+                const float *mFloatArray = (const float*)bData;
+                osc::osc_bundle_element_size_t aSize = bSize / 4;
+                float *floatArray = (float*)calloc(aSize, sizeof(float));
+                for (osc::osc_bundle_element_size_t i = 1; i < aSize; i++) { floatArray[i-1] = mFloatArray[i]; }
+                newMeters3(floatArray);
             } else {
                 string address = m.AddressPattern();
                 ReceivedMessage::const_iterator arg = m.ArgumentsBegin();

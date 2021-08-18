@@ -205,8 +205,12 @@ void MixFaceWindow::initUI(){
             this, &MixFaceWindow::threadConnected);
     connect(returnThread, &ReturnThread::valueSignal,
             this, &MixFaceWindow::threadValueChanged);
+    connect(returnThread, &ReturnThread::meter1Signal,
+            this, &MixFaceWindow::threadMeter1);
     connect(returnThread, &ReturnThread::meter2Signal,
             this, &MixFaceWindow::threadMeter2);
+    connect(returnThread, &ReturnThread::meter3Signal,
+            this, &MixFaceWindow::threadMeter3);
 
     mf_library->valueChanged.connect(
                 signal_type_thr_int(&MixFaceWindow::slotValueChanged, this,
@@ -214,8 +218,14 @@ void MixFaceWindow::initUI(){
     mf_library->slotConnected.connect(
                 signal_type_bool(&MixFaceWindow::slotConnected,
                                  this,boost::arg<1>()));
+    mf_library->newMeters1.connect(
+                signal_type_float_array(&MixFaceWindow::slotMeter1,
+                                        this,boost::arg<1>()));
     mf_library->newMeters2.connect(
                 signal_type_float_array(&MixFaceWindow::slotMeter2,
+                                        this,boost::arg<1>()));
+    mf_library->newMeters3.connect(
+                signal_type_float_array(&MixFaceWindow::slotMeter3,
                                         this,boost::arg<1>()));
 }
 
@@ -357,7 +367,10 @@ void MixFaceWindow::assignScrollFaders(int idy) {
 
 void MixFaceWindow::iconButtonClicked(){
     int idx = reinterpret_cast<QObject *>(sender())->property("idx").toInt();
-    mf_picker->showIconPopup(idx, mf_library->db.configicon[idx], mf_library->db.configcolor[idx],QString::fromStdString(mf_library->channelNameFromIdx(idx)),QString::fromStdString(mf_library->db.configname[idx]));
+    mf_picker->showIconPopup(idx, mf_library->db.configicon[idx],
+                                 mf_library->db.configcolor[idx],
+                                 QString::fromStdString(mf_library->channelNameFromIdx(idx)),
+                                 QString::fromStdString(mf_library->db.configname[idx]));
 }
 
 void MixFaceWindow::logoChanged(int idx, int value){
@@ -948,10 +961,145 @@ void MixFaceWindow::threadValueChanged(int imtype, int idx, int idy) {
     }
 }
 
+void MixFaceWindow::slotMeter1(float *array){
+    returnThread->meter1Slot(array);
+}
+
+void MixFaceWindow::threadMeter1(float *array){
+    for(int i = 0;i < 32; i++){
+        //32 input channels
+        scrollWidget[i]->setMeter(array[i], array[i+1]);
+        //32 gate gain reductions
+        scrollWidget[i]->setDynamics(array[i + 32]);
+        //32 dynamics gain reductions
+        scrollWidget[i]->setGate(array[i + 64]);
+    }
+}
+
 void MixFaceWindow::slotMeter2(float *array){
     returnThread->meter2Slot(array);
 }
 
 void MixFaceWindow::threadMeter2(float *array){
-    mainWidget[70]->setMeter(array[22],array[23],array[47],array[47]);
+    //meters
+    //16 bus masters
+    mainWidget[48]->setMeter(array[0], array[1]);
+    mainWidget[49]->setMeter(array[1], array[0]);
+    mainWidget[50]->setMeter(array[2], array[3]);
+    mainWidget[51]->setMeter(array[3], array[2]);
+    mainWidget[52]->setMeter(array[4], array[5]);
+    mainWidget[53]->setMeter(array[5], array[4]);
+    mainWidget[54]->setMeter(array[6], array[7]);
+    mainWidget[55]->setMeter(array[7], array[6]);
+    mainWidget[56]->setMeter(array[8], array[9]);
+    mainWidget[57]->setMeter(array[9], array[8]);
+    mainWidget[58]->setMeter(array[10], array[11]);
+    mainWidget[59]->setMeter(array[11], array[10]);
+    mainWidget[60]->setMeter(array[12], array[13]);
+    mainWidget[61]->setMeter(array[13], array[12]);
+    mainWidget[62]->setMeter(array[14], array[15]);
+    mainWidget[63]->setMeter(array[15], array[14]);
+    scrollWidget[48]->setMeter(array[0], array[1]);
+    scrollWidget[49]->setMeter(array[1], array[0]);
+    scrollWidget[50]->setMeter(array[2], array[3]);
+    scrollWidget[51]->setMeter(array[3], array[2]);
+    scrollWidget[52]->setMeter(array[4], array[5]);
+    scrollWidget[53]->setMeter(array[5], array[4]);
+    scrollWidget[54]->setMeter(array[6], array[7]);
+    scrollWidget[55]->setMeter(array[7], array[6]);
+    scrollWidget[56]->setMeter(array[8], array[9]);
+    scrollWidget[57]->setMeter(array[9], array[8]);
+    scrollWidget[58]->setMeter(array[10], array[11]);
+    scrollWidget[59]->setMeter(array[11], array[10]);
+    scrollWidget[60]->setMeter(array[12], array[13]);
+    scrollWidget[61]->setMeter(array[13], array[12]);
+    scrollWidget[62]->setMeter(array[14], array[15]);
+    scrollWidget[63]->setMeter(array[15], array[14]);
+    //matrix
+    scrollWidget[64]->setMeter(array[16], array[17]);
+    scrollWidget[65]->setMeter(array[17], array[16]);
+    scrollWidget[66]->setMeter(array[18], array[19]);
+    scrollWidget[67]->setMeter(array[19], array[18]);
+    scrollWidget[68]->setMeter(array[20], array[21]);
+    scrollWidget[69]->setMeter(array[21], array[20]);
+    //main lr
+    mainWidget[70]->setMeter(array[22], array[23]);
+    scrollWidget[70]->setMeter(array[22], array[23]);
+    //mono mc
+    mainWidget[71]->setMeter(array[24], 0);
+    scrollWidget[71]->setMeter(array[24], 0);
+
+    //dynamics gain reduction
+    //16 bus masters
+    mainWidget[48]->setDynamics(array[25]);
+    mainWidget[49]->setDynamics(array[26]);
+    mainWidget[50]->setDynamics(array[27]);
+    mainWidget[51]->setDynamics(array[28]);
+    mainWidget[52]->setDynamics(array[29]);
+    mainWidget[53]->setDynamics(array[30]);
+    mainWidget[54]->setDynamics(array[31]);
+    mainWidget[55]->setDynamics(array[32]);
+    mainWidget[56]->setDynamics(array[33]);
+    mainWidget[57]->setDynamics(array[34]);
+    mainWidget[58]->setDynamics(array[35]);
+    mainWidget[59]->setDynamics(array[36]);
+    mainWidget[60]->setDynamics(array[37]);
+    mainWidget[61]->setDynamics(array[38]);
+    mainWidget[62]->setDynamics(array[39]);
+    mainWidget[63]->setDynamics(array[40]);
+    scrollWidget[48]->setDynamics(array[25]);
+    scrollWidget[49]->setDynamics(array[26]);
+    scrollWidget[50]->setDynamics(array[27]);
+    scrollWidget[51]->setDynamics(array[28]);
+    scrollWidget[52]->setDynamics(array[29]);
+    scrollWidget[53]->setDynamics(array[30]);
+    scrollWidget[54]->setDynamics(array[31]);
+    scrollWidget[55]->setDynamics(array[32]);
+    scrollWidget[56]->setDynamics(array[33]);
+    scrollWidget[57]->setDynamics(array[34]);
+    scrollWidget[58]->setDynamics(array[35]);
+    scrollWidget[59]->setDynamics(array[36]);
+    scrollWidget[60]->setDynamics(array[37]);
+    scrollWidget[61]->setDynamics(array[38]);
+    scrollWidget[62]->setDynamics(array[39]);
+    scrollWidget[63]->setDynamics(array[40]);
+    //matrix
+    scrollWidget[64]->setDynamics(array[41]);
+    scrollWidget[65]->setDynamics(array[42]);
+    scrollWidget[66]->setDynamics(array[43]);
+    scrollWidget[67]->setDynamics(array[44]);
+    scrollWidget[68]->setDynamics(array[45]);
+    scrollWidget[69]->setDynamics(array[46]);
+    //main lr
+    mainWidget[70]->setDynamics(array[47]);
+    scrollWidget[70]->setDynamics(array[47]);
+    //mono mc
+    mainWidget[71]->setDynamics(array[48]);
+    scrollWidget[71]->setDynamics(array[48]);
+}
+
+void MixFaceWindow::slotMeter3(float *array){
+    returnThread->meter1Slot(array);
+}
+
+void MixFaceWindow::threadMeter3(float *array){
+    //6 aux sends NOT USED FOR NOW
+    //8 aux returns
+    scrollWidget[32]->setMeter(array[6], array[7]);
+    scrollWidget[33]->setMeter(array[7], array[6]);
+    scrollWidget[34]->setMeter(array[8], array[9]);
+    scrollWidget[35]->setMeter(array[9], array[8]);
+    scrollWidget[36]->setMeter(array[10], array[11]);
+    scrollWidget[37]->setMeter(array[11], array[10]);
+    scrollWidget[38]->setMeter(array[12], array[13]);
+    scrollWidget[39]->setMeter(array[13], array[12]);
+    //4x2 st fx returns
+    scrollWidget[40]->setMeter(array[14], array[15]);
+    scrollWidget[41]->setMeter(array[15], array[14]);
+    scrollWidget[42]->setMeter(array[16], array[17]);
+    scrollWidget[43]->setMeter(array[17], array[16]);
+    scrollWidget[44]->setMeter(array[18], array[19]);
+    scrollWidget[45]->setMeter(array[19], array[18]);
+    scrollWidget[46]->setMeter(array[20], array[21]);
+    scrollWidget[47]->setMeter(array[21], array[20]);
 }

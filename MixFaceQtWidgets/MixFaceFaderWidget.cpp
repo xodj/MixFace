@@ -646,12 +646,18 @@ void FaderWidget::emitSoloChanged(){
     emit soloChanged(value);
 }
 
-void FaderWidget::setMeter(float preL_, float preR_, float gate, float comp){
-    Q_UNUSED(gate)
-    Q_UNUSED(comp)
+void FaderWidget::setMeter(float preL_, float preR_){
     m_vmeter->setMeter(preL_, preR_);
+}
+
+void FaderWidget::setDynamics(float comp){
     if(dyn->isEnabled())
-        m_dmeter->setlevel(gate, comp);
+        m_dmeter->setDynamics(comp);
+}
+
+void FaderWidget::setGate(float gate){
+    if(dyn->isEnabled())
+        m_dmeter->setGate(gate);
 }
 
 TicksPaint::TicksPaint(float dpiRatio_) : QWidget() {
@@ -740,9 +746,12 @@ dynMeter::dynMeter(float dpiRatio_,QWidget *parent_) : QWidget() {
     dynMeterSize = QSize(122*dpiRatio-10,36*dpiRatio-10);
 }
 
-void dynMeter::setlevel(float comp_, float gate_){
-    currentGate = log10(gate_)*20 + 115;
+void dynMeter::setDynamics(float comp_){
     currentComp = log10(comp_)*20 + 115;
+}
+
+void dynMeter::setGate(float gate_){
+    currentGate = log10(gate_)*20 + 115;
 }
 
 void dynMeter::paintEvent(QPaintEvent *event)

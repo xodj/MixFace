@@ -385,14 +385,9 @@ public:
     signal_thr_int valueChanged;
     signal_bool slotConnected;
 
-    signal_float_array newMeters9;
-    signal_float_array newMeters10;
-    signal_float_array newMeters14;
-    signal_float_array newMeters0;
+    signal_float_array newMeters1;
     signal_float_array newMeters2;
-    signal_float_array newMeters5;
-    signal_float_array newMeters6;
-    signal_float_array newMeters16;
+    signal_float_array newMeters3;
     //Threads
     void threadConnect(string hostNameString){
         boost::thread{&MixFaceLibrary::connect, this, hostNameString};
