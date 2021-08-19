@@ -18,8 +18,32 @@ public:
     explicit DynamicsWidget(int idx, float dpiRatio, MixFaceFonts *m_fonts_ = nullptr);
     ~DynamicsWidget();
 
+    int idx;
+
+    void onOffRecieved(int value);
+    void tresholdRecieved(float value);
+    void ratioRecieved(int value);
+
+    void mixRecieved(float value);
+    void gainRecieved(float value);
+    void kneeRecieved(float value);
+
+    void modeCompExpRecieved(int value);
+    void envLinLogRecieved(int value);
+    void detPeakRmsRecieved(int value);
+
+    void attackRecieved(float value);
+    void holdRecieved(float value);
+    void releaseRecieved(float value);
+    void autoTimeRecieved(int value);
+
+    void keySourceRecieved(int value);
+    void filterRecieved(int value);
+    void filterTypeRecieved(int value);
+    void filterFrequencyRecieved(float value);
+
 signals:
-    void setOn(int value);
+    void onOffChanged(int value);
     void tresholdChanged(float value);
     void ratioChanged(int value);
 
@@ -27,9 +51,9 @@ signals:
     void gainChanged(float value);
     void kneeChanged(float value);
 
-    void typeChanged(int value);
-    void linLogChanged(int value);
-    void peakRmsChanged(int value);
+    void modeCompExpChanged(int value);
+    void envLinLogChanged(int value);
+    void detPeakRmsChanged(int value);
 
     void attackChanged(float value);
     void holdChanged(float value);
@@ -46,7 +70,7 @@ private:
     QFrame *gateWidget(int idx);
     void connectSignals();
 
-    void emitSetOnChanged();
+    void emitOnOffChanged();
     void emitTresholdChanged();
     void emitRatioChanged();
 
@@ -54,9 +78,9 @@ private:
     void emitGainChanged();
     void emitKneeChanged();
 
-    void emitTypeChanged();
-    void emitLinLogChanged();
-    void emitPeakRmsChanged();
+    void emitModeCompExpChanged();
+    void emitEnvLinLogChanged();
+    void emitDetPeakRmsChanged();
 
     void emitAttackChanged();
     void emitHoldChanged();

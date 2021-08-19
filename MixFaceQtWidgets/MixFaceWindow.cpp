@@ -574,6 +574,24 @@ void MixFaceWindow::buttonDynClicked(){
         bar->setHidden(true);
         srcArea->setVisible(true);
         m_mode = mDyn;
+
+        dynWidget->onOffRecieved(mf_library->db.dynon[idx]);
+        dynWidget->tresholdRecieved(mf_library->db.dynthr[idx]);
+        dynWidget->ratioRecieved(mf_library->db.dynratio[idx]);
+        dynWidget->mixRecieved(mf_library->db.dynmix[idx]);
+        dynWidget->gainRecieved(mf_library->db.dynmgain[idx]);
+        dynWidget->attackRecieved(mf_library->db.dynattack[idx]);
+        dynWidget->holdRecieved(mf_library->db.dynhold[idx]);
+        dynWidget->releaseRecieved(mf_library->db.dynrelease[idx]);
+        dynWidget->modeCompExpRecieved(mf_library->db.dynmode[idx]);
+        dynWidget->kneeRecieved(mf_library->db.dynknee[idx]);
+        dynWidget->envLinLogRecieved(mf_library->db.dynenv[idx]);
+        dynWidget->detPeakRmsRecieved(mf_library->db.dyndet[idx]);
+        dynWidget->autoTimeRecieved(mf_library->db.dynauto[idx]);
+        dynWidget->keySourceRecieved(mf_library->db.dynkeysrc[idx]);
+        dynWidget->filterRecieved(mf_library->db.dynfilteron[idx]);
+        dynWidget->filterTypeRecieved(mf_library->db.dynfiltertype[idx]);
+        dynWidget->filterFrequencyRecieved(mf_library->db.dynfilterf[idx]);
     } else {
         srcArea->setHidden(true);
         scrollArea->setVisible(true);
@@ -827,38 +845,72 @@ void MixFaceWindow::threadValueChanged(int imtype, int idx, int idy) {
     case gatefilterf:
         break;
     case dynon:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->onOffRecieved(mf_library->db.dynon[idx]);
         break;
     case dynthr:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->tresholdRecieved(mf_library->db.dynthr[idx]);
         break;
     case dynratio:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->ratioRecieved(mf_library->db.dynratio[idx]);
         break;
     case dynmix:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->mixRecieved(mf_library->db.dynmix[idx]);
         break;
     case dynmgain:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->gainRecieved(mf_library->db.dynmgain[idx]);
         break;
     case dynattack:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->attackRecieved(mf_library->db.dynattack[idx]);
         break;
     case dynhold:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->holdRecieved(mf_library->db.dynhold[idx]);
         break;
     case dynrelease:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->releaseRecieved(mf_library->db.dynrelease[idx]);
         break;
     case dynmode:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->modeCompExpRecieved(mf_library->db.dynmode[idx]);
         break;
     case dynknee:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->kneeRecieved(mf_library->db.dynknee[idx]);
         break;
     case dynenv:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->envLinLogRecieved(mf_library->db.dynenv[idx]);
         break;
     case dyndet:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->detPeakRmsRecieved(mf_library->db.dyndet[idx]);
         break;
     case dynauto:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->autoTimeRecieved(mf_library->db.dynauto[idx]);
         break;
     case dynkeysrc:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->keySourceRecieved(mf_library->db.dynkeysrc[idx]);
         break;
     case dynfilteron:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->filterRecieved(mf_library->db.dynfilteron[idx]);
         break;
     case dynfiltertype:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->filterTypeRecieved(mf_library->db.dynfiltertype[idx]);
         break;
     case dynfilterf:
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+            dynWidget->filterFrequencyRecieved(mf_library->db.dynfilterf[idx]);
         break;
     case eq1type:
         break;
@@ -970,9 +1022,9 @@ void MixFaceWindow::threadMeter1(float *array){
         //32 input channels
         scrollWidget[i]->setMeter(array[i], array[i+1]);
         //32 gate gain reductions
-        scrollWidget[i]->setDynamics(array[i + 32]);
+        scrollWidget[i]->setGate(array[i + 32]);
         //32 dynamics gain reductions
-        scrollWidget[i]->setGate(array[i + 64]);
+        scrollWidget[i]->setDynamics(array[i + 64]);
     }
 }
 
@@ -1079,7 +1131,7 @@ void MixFaceWindow::threadMeter2(float *array){
 }
 
 void MixFaceWindow::slotMeter3(float *array){
-    returnThread->meter1Slot(array);
+    returnThread->meter3Slot(array);
 }
 
 void MixFaceWindow::threadMeter3(float *array){

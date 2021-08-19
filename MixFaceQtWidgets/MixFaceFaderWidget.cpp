@@ -2,6 +2,7 @@
 #include <qglobal.h>
 #include <QtCore/QVariant>
 #include "MixFaceStaticMath.h"
+#include <QTime>
 
 FaderWidget::FaderWidget(float dpiRatio, MixFaceFonts *m_fonts,
                          MixFaceMetersTimer *mf_metersTimer, DebugLibrary *debug)
@@ -96,7 +97,7 @@ void FaderWidget::initWidget(){
                              "height: "+QString::number(28*dpiRatio)+"px;"
                              "border: 2px solid rgb(32,32,32);"
                              "border-radius: 5px;}"
-                             "QSlider::handle:horizontal"
+                             "QSlider::handle"
                              "{"
                              "background-color:"
                              "qlineargradient(spread:reflect,"
@@ -104,11 +105,23 @@ void FaderWidget::initWidget(){
                              "stop:0 rgba(0, 0, 0, 255),"
                              "stop:0.1 rgba(196, 196, 196, 255));"
                              "height: "+QString::number(36*dpiRatio)+"px;"
-                             "border: 2px solid rgb(32,32,32);"
-                             "border-radius: 3px;"
+                             "border: 1px solid rgb(32,32,32);"
+                             "border-radius: 4px;"
                              "width: "+QString::number(18*dpiRatio)+"px;"
                              "}"
-                             "QSlider::groove:horizontal"
+                             "QSlider::handle:hover"
+                             "{"
+                             "background-color:"
+                             "qlineargradient(spread:reflect,"
+                             "x1:0.5, y1:0, x2:1, y2:0,"
+                             "stop:0 rgba(0, 0, 0, 255),"
+                             "stop:0.1 rgba(196, 196, 196, 255));"
+                             "height: "+QString::number(36*dpiRatio)+"px;"
+                             "border: 1px solid rgb(223,223,223);"
+                             "border-radius: 4px;"
+                             "width: "+QString::number(18*dpiRatio)+"px;"
+                             "}"
+                             "QSlider::groove"
                              "{"
                              "border-radius: 0px;"
                              "}");
@@ -171,7 +184,15 @@ void FaderWidget::initWidget(){
                                                  "QSlider::handle\n"
                                                  "{\n"
                                                  "background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(196, 196, 196, 255), stop:0.12 rgba(64, 64, 64, 255), stop:0.480377 rgba(255, 255, 255, 255), stop:0.489564 rgba(0, 0, 0, 255), stop:0.510436 rgba(0, 0, 0, 255), stop:0.52 rgba(255, 255, 255, 255), stop:0.88 rgba(64, 64, 64, 255), stop:1 rgba(196, 196, 196, 255));\n"
-                                                 "border: 1px solid rgb(64,64,64);\n"
+                                                 "border: 1px solid rgb(32,32,32);\n"
+                                                 "border-radius: 5px;\n"
+                                                 "height: " + QString::number(44*dpiRatio) + "px;\n"
+                                                 "margin: 0 -" + QString::number(18*dpiRatio) + "px;\n"
+                                                 "}"
+                                                 "QSlider::handle:pressed\n"
+                                                 "{\n"
+                                                 "background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(196, 196, 196, 255), stop:0.12 rgba(64, 64, 64, 255), stop:0.480377 rgba(255, 255, 255, 255), stop:0.489564 rgba(0, 0, 0, 255), stop:0.510436 rgba(0, 0, 0, 255), stop:0.52 rgba(255, 255, 255, 255), stop:0.88 rgba(64, 64, 64, 255), stop:1 rgba(196, 196, 196, 255));\n"
+                                                 "border: 1px solid rgb(223,223,223);\n"
                                                  "border-radius: 5px;\n"
                                                  "height: " + QString::number(44*dpiRatio) + "px;\n"
                                                  "margin: 0 -" + QString::number(18*dpiRatio) + "px;\n"
@@ -265,6 +286,8 @@ void FaderWidget::connectWidgets(){
                          &FaderWidget::emitMuteChanged);
     QSlider::connect(panSlider, &QSlider::valueChanged,
                      this, &FaderWidget::emitPanChanged);
+    QSlider::connect(panSlider, &QSlider::sliderReleased,
+                     this, &FaderWidget::sliderReleased);
     QLineEdit::connect(db,&QLineEdit::editingFinished,
                        this,&FaderWidget::dbEditingFinished);
     QSlider::connect(volSlider, &QSlider::valueChanged,
@@ -315,6 +338,7 @@ void FaderWidget::setFaderType(FaderType ftype) {
     switch(ftype){
     case f_channel:
         setColor(0);
+        m_dmeter->enableGate(true);
         break;
     case f_auxin:
         setLogo(55);
@@ -443,9 +467,9 @@ void FaderWidget::setFaderValue(float value) {
 
     //Calculate db value
     //Resize one digit after point and set -inf
-    /*if (value > 0.f)
-        db->setText(QString::number(round(float2db(value, 1)) + " db");
-    else db->setText("-inf db");*/
+    if (value > 0.f)
+        db->setText(QString::number(round2(float2db(value), 1)) + QString(" db"));
+    else db->setText("-inf db");
     QLineEdit::connect(db,&QLineEdit::editingFinished,
                        this,&FaderWidget::dbEditingFinished);
     QSlider::connect(volSlider, &QSlider::valueChanged,
@@ -459,9 +483,9 @@ void FaderWidget::emitFaderChanged() {
     //Resize one digit after point and set -inf
     QLineEdit::disconnect(db,&QLineEdit::editingFinished,
                           this, &FaderWidget::dbEditingFinished);
-    /*if (volSlider->value()>0)
-        db->setText(QString::number(round(float2db(value, 1)) + " db");
-    else db->setText("-inf db");*/
+    if (volSlider->value()>0)
+        db->setText(QString::number(round2(float2db(float(volSlider->value()) / 10000), 1)) + " db");
+    else db->setText("-inf db");
     QLineEdit::connect(db,&QLineEdit::editingFinished,
                           this, &FaderWidget::dbEditingFinished);
 }
@@ -481,6 +505,15 @@ void FaderWidget::dbEditingFinished(){
 
 void FaderWidget::emitPanChanged(){
     emit panChanged(float(panSlider->value()) / 10000);
+}
+
+void FaderWidget::sliderReleased(){
+    int currentSliderReleasedTime = QTime::currentTime().msec() + (QTime::currentTime().second() * 1000) + (QTime::currentTime().minute() * 60000) + (QTime::currentTime().hour() * 3600000);
+    debug->sendMessage(QString::number(lastSliderReleasedTime).toStdString(), 0);
+    debug->sendMessage(QString::number(currentSliderReleasedTime).toStdString(), 0);
+    if((currentSliderReleasedTime - lastSliderReleasedTime) < 300)
+        panSlider->setValue(5000);
+    lastSliderReleasedTime = currentSliderReleasedTime;
 }
 
 void FaderWidget::setPanValue(float value) {
@@ -508,98 +541,108 @@ void FaderWidget::setColor(int value) {
     colorNumber = value;
     QString fgcolor;
     QString bgcolor;
+    QString fontColor;
 
     switch(colorNumber){
     case 0:
         BWIcon = "W";
+        fontColor = "rgb(255,255,255)";
         fgcolor = "rgb(255,255,255)";
         bgcolor = "rgb(64,64,64)";
-
         break;
     case 1:
         BWIcon = "B";
+        fontColor = "rgb(0,0,0)";
         bgcolor = "rgb(255,64,64)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 2:
         BWIcon = "B";
+        fontColor = "rgb(0,0,0)";
         bgcolor = "rgb(64,255,64)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 3:
         BWIcon = "B";
+        fontColor = "rgb(0,0,0)";
         bgcolor = "rgb(255,255,64)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 4:
-        BWIcon = "W";
-        bgcolor = "rgb(64,64,255)";
-        fgcolor = "rgb(255,255,255)";
-
+        BWIcon = "B";
+        fontColor = "rgb(0,0,0)";
+        bgcolor = "rgb(96,96,255)";
+        fgcolor = "rgb(32,32,32)";
         break;
     case 5:
         BWIcon = "B";
+        fontColor = "rgb(0,0,0)";
         bgcolor = "rgb(255,64,255)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 6:
         BWIcon = "B";
+        fontColor = "rgb(0,0,0)";
         bgcolor = "rgb(64,255,255)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 7:
         BWIcon = "B";
+        fontColor = "rgb(0,0,0)";
         bgcolor = "rgb(255,255,255)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 8:
-        BWIcon = "W";
-        bgcolor = "rgb(128,128,128)";
-        fgcolor = "rgb(255,255,255)";
+        BWIcon = "B";
+        fontColor = "rgb(0,0,0)";
+        bgcolor = "rgb(192,192,192)";
+        fgcolor = "rgb(32,32,32)";
         break;
     case 9:
         BWIcon = "W";
+        fontColor = "rgb(255,255,255)";
         bgcolor = "rgb(32,32,32)";
         fgcolor = "rgb(255,0,0)";
         break;
     case 10:
         BWIcon = "W";
+        fontColor = "rgb(255,255,255)";
         bgcolor = "rgb(32,32,32)";
         fgcolor = "rgb(0,255,0)";
         break;
     case 11:
         BWIcon = "W";
+        fontColor = "rgb(255,255,255)";
         bgcolor = "rgb(32,32,32)";
         fgcolor = "rgb(255,255,0)";
         break;
     case 12:
         BWIcon = "W";
-        bgcolor = "rgb(128,128,128)";
-        fgcolor = "rgb(0,0,255)";
+        fontColor = "rgb(255,255,255)";
+        bgcolor = "rgb(32,32,32)";
+        fgcolor = "rgb(32,32,255)";
         break;
     case 13:
         BWIcon = "W";
+        fontColor = "rgb(255,255,255)";
         bgcolor = "rgb(32,32,32)";
         fgcolor = "rgb(255,0,255)";
         break;
     case 14:
         BWIcon = "W";
+        fontColor = "rgb(255,255,255)";
         bgcolor = "rgb(32,32,32)";
         fgcolor = "rgb(0,255,255)";
         break;
     case 15:
         BWIcon = "W";
+        fontColor = "rgb(255,255,255)";
         bgcolor = "rgb(32,32,32)";
         fgcolor = "rgb(255,255,255)";
         break;
     default:
         BWIcon = "W";
+        fontColor = "rgb(255,255,255)";
         fgcolor = "rgb(255,255,255)";
         bgcolor = "rgb(64,64,64)";
         break;
@@ -608,7 +651,7 @@ void FaderWidget::setColor(int value) {
     //set color by number
     channelName->setStyleSheet("QPushButton {"
                                "background-color: " + bgcolor + ";"
-                               "color: " + fgcolor + ";"
+                               "color: " + fontColor + ";"
                                "border: 0px solid rgb(0,0,0);}");
     icon->setStyleSheet("QPushButton {"
                         "background-color: " + bgcolor + ";"
@@ -735,7 +778,7 @@ void TicksPaint::paintVTicks(QPainter &painter, int x, int y, int height)
     }
 }
 
-dynMeter::dynMeter(float dpiRatio_,QWidget *parent_) : QWidget() {
+dynMeter::dynMeter(float dpiRatio_, QWidget *parent_) : QWidget() {
     this->setParent(parent_);
     dpiRatio = dpiRatio_;
 
@@ -747,11 +790,11 @@ dynMeter::dynMeter(float dpiRatio_,QWidget *parent_) : QWidget() {
 }
 
 void dynMeter::setDynamics(float comp_){
-    currentComp = log10(comp_)*20 + 115;
+    currentComp = compGainReductionToFloatRatio(comp_);
 }
 
 void dynMeter::setGate(float gate_){
-    currentGate = log10(gate_)*20 + 115;
+    currentGate = gateGainReductionToFloatRatio(gate_);
 }
 
 void dynMeter::paintEvent(QPaintEvent *event)
@@ -764,35 +807,36 @@ void dynMeter::paintEvent(QPaintEvent *event)
         QColor clearColor(0, 0, 0, 0);
         dynMeterCache->fill(clearColor);
         QPainter cachePainter(dynMeterCache);
-        paintCache(cachePainter,dynMeterSize);
+        paintCache(cachePainter, dynMeterSize);
         cachePainter.end();
     }
 
     QPainter painter(this);
     painter.drawPixmap(5, 5, *dynMeterCache);
     paintComp(painter,dynMeterSize);
-    paintGate(painter,dynMeterSize);
+    if(gate)
+        paintGate(painter,dynMeterSize);
 }
 
 void dynMeter::paintCache(QPainter &painter, QSize dynMeterSize)
 {
     painter.fillRect(QRect(0,0,dynMeterSize.width(),dynMeterSize.height()/2-2),backColor);
-    painter.fillRect(QRect(0,dynMeterSize.height()/2+2,dynMeterSize.width(),dynMeterSize.height()/2-2),backColor);
+    if(gate){
+        painter.fillRect(QRect(0,dynMeterSize.height()/2+2,dynMeterSize.width(),dynMeterSize.height()/2-2),backColor);
+    }
 }
 
 void dynMeter::paintComp(QPainter &painter, QSize dynMeterSize)
 {
-    qreal compSize = dynMeterSize.width() / 60 * currentComp;
-    if (compSize > dynMeterSize.width()) compSize = dynMeterSize.width();
-    if(compSize > 7)
+    qreal compSize = dynMeterSize.width() * currentComp;
+    if(compSize > 1)
         painter.fillRect(QRect(7,7,compSize-4,dynMeterSize.height()/2-6),treshColor);
 }
 
 void dynMeter::paintGate(QPainter &painter, QSize dynMeterSize)
 {
-    qreal gateSize = dynMeterSize.width() / 60 * currentGate;
-    if (gateSize > dynMeterSize.width()) gateSize = dynMeterSize.width();
-    if(gateSize > 7)
+    qreal gateSize = dynMeterSize.width() * currentGate;
+    if(gateSize > 1)
         painter.fillRect(QRect(7,dynMeterSize.height()/2+9,gateSize-4,dynMeterSize.height()/2-6),treshColor);
 }
 

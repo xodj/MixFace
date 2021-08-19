@@ -85,6 +85,8 @@ private:
 
     void emitFaderChanged();
     void emitPanChanged();
+    void sliderReleased();
+    int lastSliderReleasedTime = 0;
     void dbEditingFinished();
 
     MixFaceVolumeMeter *m_vmeter;
@@ -128,9 +130,14 @@ class dynMeter : public QWidget {
     Q_OBJECT
 
 public:
-    explicit dynMeter(float dpiRatio_,QWidget *parent_);
+    explicit dynMeter(float dpiRatio_, QWidget *parent_);
     void setDynamics(float comp_);
     void setGate(float gate_);
+    void enableGate(bool gate_){
+        gate = gate_;
+        delete dynMeterCache;
+        dynMeterCache = nullptr;
+    }
 
 private:
     QPainter *painter;
@@ -139,8 +146,9 @@ private:
     QColor treshColor;
     float dpiRatio = 1;
     QSize dynMeterSize;
-    float currentGate;
-    float currentComp;
+    float currentGate = 0.f;
+    float currentComp = 0.f;
+    bool gate = false;
 
     void paintCache(QPainter &painter, QSize dynMeterSize);
     void paintComp(QPainter &painter, QSize dynMeterSize);

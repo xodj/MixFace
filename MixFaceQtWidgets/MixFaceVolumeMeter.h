@@ -12,7 +12,6 @@
 #include "MixFaceStaticMath.h"
 
 #define CLIP_FLASH_DURATION_MS 1000
-#define CLAMP(x, min, max) ((x) < (min) ? (min) : ((x) > (max) ? (max) : (x)))
 
 #define peakHoldMS 3000
 #define tickHoldMS 1500
@@ -34,18 +33,8 @@ public:
     };
 
     void setMeter(float channel0, float channel1 = 0.f){
-        channel0 = log10(channel0) * 20;
-        channel1 = log10(channel1) * 20;
-        channel0 += 100;
-        channel1 += 100;
-        channel0 /= 100;
-        channel1 /= 100;
-        if (channel0 > 1) channel0 = 1.f;
-        if (channel0 < 0) channel0 = 0.f;
-        if (channel1 > 1) channel1 = 1.f;
-        if (channel1 < 0) channel1 = 0.f;
-        currentPeak[0] = channel0;
-        currentPeak[1] = channel1;
+        currentPeak[0] = meterLogToFloatRatio(channel0);
+        currentPeak[1] = meterLogToFloatRatio(channel1);
     }
 
 private:

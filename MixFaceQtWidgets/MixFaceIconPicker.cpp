@@ -143,8 +143,8 @@ void MixFaceIconPicker::initIconPopup(){
             fgcolor = "rgb(32,32,32)";
             break;
         case 4:
-            bgcolor = "rgb(64,64,255)";
-            fgcolor = "rgb(255,255,255)";
+            bgcolor = "rgb(96,96,255)";
+            fgcolor = "rgb(32,32,32)";
             break;
         case 5:
             bgcolor = "rgb(255,64,255)";
@@ -159,8 +159,8 @@ void MixFaceIconPicker::initIconPopup(){
             fgcolor = "rgb(32,32,32)";
             break;
         case 8:
-            bgcolor = "rgb(128,128,128)";
-            fgcolor = "rgb(255,255,255)";
+            bgcolor = "rgb(192,192,192)";
+            fgcolor = "rgb(32,32,32)";
             break;
         case 9:
             bgcolor = "rgb(32,32,32)";
@@ -175,8 +175,8 @@ void MixFaceIconPicker::initIconPopup(){
             fgcolor = "rgb(255,255,0)";
             break;
         case 12:
-            bgcolor = "rgb(128,128,128)";
-            fgcolor = "rgb(0,0,255)";
+            bgcolor = "rgb(32,32,32)";
+            fgcolor = "rgb(32,32,255)";
             break;
         case 13:
             bgcolor = "rgb(32,32,32)";
@@ -199,6 +199,14 @@ void MixFaceIconPicker::initIconPopup(){
         button = new QPushButton("");
         button->setMinimumHeight(64*dpiRatio);
         button->setStyleSheet("QPushButton {"
+                              "border: 2px solid " + fgcolor + ";"
+                              "background-color: " + bgcolor + ";"
+                              "}"
+                              "QPushButton:pressed {"
+                              "border: 2px solid " + bgcolor + ";"
+                              "background-color: " + fgcolor + ";"
+                              "}"
+                              "QPushButton:checked {"
                               "border: 2px solid " + fgcolor + ";"
                               "background-color: " + bgcolor + ";"
                               "}");
@@ -236,6 +244,12 @@ void MixFaceIconPicker::showIconPopup(int idx_, int logoId, int colorId, QString
     iconNumber = logoId;
     setColorPreview(colorId);
     colorNumber = colorId;
+    for(qsizetype i = 0;i < colorsList->count();i++){
+        if(colorsList->at(i)->property("colorId").toInt() == colorId)
+            colorsList->at(i)->setHidden(true);
+        else
+            colorsList->at(i)->setHidden(false);
+    }
     nativeName->setText(nativeName_);
     channelName->setText(name);
 
@@ -259,6 +273,12 @@ void MixFaceIconPicker::emitLogoChanged(int idl){
 void MixFaceIconPicker::emitColorChanged(){
     int colorId = reinterpret_cast<QPushButton*>(sender())->property("colorId").toInt();
     setColorPreview(colorId);
+    for(qsizetype i = 0;i < colorsList->count();i++){
+        if(colorsList->at(i)->property("colorId").toInt() == colorId)
+            colorsList->at(i)->setHidden(true);
+        else
+            colorsList->at(i)->setHidden(false);
+    }
     emit colorChanged(idx, colorId);
 }
 
@@ -276,54 +296,46 @@ void MixFaceIconPicker::setColorPreview(int value) {
         BWIcon = "W";
         fgcolor = "rgb(255,255,255)";
         bgcolor = "rgb(64,64,64)";
-
         break;
     case 1:
         BWIcon = "B";
         bgcolor = "rgb(255,64,64)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 2:
         BWIcon = "B";
         bgcolor = "rgb(64,255,64)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 3:
         BWIcon = "B";
         bgcolor = "rgb(255,255,64)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 4:
-        BWIcon = "W";
-        bgcolor = "rgb(64,64,255)";
-        fgcolor = "rgb(255,255,255)";
-
+        BWIcon = "B";
+        bgcolor = "rgb(96,96,255)";
+        fgcolor = "rgb(32,32,32)";
         break;
     case 5:
         BWIcon = "B";
         bgcolor = "rgb(255,64,255)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 6:
         BWIcon = "B";
         bgcolor = "rgb(64,255,255)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 7:
         BWIcon = "B";
         bgcolor = "rgb(255,255,255)";
         fgcolor = "rgb(32,32,32)";
-
         break;
     case 8:
-        BWIcon = "W";
-        bgcolor = "rgb(128,128,128)";
-        fgcolor = "rgb(255,255,255)";
+        BWIcon = "B";
+        bgcolor = "rgb(192,192,192)";
+        fgcolor = "rgb(32,32,32)";
         break;
     case 9:
         BWIcon = "W";
@@ -342,8 +354,8 @@ void MixFaceIconPicker::setColorPreview(int value) {
         break;
     case 12:
         BWIcon = "W";
-        bgcolor = "rgb(128,128,128)";
-        fgcolor = "rgb(0,0,255)";
+        bgcolor = "rgb(32,32,32)";
+        fgcolor = "rgb(32,32,255)";
         break;
     case 13:
         BWIcon = "W";
