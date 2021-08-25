@@ -426,7 +426,6 @@ void MixFaceWindow::nameChanged(int idx, QString value){
 void MixFaceWindow::buttonSrcClicked(){
     int idx = reinterpret_cast<QObject *>(sender())->property("idx").toInt();
 
-    if (dynWidget != nullptr) { delete dynWidget; dynWidget = nullptr; }
     if (eqWidget != nullptr) { delete eqWidget; eqWidget = nullptr; }
     if (srcWidget != nullptr) { delete srcWidget; srcWidget = nullptr; }
     if (srcFader != nullptr) {
@@ -479,7 +478,6 @@ void MixFaceWindow::buttonSrcClicked(){
 void MixFaceWindow::buttonEqClicked(){
     int idx = reinterpret_cast<QObject *>(sender())->property("idx").toInt();
 
-    if (dynWidget != nullptr) { delete dynWidget; dynWidget = nullptr; }
     if (eqWidget != nullptr) { delete eqWidget; eqWidget = nullptr; }
     if (srcWidget != nullptr) { delete srcWidget; srcWidget = nullptr; }
     if (srcFader != nullptr) {
@@ -532,7 +530,6 @@ void MixFaceWindow::buttonEqClicked(){
 void MixFaceWindow::buttonDynClicked(){
     int idx = reinterpret_cast<QObject *>(sender())->property("idx").toInt();
 
-    if (dynWidget != nullptr) { delete dynWidget; dynWidget = nullptr; }
     if (eqWidget != nullptr) { delete eqWidget; eqWidget = nullptr; }
     if (srcWidget != nullptr) { delete srcWidget; srcWidget = nullptr; }
     if (srcFader != nullptr) {
@@ -567,7 +564,9 @@ void MixFaceWindow::buttonDynClicked(){
             connect(srcFader, &FaderWidget::iconButtonClicked, this, &MixFaceWindow::iconButtonClicked);
         }
 
-        dynWidget = new DynamicsWidget(idx, dpiRatio, mf_fonts);
+        if (dynWidget == nullptr)
+            dynWidget = new DynamicsWidget(dpiRatio, mf_fonts);
+        dynWidget->setIdx(idx);
         srcLayout->addWidget(dynWidget);
 
         scrollArea->setHidden(true);
@@ -845,71 +844,71 @@ void MixFaceWindow::threadValueChanged(int imtype, int idx, int idy) {
     case gatefilterf:
         break;
     case dynon:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->onOffRecieved(mf_library->db.dynon[idx]);
         break;
     case dynthr:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->tresholdRecieved(mf_library->db.dynthr[idx]);
         break;
     case dynratio:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->ratioRecieved(mf_library->db.dynratio[idx]);
         break;
     case dynmix:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->mixRecieved(mf_library->db.dynmix[idx]);
         break;
     case dynmgain:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->gainRecieved(mf_library->db.dynmgain[idx]);
         break;
     case dynattack:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->attackRecieved(mf_library->db.dynattack[idx]);
         break;
     case dynhold:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->holdRecieved(mf_library->db.dynhold[idx]);
         break;
     case dynrelease:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->releaseRecieved(mf_library->db.dynrelease[idx]);
         break;
     case dynmode:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->modeCompExpRecieved(mf_library->db.dynmode[idx]);
         break;
     case dynknee:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->kneeRecieved(mf_library->db.dynknee[idx]);
         break;
     case dynenv:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->envLinLogRecieved(mf_library->db.dynenv[idx]);
         break;
     case dyndet:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->detPeakRmsRecieved(mf_library->db.dyndet[idx]);
         break;
     case dynauto:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->autoTimeRecieved(mf_library->db.dynauto[idx]);
         break;
     case dynkeysrc:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->keySourceRecieved(mf_library->db.dynkeysrc[idx]);
         break;
     case dynfilteron:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->filterRecieved(mf_library->db.dynfilteron[idx]);
         break;
     case dynfiltertype:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->filterTypeRecieved(mf_library->db.dynfiltertype[idx]);
         break;
     case dynfilterf:
-        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->idx == idx)
+        if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->filterFrequencyRecieved(mf_library->db.dynfilterf[idx]);
         break;
     case eq1type:

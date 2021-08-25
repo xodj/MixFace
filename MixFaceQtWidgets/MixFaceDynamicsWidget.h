@@ -7,18 +7,18 @@
 #include "MixFaceFaderWidget.h"
 
 class compGainPaint;
-
 class compEnvPaint;
-
+class compFilterPaint;
 class tablesTimer;
 
 class DynamicsWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit DynamicsWidget(int idx, float dpiRatio, MixFaceFonts *m_fonts_ = nullptr);
+    explicit DynamicsWidget(float dpiRatio, MixFaceFonts *m_fonts_ = nullptr);
     ~DynamicsWidget();
 
-    int idx;
+    void setIdx(int idx_){ idx = idx_; };
+    int getIdx(){ return idx; };
 
     void onOffRecieved(int value);
     void tresholdRecieved(float value);
@@ -66,8 +66,8 @@ signals:
     void filterFrequencyChanged(float value);
 
 private:
-    QFrame *compWidget(float dpiRatio);
-    QFrame *gateWidget(int idx);
+    QFrame *compWidget();
+    QFrame *gateWidget();
     void connectSignals();
 
     void emitOnOffChanged();
@@ -95,6 +95,14 @@ private:
     MixFaceFonts *m_fonts;
     compGainPaint *compGain;
     compEnvPaint *compEnv;
+    compFilterPaint *compFilter;
+
+    QPushButton *compActivePushButton;
+    QPushButton *compAutoPushButton;
+    QPushButton *compFilterPushButton;
+    QPushButton *compFilterSoloPushButton;
+
+    QComboBox *compFilterSourceComboBox;
 
     QSlider *tresholdSlider;
     QLineEdit *tresholdLine;
@@ -132,7 +140,16 @@ private:
     QSlider *compReleaseSlider;
     QLineEdit *compReleaseLine;
 
+    QSlider *compFilterTypeSlider;
+    QLineEdit *compFilterTypeLine;
+
+    QSlider *compFilterFreqSlider;
+    QLineEdit *compFilterFreqLine;
+
     tablesTimer *tablesRenew;
+
+    float dpiRatio = 1.f;
+    int idx = 0;
 };
 
 class compGainPaint : public QWidget {
@@ -241,6 +258,55 @@ protected:
 
 };
 
+class compFilterPaint : public QWidget {
+    Q_OBJECT
+
+public:
+    explicit compFilterPaint(float dpiRatio_);
+    void setFilterFreq(float filterFreq_){
+        filterFreq = filterFreq_;
+        repaint = true;
+    }
+    void setFilterType(int filterType_){
+        filterType = filterType_;
+        repaint = true;
+    }
+    void setOn(bool on_){
+        on = on_;
+        repaint = true;
+    }
+    void setFilterOn(bool filterOn_){
+        filterOn = filterOn_;
+        repaint = true;
+    }
+
+private:
+    QPainter *painter;
+    QPixmap *squaresCache;
+    QPixmap *lineCache;
+
+    QColor backColor;
+    QColor squaresColor;
+    QColor lineColor;
+    QPen linePen;
+
+    float dpiRatio = 1;
+
+    float filterFreq = 0.5f;
+    int filterType = 6;
+
+    bool on = true;
+    bool filterOn = true;
+    bool repaint = true;
+
+    void paintSquares(QPainter &painter, int height);
+    void paintLine(QPainter &painter, int height);
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
+};
+
 class tablesTimer : public QTimer {
     Q_OBJECT
 
@@ -255,15 +321,21 @@ public:
         compEnv = compEnv_;
     }
 
+    void addFilterPaint(compFilterPaint *compFilter_) {
+        compFilter = compFilter_;
+    }
+
 private:
     compGainPaint *compGain;
     compEnvPaint *compEnv;
+    compFilterPaint *compFilter;
 
 protected:
     void timerEvent(QTimerEvent *event) override {
         Q_UNUSED(event)
         compGain->update();
         compEnv->update();
+        compFilter->update();
     }
 };
 #endif

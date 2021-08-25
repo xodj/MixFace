@@ -404,7 +404,7 @@ private:
     void processIntMessage(string message, int ival);
     void processFloatMessage(string message, float fval);
     void processXinfo(string *xinfo_) { for(int i = 0;i < 4; i++) xinfo[i] = xinfo_[i]; }
-    MessageType getMessageType(string message);
+    MessageType getMessageType(string message, ChannelType type);
     ChannelType getChannelType(string message);
     int getChannelNumber(string message);
     int getSendNumber(string message);

@@ -197,10 +197,10 @@ string MixFaceLibrary::channelNameFromIdx(int idx) {
 }
 
 void MixFaceLibrary::processStringMessage(string message, string sval) {
-    MessageType mtype = getMessageType(message);
+    ChannelType chtype = getChannelType(message);
+    MessageType mtype = getMessageType(message, chtype);
 
     int chN = getChannelNumber(message);
-    ChannelType chtype = getChannelType(message);
     int idx = getIdxFromChNandChType(chN, chtype);
 
     switch (mtype) {
@@ -215,10 +215,10 @@ void MixFaceLibrary::processStringMessage(string message, string sval) {
 }
 
 void MixFaceLibrary::processIntMessage(string message, int ival) {
-    MessageType mtype = getMessageType(message);
+    ChannelType chtype = getChannelType(message);
+    MessageType mtype = getMessageType(message, chtype);
 
     int chN = getChannelNumber(message);
-    ChannelType chtype = getChannelType(message);
     int idx = getIdxFromChNandChType(chN, chtype);
     int sendN = getSendNumber(message);
 
@@ -394,11 +394,10 @@ void MixFaceLibrary::processIntMessage(string message, int ival) {
 }
 
 void MixFaceLibrary::processFloatMessage(string message, float fval) {
-
-    MessageType mtype = getMessageType(message);
+    ChannelType chtype = getChannelType(message);
+    MessageType mtype = getMessageType(message, chtype);
 
     int chN = getChannelNumber(message);
-    ChannelType chtype = getChannelType(message);
     int idx = getIdxFromChNandChType(chN, chtype);
     int sendN = getSendNumber(message);
 
@@ -955,92 +954,96 @@ int MixFaceLibrary::getChannelNumberFromIdx(int idx) {
   else return 0;
 }
 
-MessageType MixFaceLibrary::getMessageType(string message) {
+MessageType MixFaceLibrary::getMessageType(string message, ChannelType type) {
     MessageType mtype = merror;
-    if (strstr(message.c_str(), msgTypeStr.stereoon)) mtype = stereoon;
-    else if (strstr(message.c_str(), msgTypeStr.monoon)) mtype = monoon;
-    else if (strstr(message.c_str(), msgTypeStr.mlevel)) mtype = mlevel;
-    else if (strstr(message.c_str(), msgTypeStr.fader)) mtype = fader;
-    else if (strstr(message.c_str(), msgTypeStr.pan)) mtype = pan;
-    else if (strstr(message.c_str(), msgTypeStr.on)) mtype = on;
-    else if (strstr(message.c_str(), msgTypeStr.solo)) mtype = solo;
-    else if (strstr(message.c_str(), msgTypeStr.sendlevel)) mtype = sendlevel;
-    else if (strstr(message.c_str(), msgTypeStr.sendpan)) mtype = sendpan;
-    else if (strstr(message.c_str(), msgTypeStr.sendpanfollow)) mtype = sendpanfollow;
-    else if (strstr(message.c_str(), msgTypeStr.sendtype)) mtype = sendtype;
-    else if (strstr(message.c_str(), msgTypeStr.sendon)) mtype = sendon;
-    else if (strstr(message.c_str(), msgTypeStr.dcaon)) mtype = on;
-    else if (strstr(message.c_str(), msgTypeStr.chlink)) mtype = chlink;
-    else if (strstr(message.c_str(), msgTypeStr.auxlink)) mtype = auxlink;
-    else if (strstr(message.c_str(), msgTypeStr.buslink)) mtype = buslink;
-    else if (strstr(message.c_str(), msgTypeStr.mtxlink)) mtype = mtxlink;
-    else if (strstr(message.c_str(), msgTypeStr.phantom)) mtype = phantom;
-    else if (strstr(message.c_str(), msgTypeStr.invert)) mtype = invert;
-    else if (strstr(message.c_str(), msgTypeStr.source)) mtype = source;
-    else if (strstr(message.c_str(), msgTypeStr.gain)) mtype = gain;
-    else if (strstr(message.c_str(), msgTypeStr.trim)) mtype = trim;
-    else if (strstr(message.c_str(), msgTypeStr.hpf)) mtype = hpf;
-    else if (strstr(message.c_str(), msgTypeStr.hpon)) mtype = hpon;
-    else if (strstr(message.c_str(), msgTypeStr.delayon)) mtype = delayon;
-    else if (strstr(message.c_str(), msgTypeStr.delaytime)) mtype = delaytime;
-    else if (strstr(message.c_str(), msgTypeStr.inserton)) mtype = inserton;
-    else if (strstr(message.c_str(), msgTypeStr.insertsel)) mtype = insertsel;
-    else if (strstr(message.c_str(), msgTypeStr.insertpos)) mtype = insertpos;
-    else if (strstr(message.c_str(), msgTypeStr.gateon)) mtype = gateon;
-    else if (strstr(message.c_str(), msgTypeStr.gatethr)) mtype = gatethr;
-    else if (strstr(message.c_str(), msgTypeStr.gaterange)) mtype = gaterange;
-    else if (strstr(message.c_str(), msgTypeStr.gatemode)) mtype = gatemode;
-    else if (strstr(message.c_str(), msgTypeStr.gateattack)) mtype = gateattack;
-    else if (strstr(message.c_str(), msgTypeStr.gatehold)) mtype = gatehold;
-    else if (strstr(message.c_str(), msgTypeStr.gaterelease)) mtype = gaterelease;
-    else if (strstr(message.c_str(), msgTypeStr.gatekeysrc)) mtype = gatekeysrc;
-    else if (strstr(message.c_str(), msgTypeStr.gatefilteron)) mtype = gatefilteron;
-    else if (strstr(message.c_str(), msgTypeStr.gatefiltertype)) mtype = gatefiltertype;
-    else if (strstr(message.c_str(), msgTypeStr.gatefilterf)) mtype = gatefilterf;
-    else if (strstr(message.c_str(), msgTypeStr.dynon)) mtype = dynon;
-    else if (strstr(message.c_str(), msgTypeStr.dynthr)) mtype = dynthr;
-    else if (strstr(message.c_str(), msgTypeStr.dynratio)) mtype = dynratio;
-    else if (strstr(message.c_str(), msgTypeStr.dynmix)) mtype = dynmix;
-    else if (strstr(message.c_str(), msgTypeStr.dynmgain)) mtype = dynmgain;
-    else if (strstr(message.c_str(), msgTypeStr.dynattack)) mtype = dynattack;
-    else if (strstr(message.c_str(), msgTypeStr.dynhold)) mtype = dynhold;
-    else if (strstr(message.c_str(), msgTypeStr.dynrelease)) mtype = dynrelease;
-    else if (strstr(message.c_str(), msgTypeStr.dynmode)) mtype = dynmode;
-    else if (strstr(message.c_str(), msgTypeStr.dynknee)) mtype = dynknee;
-    else if (strstr(message.c_str(), msgTypeStr.dynenv)) mtype = dynenv;
-    else if (strstr(message.c_str(), msgTypeStr.dyndet)) mtype = dyndet;
-    else if (strstr(message.c_str(), msgTypeStr.dynauto)) mtype = dynauto;
-    else if (strstr(message.c_str(), msgTypeStr.dynkeysrc)) mtype = dynkeysrc;
-    else if (strstr(message.c_str(), msgTypeStr.dynfilteron)) mtype = dynfilteron;
-    else if (strstr(message.c_str(), msgTypeStr.dynfiltertype)) mtype = dynfiltertype;
-    else if (strstr(message.c_str(), msgTypeStr.dynfilterf)) mtype = dynfilterf;
-    else if (strstr(message.c_str(), msgTypeStr.eq1type)) mtype = eq1type;
-    else if (strstr(message.c_str(), msgTypeStr.eq1g)) mtype = eq1g;
-    else if (strstr(message.c_str(), msgTypeStr.eq1f)) mtype = eq1f;
-    else if (strstr(message.c_str(), msgTypeStr.eq1q)) mtype = eq1q;
-    else if (strstr(message.c_str(), msgTypeStr.eq2type)) mtype = eq2type;
-    else if (strstr(message.c_str(), msgTypeStr.eq2g)) mtype = eq2g;
-    else if (strstr(message.c_str(), msgTypeStr.eq2f)) mtype = eq2f;
-    else if (strstr(message.c_str(), msgTypeStr.eq2q)) mtype = eq2q;
-    else if (strstr(message.c_str(), msgTypeStr.eq3type)) mtype = eq3type;
-    else if (strstr(message.c_str(), msgTypeStr.eq3g)) mtype = eq3g;
-    else if (strstr(message.c_str(), msgTypeStr.eq3f)) mtype = eq3f;
-    else if (strstr(message.c_str(), msgTypeStr.eq3q)) mtype = eq3q;
-    else if (strstr(message.c_str(), msgTypeStr.eq4type)) mtype = eq4type;
-    else if (strstr(message.c_str(), msgTypeStr.eq4g)) mtype = eq4g;
-    else if (strstr(message.c_str(), msgTypeStr.eq4f)) mtype = eq4f;
-    else if (strstr(message.c_str(), msgTypeStr.eq4q)) mtype = eq4q;
-    else if (strstr(message.c_str(), msgTypeStr.eq5type)) mtype = eq5type;
-    else if (strstr(message.c_str(), msgTypeStr.eq5g)) mtype = eq5g;
-    else if (strstr(message.c_str(), msgTypeStr.eq5f)) mtype = eq5f;
-    else if (strstr(message.c_str(), msgTypeStr.eq5q)) mtype = eq5q;
-    else if (strstr(message.c_str(), msgTypeStr.eq6type)) mtype = eq6type;
-    else if (strstr(message.c_str(), msgTypeStr.eq6g)) mtype = eq6g;
-    else if (strstr(message.c_str(), msgTypeStr.eq6f)) mtype = eq6f;
-    else if (strstr(message.c_str(), msgTypeStr.eq6q)) mtype = eq6q;
-    else if (strstr(message.c_str(), msgTypeStr.configicon)) mtype = configicon;
-    else if (strstr(message.c_str(), msgTypeStr.configcolor)) mtype = configcolor;
-    else if (strstr(message.c_str(), msgTypeStr.configname)) mtype = configname;
+    if (type != dca) {
+        if (strstr(message.c_str(), msgTypeStr.stereoon)) mtype = stereoon;
+        else if (strstr(message.c_str(), msgTypeStr.monoon)) mtype = monoon;
+        else if (strstr(message.c_str(), msgTypeStr.mlevel)) mtype = mlevel;
+        else if (strstr(message.c_str(), msgTypeStr.fader)) mtype = fader;
+        else if (strstr(message.c_str(), msgTypeStr.pan)) mtype = pan;
+        else if (strstr(message.c_str(), msgTypeStr.on)) mtype = on;
+        else if (strstr(message.c_str(), msgTypeStr.solo)) mtype = solo;
+        else if (strstr(message.c_str(), msgTypeStr.chlink)) mtype = chlink;
+        else if (strstr(message.c_str(), msgTypeStr.auxlink)) mtype = auxlink;
+        else if (strstr(message.c_str(), msgTypeStr.buslink)) mtype = buslink;
+        else if (strstr(message.c_str(), msgTypeStr.mtxlink)) mtype = mtxlink;
+        else if (strstr(message.c_str(), msgTypeStr.phantom)) mtype = phantom;
+        else if (strstr(message.c_str(), msgTypeStr.invert)) mtype = invert;
+        else if (strstr(message.c_str(), msgTypeStr.source)) mtype = source;
+        else if (strstr(message.c_str(), msgTypeStr.gain)) mtype = gain;
+        else if (strstr(message.c_str(), msgTypeStr.trim)) mtype = trim;
+        else if (strstr(message.c_str(), msgTypeStr.hpf)) mtype = hpf;
+        else if (strstr(message.c_str(), msgTypeStr.hpon)) mtype = hpon;
+        else if (strstr(message.c_str(), msgTypeStr.delayon)) mtype = delayon;
+        else if (strstr(message.c_str(), msgTypeStr.delaytime)) mtype = delaytime;
+        else if (strstr(message.c_str(), msgTypeStr.inserton)) mtype = inserton;
+        else if (strstr(message.c_str(), msgTypeStr.insertsel)) mtype = insertsel;
+        else if (strstr(message.c_str(), msgTypeStr.insertpos)) mtype = insertpos;
+        else if (strstr(message.c_str(), msgTypeStr.gateon)) mtype = gateon;
+        else if (strstr(message.c_str(), msgTypeStr.gatethr)) mtype = gatethr;
+        else if (strstr(message.c_str(), msgTypeStr.gaterange)) mtype = gaterange;
+        else if (strstr(message.c_str(), msgTypeStr.gatemode)) mtype = gatemode;
+        else if (strstr(message.c_str(), msgTypeStr.gateattack)) mtype = gateattack;
+        else if (strstr(message.c_str(), msgTypeStr.gatehold)) mtype = gatehold;
+        else if (strstr(message.c_str(), msgTypeStr.gaterelease)) mtype = gaterelease;
+        else if (strstr(message.c_str(), msgTypeStr.gatekeysrc)) mtype = gatekeysrc;
+        else if (strstr(message.c_str(), msgTypeStr.gatefilteron)) mtype = gatefilteron;
+        else if (strstr(message.c_str(), msgTypeStr.gatefiltertype)) mtype = gatefiltertype;
+        else if (strstr(message.c_str(), msgTypeStr.gatefilterf)) mtype = gatefilterf;
+        else if (strstr(message.c_str(), msgTypeStr.dynon)) mtype = dynon;
+        else if (strstr(message.c_str(), msgTypeStr.dynthr)) mtype = dynthr;
+        else if (strstr(message.c_str(), msgTypeStr.dynratio)) mtype = dynratio;
+        else if (strstr(message.c_str(), msgTypeStr.dynmix)) mtype = dynmix;
+        else if (strstr(message.c_str(), msgTypeStr.dynmgain)) mtype = dynmgain;
+        else if (strstr(message.c_str(), msgTypeStr.dynattack)) mtype = dynattack;
+        else if (strstr(message.c_str(), msgTypeStr.dynhold)) mtype = dynhold;
+        else if (strstr(message.c_str(), msgTypeStr.dynrelease)) mtype = dynrelease;
+        else if (strstr(message.c_str(), msgTypeStr.dynmode)) mtype = dynmode;
+        else if (strstr(message.c_str(), msgTypeStr.dynknee)) mtype = dynknee;
+        else if (strstr(message.c_str(), msgTypeStr.dynenv)) mtype = dynenv;
+        else if (strstr(message.c_str(), msgTypeStr.dyndet)) mtype = dyndet;
+        else if (strstr(message.c_str(), msgTypeStr.dynauto)) mtype = dynauto;
+        else if (strstr(message.c_str(), msgTypeStr.dynkeysrc)) mtype = dynkeysrc;
+        else if (strstr(message.c_str(), msgTypeStr.dynfilteron)) mtype = dynfilteron;
+        else if (strstr(message.c_str(), msgTypeStr.dynfiltertype)) mtype = dynfiltertype;
+        else if (strstr(message.c_str(), msgTypeStr.dynfilterf)) mtype = dynfilterf;
+        else if (strstr(message.c_str(), msgTypeStr.eq1type)) mtype = eq1type;
+        else if (strstr(message.c_str(), msgTypeStr.eq1g)) mtype = eq1g;
+        else if (strstr(message.c_str(), msgTypeStr.eq1f)) mtype = eq1f;
+        else if (strstr(message.c_str(), msgTypeStr.eq1q)) mtype = eq1q;
+        else if (strstr(message.c_str(), msgTypeStr.eq2type)) mtype = eq2type;
+        else if (strstr(message.c_str(), msgTypeStr.eq2g)) mtype = eq2g;
+        else if (strstr(message.c_str(), msgTypeStr.eq2f)) mtype = eq2f;
+        else if (strstr(message.c_str(), msgTypeStr.eq2q)) mtype = eq2q;
+        else if (strstr(message.c_str(), msgTypeStr.eq3type)) mtype = eq3type;
+        else if (strstr(message.c_str(), msgTypeStr.eq3g)) mtype = eq3g;
+        else if (strstr(message.c_str(), msgTypeStr.eq3f)) mtype = eq3f;
+        else if (strstr(message.c_str(), msgTypeStr.eq3q)) mtype = eq3q;
+        else if (strstr(message.c_str(), msgTypeStr.eq4type)) mtype = eq4type;
+        else if (strstr(message.c_str(), msgTypeStr.eq4g)) mtype = eq4g;
+        else if (strstr(message.c_str(), msgTypeStr.eq4f)) mtype = eq4f;
+        else if (strstr(message.c_str(), msgTypeStr.eq4q)) mtype = eq4q;
+        else if (strstr(message.c_str(), msgTypeStr.eq5type)) mtype = eq5type;
+        else if (strstr(message.c_str(), msgTypeStr.eq5g)) mtype = eq5g;
+        else if (strstr(message.c_str(), msgTypeStr.eq5f)) mtype = eq5f;
+        else if (strstr(message.c_str(), msgTypeStr.eq5q)) mtype = eq5q;
+        else if (strstr(message.c_str(), msgTypeStr.eq6type)) mtype = eq6type;
+        else if (strstr(message.c_str(), msgTypeStr.eq6g)) mtype = eq6g;
+        else if (strstr(message.c_str(), msgTypeStr.eq6f)) mtype = eq6f;
+        else if (strstr(message.c_str(), msgTypeStr.eq6q)) mtype = eq6q;
+        else if (strstr(message.c_str(), msgTypeStr.configicon)) mtype = configicon;
+        else if (strstr(message.c_str(), msgTypeStr.configcolor)) mtype = configcolor;
+        else if (strstr(message.c_str(), msgTypeStr.configname)) mtype = configname;
+        else if (strstr(message.c_str(), msgTypeStr.sendlevel)) mtype = sendlevel;
+        else if (strstr(message.c_str(), msgTypeStr.sendpan)) mtype = sendpan;
+        else if (strstr(message.c_str(), msgTypeStr.sendpanfollow)) mtype = sendpanfollow;
+        else if (strstr(message.c_str(), msgTypeStr.sendtype)) mtype = sendtype;
+        else if (strstr(message.c_str(), msgTypeStr.sendon)) mtype = sendon;
+    } else {
+        if (strstr(message.c_str(), msgTypeStr.dcaon)) mtype = on;
+        else if (strstr(message.c_str(), msgTypeStr.dca)) mtype = fader;
+    }
     return mtype;
 }
 
