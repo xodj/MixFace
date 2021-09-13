@@ -7,8 +7,6 @@
 #include "MixFaceFaderWidget.h"
 
 class compGainPaint;
-class compEnvPaint;
-class compFilterPaint;
 class tablesTimer;
 
 class DynamicsWidget : public QWidget {
@@ -67,6 +65,10 @@ signals:
 
 private:
     QFrame *compWidget();
+    QWidget *compRadioWidget();
+    QWidget *compGainWidget();
+    QWidget *compEnvWidget();
+    QWidget *compFltrWidget();
     QFrame *gateWidget();
     void connectSignals();
 
@@ -94,8 +96,6 @@ private:
 
     MixFaceFonts *m_fonts;
     compGainPaint *compGain;
-    compEnvPaint *compEnv;
-    compFilterPaint *compFilter;
 
     QPushButton *compActivePushButton;
     QPushButton *compAutoPushButton;
@@ -150,6 +150,11 @@ private:
 
     float dpiRatio = 1.f;
     int idx = 0;
+
+    //QSS
+    QString lineStyle;
+    QString sliderStyle;
+    QString buttonStyle;
 };
 
 class compGainPaint : public QWidget {
@@ -204,109 +209,6 @@ protected:
 
 };
 
-class compEnvPaint : public QWidget {
-    Q_OBJECT
-
-public:
-    explicit compEnvPaint(float dpiRatio_);
-    void setAttack(float attack_){
-        attack = attack_;
-        repaint = true;
-    }
-    void setHold(float hold_){
-        hold = hold_;
-        repaint = true;
-    }
-    void setRelease(float release_){
-        release = release_;
-        repaint = true;
-    }
-    void setAuto(int autoTime_){
-        autoTime = autoTime_;
-        repaint = true;
-    }
-    void setOn(bool on_){
-        on = on_;
-        repaint = true;
-    }
-
-private:
-    QPainter *painter;
-    QPixmap *squaresCache;
-    QPixmap *lineCache;
-
-    QColor backColor;
-    QColor squaresColor;
-    QColor lineColor;
-    QPen linePen;
-
-    float dpiRatio = 1;
-
-    float attack = 1;
-    float hold = 1;
-    float release = 1;
-    int autoTime = 0;
-
-    bool on = true;
-    bool repaint = true;
-
-    void paintSquares(QPainter &painter, int height);
-    void paintLine(QPainter &painter, int height);
-
-protected:
-    void paintEvent(QPaintEvent *event) override;
-
-};
-
-class compFilterPaint : public QWidget {
-    Q_OBJECT
-
-public:
-    explicit compFilterPaint(float dpiRatio_);
-    void setFilterFreq(float filterFreq_){
-        filterFreq = filterFreq_;
-        repaint = true;
-    }
-    void setFilterType(int filterType_){
-        filterType = filterType_;
-        repaint = true;
-    }
-    void setOn(bool on_){
-        on = on_;
-        repaint = true;
-    }
-    void setFilterOn(bool filterOn_){
-        filterOn = filterOn_;
-        repaint = true;
-    }
-
-private:
-    QPainter *painter;
-    QPixmap *squaresCache;
-    QPixmap *lineCache;
-
-    QColor backColor;
-    QColor squaresColor;
-    QColor lineColor;
-    QPen linePen;
-
-    float dpiRatio = 1;
-
-    float filterFreq = 0.5f;
-    int filterType = 6;
-
-    bool on = true;
-    bool filterOn = true;
-    bool repaint = true;
-
-    void paintSquares(QPainter &painter, int height);
-    void paintLine(QPainter &painter, int height);
-
-protected:
-    void paintEvent(QPaintEvent *event) override;
-
-};
-
 class tablesTimer : public QTimer {
     Q_OBJECT
 
@@ -317,25 +219,13 @@ public:
         compGain = compGain_;
     }
 
-    void addEnvPaint(compEnvPaint *compEnv_) {
-        compEnv = compEnv_;
-    }
-
-    void addFilterPaint(compFilterPaint *compFilter_) {
-        compFilter = compFilter_;
-    }
-
 private:
     compGainPaint *compGain;
-    compEnvPaint *compEnv;
-    compFilterPaint *compFilter;
 
 protected:
     void timerEvent(QTimerEvent *event) override {
         Q_UNUSED(event)
         compGain->update();
-        compEnv->update();
-        compFilter->update();
     }
 };
 #endif

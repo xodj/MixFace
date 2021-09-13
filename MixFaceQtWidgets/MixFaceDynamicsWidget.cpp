@@ -7,6 +7,97 @@
 DynamicsWidget::DynamicsWidget(float dpiRatio, MixFaceFonts *m_fonts_)
     : m_fonts(m_fonts_), dpiRatio(dpiRatio)
 {
+    //QSS
+    lineStyle = "QLineEdit {"
+                "color: rgb(255,255,255);"
+                "background-color: rgb(128, 128, 128);"
+                "border: 1px solid rgb(32,32,32);"
+                "border-radius: 0px;"
+                "}"
+                "QLineEdit::disabled {"
+                "color: rgb(128,128,128);"
+                "background-color: rgb(64, 64, 64);"
+                "border: 1px solid rgb(128,128,128);"
+                "border-radius: 0px;"
+                "}";
+    sliderStyle = "QSlider {"
+                  "background-color: rgba(0, 0, 0, 0);"
+                  "}"
+                  "QSlider::groove:vertical\n"
+                  "{\n"
+                  "background-color: rgba(0, 0, 0, 0);\n"
+                  "border:none;\n"
+                  "width: 8px;\n"
+                  "}\n"
+                  "\n"
+                  "QSlider::sub-page\n"
+                  "{\n"
+                  "background: rgb(64, 64, 64);\n"
+                  "border: 1px solid rgb(0,0,0);\n"
+                  "border-radius: 4px;\n"
+                  "margin-top: " + QString::number(11*dpiRatio) + "px;\n"
+                  "}\n"
+                  "QSlider::add-page\n"
+                  "{\n"
+                  "background: rgb(96, 96, 255);\n"
+                  "border: 1px solid rgb(0,0,0);\n"
+                  "border-radius: 4px;\n"
+                  "margin-bottom: " + QString::number(11*dpiRatio) + "px;\n"
+                  "}\n"
+                  "QSlider::handle\n"
+                  "{\n"
+                  "background-color: qlineargradient(spread:pad, x1:0, y1:0.006, x2:0, y2:1, stop:0.025 rgba(96, 96, 96, 255), stop:0.065 rgba(64, 64, 64, 255), stop:0.1 rgba(96, 96, 96, 255), stop:0.48 rgba(196, 196, 196, 255), stop:0.481 rgba(0, 0, 0, 255), stop:0.519 rgba(0, 0, 0, 255), stop:0.52 rgba(196, 196, 196, 255), stop:0.9 rgba(96, 96, 96, 255), stop:0.935 rgba(64, 64, 64, 255), stop:0.975 rgba(96, 96, 96, 255));\n"
+                  "border: 1px solid rgb(32,32,32);\n"
+                  "border-radius: 4px;\n"
+                  "height: " + QString::number(22*dpiRatio) + "px;\n"
+                  "margin: 0 -" + QString::number(9*dpiRatio) + "px;\n"
+                  "}"
+                  "QSlider::handle:pressed\n"
+                  "{\n"
+                  "background-color: qlineargradient(spread:pad, x1:0, y1:0.006, x2:0, y2:1, stop:0.025 rgba(96, 96, 96, 255), stop:0.065 rgba(64, 64, 64, 255), stop:0.1 rgba(96, 96, 96, 255), stop:0.48 rgba(196, 196, 196, 255), stop:0.481 rgba(0, 0, 0, 255), stop:0.519 rgba(0, 0, 0, 255), stop:0.52 rgba(196, 196, 196, 255), stop:0.9 rgba(96, 96, 96, 255), stop:0.935 rgba(64, 64, 64, 255), stop:0.975 rgba(96, 96, 96, 255));\n"
+                  "border: 1px solid rgb(223,223,223);\n"
+                  "border-radius: 4px;\n"
+                  "height: " + QString::number(22*dpiRatio) + "px;\n"
+                  "margin: 0 -" + QString::number(9*dpiRatio) + "px;\n"
+                  "}"
+                  "QSlider::sub-page:disabled\n"
+                  "{\n"
+                  "background: rgb(32, 32, 32);\n"
+                  "border: 1px solid rgb(128,128,128);\n"
+                  "border-radius: 4px;\n"
+                  "margin-top: " + QString::number(11*dpiRatio) + "px;\n"
+                  "}\n"
+                  "QSlider::add-page:disabled\n"
+                  "{\n"
+                  "background: rgb(48, 48, 128);\n"
+                  "border: 1px solid rgb(128,128,128);\n"
+                  "border-radius: 4px;\n"
+                  "margin-bottom: " + QString::number(11*dpiRatio) + "px;\n"
+                  "}\n"
+                  "QSlider::handle:disabled\n"
+                  "{\n"
+                  "background-color: qlineargradient(spread:pad, x1:0, y1:0.006, x2:0, y2:1, stop:0.025 rgba(48, 48, 48, 255), stop:0.065 rgba(32, 32, 32, 255), stop:0.1 rgba(48, 48, 48, 255), stop:0.48 rgba(98, 98, 98, 255), stop:0.481 rgba(0, 0, 0, 255), stop:0.519 rgba(0, 0, 0, 255), stop:0.52 rgba(98, 98, 98, 255), stop:0.9 rgba(48, 48, 48, 255), stop:0.935 rgba(32, 32, 32, 255), stop:0.975 rgba(48, 48, 48, 255));\n"
+                  "border: 1px solid rgb(128,128,128);\n"
+                  "border-radius: 4px;\n"
+                  "height: " + QString::number(22*dpiRatio) + "px;\n"
+                  "margin: 0 -" + QString::number(9*dpiRatio) + "px;\n"
+                  "}";
+    buttonStyle = "QPushButton {"
+                  "color: rgb(0,0,0);"
+                  "background-color: rgb(196, 196, 196);"
+                  "border: 1px solid rgb(32,32,32);"
+                  "border-radius: 0px;"
+                  "}"
+                  "QPushButton:pressed {"
+                  "background-color: rgb(128, 128, 128);"
+                  "}"
+                  "QPushButton:checked {"
+                  "background-color: rgb(128, 255, 128);"
+                  "}"
+                  "QPushButton:checked:pressed {"
+                  "background-color: rgb(128, 196, 128);"
+                  "}";
+
     QVBoxLayout *vlayout = new QVBoxLayout;
     vlayout->setContentsMargins(0, 0, 0, 0);
     vlayout->setSpacing(0);
@@ -24,8 +115,6 @@ DynamicsWidget::DynamicsWidget(float dpiRatio, MixFaceFonts *m_fonts_)
 
     tablesRenew = new tablesTimer;
     tablesRenew->addGainPaint(compGain);
-    tablesRenew->addEnvPaint(compEnv);
-    tablesRenew->addFilterPaint(compFilter);
     tablesRenew->start(30);
 }
 
@@ -69,21 +158,32 @@ DynamicsWidget::~DynamicsWidget(){
                         this, &DynamicsWidget::emitHoldChanged);
     QSlider::disconnect(compReleaseSlider, &QSlider::valueChanged,
                         this, &DynamicsWidget::emitReleaseChanged);
+    QSlider::disconnect(compFilterTypeSlider, &QSlider::valueChanged,
+                     this, &DynamicsWidget::emitFilterTypeChanged);
+    QSlider::disconnect(compFilterFreqSlider, &QSlider::valueChanged,
+                     this, &DynamicsWidget::emitFilterFrequencyChanged);
     delete tablesRenew;
 }
 
 QFrame *DynamicsWidget::compWidget(){
-    QHBoxLayout *hlayout = new QHBoxLayout;
-    hlayout->setContentsMargins(16, 0, 0, 0);
-    hlayout->setSpacing(0);
+    QFrame *frame = new QFrame;
+    frame->setFrameShape(QFrame::Box);
+    frame->setFrameShadow(QFrame::Plain);
+    frame->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,
+                                     QSizePolicy::MinimumExpanding));
 
+    QHBoxLayout *hlayout = new QHBoxLayout;
+    hlayout->setContentsMargins(0, 0, 0, 0);
+    hlayout->setSpacing(0);
+    //Activate Button
     QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->setContentsMargins(4, 16, 4, 4);
+    vlayout->setContentsMargins(8, 16, 8, 16);
     vlayout->setSpacing(4);
 
     compActivePushButton = new QPushButton("Active");
     compActivePushButton->setCheckable(true);
-    compActivePushButton->setMinimumSize(72*dpiRatio, 24*dpiRatio);
+    compActivePushButton->setMinimumSize(96*dpiRatio, 36*dpiRatio);
+    compActivePushButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     compActivePushButton->setStyleSheet("QPushButton {"
                           "color: rgb(0,0,0);"
                           "background-color: rgb(196, 196, 196);"
@@ -101,34 +201,29 @@ QFrame *DynamicsWidget::compWidget(){
     QSpacerItem *verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
     vlayout->addItem(verticalSpacer);
 
+    vlayout->addWidget(compRadioWidget());
+
     hlayout->addLayout(vlayout);
 
-    vlayout = new QVBoxLayout;
+    hlayout->addWidget(compGainWidget());
+    hlayout->addWidget(compEnvWidget());
+    hlayout->addWidget(compFltrWidget());
+
+    frame->setLayout(hlayout);
+    return frame;
+
+}
+
+QWidget *DynamicsWidget::compRadioWidget(){
+    QWidget *widget = new QWidget;
+
+    QVBoxLayout *vlayout = new QVBoxLayout;
     vlayout->setContentsMargins(4, 4, 4, 4);
     vlayout->setSpacing(4);
-
-    QHBoxLayout *hlayout_ = new QHBoxLayout;
-    hlayout_->setContentsMargins(4, 4, 4, 4);
-    hlayout_->setSpacing(4);
-    //h1
-    /*Gain*/
-    QVBoxLayout *vlayout_ = new QVBoxLayout;
-    vlayout_->setContentsMargins(4, 4, 4, 4);
-    vlayout_->setSpacing(4);
-
-    QLabel *label = new QLabel("Gain");
-    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
-    label->setFont(m_fonts->boldFont8);
-    label->setAlignment(Qt::AlignCenter);
-    vlayout_->addWidget(label);
-
-    compGain = new compGainPaint(dpiRatio);
-    vlayout_->addWidget(compGain);
-
+    //Comp/EXP
     QHBoxLayout *radiohlayout = new QHBoxLayout;
     radiohlayout->setContentsMargins(0, 0, 0, 0);
     radiohlayout->setSpacing(0);
-
     compType = new QButtonGroup;
     compTypeRadio = new QRadioButton("Comp");
     compTypeRadio->setStyleSheet("QRadioButton {color: rgb(255,255,255);}");
@@ -136,30 +231,87 @@ QFrame *DynamicsWidget::compWidget(){
     compType->addButton(compTypeRadio);
     compTypeRadio->setChecked(true);
     radiohlayout->addWidget(compTypeRadio);
-
     expTypeRadio = new QRadioButton("Exp");
     expTypeRadio->setStyleSheet("QRadioButton {color: rgb(255,255,255);}");
     expTypeRadio->setFont(m_fonts->boldFont8);
     compType->addButton(expTypeRadio);
     radiohlayout->addWidget(expTypeRadio);
 
-    vlayout_->addLayout(radiohlayout);
+    vlayout->addLayout(radiohlayout);
+    //Lin/Log
+    radiohlayout = new QHBoxLayout;
+    radiohlayout->setContentsMargins(0, 0, 0, 0);
+    radiohlayout->setSpacing(0);
+    compLinLogType = new QButtonGroup;
+    compLinRadio = new QRadioButton("Lin");
+    compLinRadio->setStyleSheet("QRadioButton {color: rgb(255,255,255);}");
+    compLinRadio->setFont(m_fonts->boldFont8);
+    compLinLogType->addButton(compLinRadio);
+    radiohlayout->addWidget(compLinRadio);
+    compLogRadio = new QRadioButton("Log");
+    compLogRadio->setStyleSheet("QRadioButton {color: rgb(255,255,255);}");
+    compLogRadio->setFont(m_fonts->boldFont8);
+    compLinLogType->addButton(compLogRadio);
+    compLogRadio->setChecked(true);
+    radiohlayout->addWidget(compLogRadio);
 
-    hlayout_->addLayout(vlayout_);
-    /*knee*/
-    vlayout_ = new QVBoxLayout;
+    vlayout->addLayout(radiohlayout);
+    //PEAK/RMS
+    radiohlayout = new QHBoxLayout;
+    radiohlayout->setContentsMargins(0, 0, 0, 0);
+    radiohlayout->setSpacing(0);
+    compPeakRmsType = new QButtonGroup;
+    compPeakRadio = new QRadioButton("Peak");
+    compPeakRadio->setStyleSheet("QRadioButton {color: rgb(255,255,255);}");
+    compPeakRadio->setFont(m_fonts->boldFont8);
+    compPeakRmsType->addButton(compPeakRadio);
+    compPeakRadio->setChecked(true);
+    radiohlayout->addWidget(compPeakRadio);
+    compRmsRadio = new QRadioButton("RMS");
+    compRmsRadio->setStyleSheet("QRadioButton {color: rgb(255,255,255);}");
+    compRmsRadio->setFont(m_fonts->boldFont8);
+    compPeakRmsType->addButton(compRmsRadio);
+    radiohlayout->addWidget(compRmsRadio);
+
+    vlayout->addLayout(radiohlayout);
+
+    widget->setLayout(vlayout);
+    return widget;
+}
+
+QWidget *DynamicsWidget::compGainWidget(){
+    QWidget *widget = new QWidget;
+    widget->setSizePolicy(QSizePolicy::MinimumExpanding,
+                            QSizePolicy::Minimum);
+
+    QVBoxLayout *vlayout = new QVBoxLayout;
+    vlayout->setContentsMargins(4, 4, 4, 4);
+    vlayout->setSpacing(4);
+
+    QLabel *label = new QLabel("Gain");
+    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
+    label->setFont(m_fonts->boldFont8);
+    label->setAlignment(Qt::AlignCenter);
+    vlayout->addWidget(label);
+
+    QHBoxLayout *hlayout = new QHBoxLayout;
+    hlayout->setContentsMargins(4, 4, 4, 4);
+    hlayout->setSpacing(4);
+    //Comp graphics
+    compGain = new compGainPaint(dpiRatio);
+    compGain->setSizePolicy(QSizePolicy::MinimumExpanding,
+                            QSizePolicy::MinimumExpanding);
+    hlayout->addWidget(compGain);
+    //Knee
+    QVBoxLayout *vlayout_ = new QVBoxLayout;
     vlayout_->setContentsMargins(4, 4, 4, 4);
     vlayout_->setSpacing(4);
 
     kneeLine = new QLineEdit("0");
-    kneeLine->setStyleSheet("QLineEdit {"
-                          "color: rgb(255,255,255);"
-                          "background-color: rgb(96, 96, 96);"
-                          "border: 2px solid rgb(32,32,32);"
-                          "border-radius: 0px;"
-                          "}");
+    kneeLine->setStyleSheet(lineStyle);
     kneeLine->setAlignment(Qt::AlignCenter);
-    kneeLine->setMaximumWidth(64*dpiRatio);
+    kneeLine->setMinimumWidth(48*dpiRatio);
+    kneeLine->setMaximumWidth(48*dpiRatio);
     kneeLine->setFont(m_fonts->boldFont8);
     vlayout_->addWidget(kneeLine);
 
@@ -168,6 +320,8 @@ QFrame *DynamicsWidget::compWidget(){
     sliderslayout->setSpacing(0);
     kneeSlider = new QSlider;
     kneeSlider->setOrientation(Qt::Orientation::Vertical);
+    kneeSlider->setMinimumSize(32*dpiRatio, 32*dpiRatio);
+    kneeSlider->setStyleSheet(sliderStyle);
     kneeSlider->setMaximum(5);
     kneeSlider->setValue(0);
     kneeSlider->setPageStep(0);
@@ -180,132 +334,325 @@ QFrame *DynamicsWidget::compWidget(){
     label->setAlignment(Qt::AlignCenter);
     vlayout_->addWidget(label);
 
-    hlayout_->addLayout(vlayout_);
-    /*linlogpeakrms*/
+    hlayout->addLayout(vlayout_);
+    //Treshold
     vlayout_ = new QVBoxLayout;
     vlayout_->setContentsMargins(4, 4, 4, 4);
     vlayout_->setSpacing(4);
 
 
-    verticalSpacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    vlayout_->addItem(verticalSpacer);
+    tresholdLine = new QLineEdit("-16.5 db");
+    tresholdLine->setStyleSheet(lineStyle);
+    tresholdLine->setAlignment(Qt::AlignCenter);
+    tresholdLine->setMinimumWidth(48*dpiRatio);
+    tresholdLine->setMaximumWidth(48*dpiRatio);
+    tresholdLine->setFont(m_fonts->boldFont8);
+    vlayout_->addWidget(tresholdLine);
 
-    compLinLogType = new QButtonGroup;
+    sliderslayout = new QHBoxLayout;
+    sliderslayout->setContentsMargins(0, 0, 0, 0);
+    sliderslayout->setSpacing(0);
+    tresholdSlider = new QSlider;
+    tresholdSlider->setOrientation(Qt::Orientation::Vertical);
+    tresholdSlider->setMinimumSize(32*dpiRatio, 32*dpiRatio);
+    tresholdSlider->setStyleSheet(sliderStyle);
+    tresholdSlider->setMaximum(120);
+    tresholdSlider->setValue(87);
+    tresholdSlider->setPageStep(0);
+    sliderslayout->addWidget(tresholdSlider);
+    vlayout_->addLayout(sliderslayout);
 
-    compLinRadio = new QRadioButton("Lin");
-    compLinRadio->setStyleSheet("QRadioButton {color: rgb(255,255,255);}");
-    compLinRadio->setFont(m_fonts->boldFont8);
-    compLinLogType->addButton(compLinRadio);
-    vlayout_->addWidget(compLinRadio);
-
-    compLogRadio = new QRadioButton("Log");
-    compLogRadio->setStyleSheet("QRadioButton {color: rgb(255,255,255);}");
-    compLogRadio->setFont(m_fonts->boldFont8);
-    compLinLogType->addButton(compLogRadio);
-    compLogRadio->setChecked(true);
-    vlayout_->addWidget(compLogRadio);
-
-    verticalSpacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    vlayout_->addItem(verticalSpacer);
-
-    compPeakRmsType = new QButtonGroup;
-
-    compPeakRadio = new QRadioButton("Peak");
-    compPeakRadio->setStyleSheet("QRadioButton {color: rgb(255,255,255);}");
-    compPeakRadio->setFont(m_fonts->boldFont8);
-    compPeakRmsType->addButton(compPeakRadio);
-    compPeakRadio->setChecked(true);
-    vlayout_->addWidget(compPeakRadio);
-
-    compRmsRadio = new QRadioButton("RMS");
-    compRmsRadio->setStyleSheet("QRadioButton {color: rgb(255,255,255);}");
-    compRmsRadio->setFont(m_fonts->boldFont8);
-    compPeakRmsType->addButton(compRmsRadio);
-    vlayout_->addWidget(compRmsRadio);
-
-    verticalSpacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    vlayout_->addItem(verticalSpacer);
-
-
-    hlayout_->addLayout(vlayout_);
-    /*env*/
-    QSpacerItem *horizontalSpacer = new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    hlayout_->addItem(horizontalSpacer);
-
-    vlayout_ = new QVBoxLayout;
-    vlayout_->setContentsMargins(4, 4, 4, 4);
-    vlayout_->setSpacing(4);
-
-
-    label = new QLabel("Envelope");
+    label = new QLabel("Treshold");
     label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
     label->setFont(m_fonts->boldFont8);
     label->setAlignment(Qt::AlignCenter);
     vlayout_->addWidget(label);
 
-    //Comp Env Widgets
-    compEnv = new compEnvPaint(dpiRatio);
-    vlayout_->addWidget(compEnv);
+    hlayout->addLayout(vlayout_);
+    //Ratio
+    vlayout_ = new QVBoxLayout;
+    vlayout_->setContentsMargins(4, 4, 4, 4);
+    vlayout_->setSpacing(4);
 
-    //Add auto time button
-    QHBoxLayout *autohlayout = new QHBoxLayout;
-    autohlayout->setContentsMargins(0, 0, 0, 0);
-    autohlayout->setSpacing(0);
 
-    horizontalSpacer = new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    autohlayout->addItem(horizontalSpacer);
+    ratioLine = new QLineEdit("2.5");
+    ratioLine->setStyleSheet(lineStyle);
+    ratioLine->setAlignment(Qt::AlignCenter);
+    ratioLine->setMinimumWidth(48*dpiRatio);
+    ratioLine->setMaximumWidth(48*dpiRatio);
+    ratioLine->setFont(m_fonts->boldFont8);
+    vlayout_->addWidget(ratioLine);
 
+    sliderslayout = new QHBoxLayout;
+    sliderslayout->setContentsMargins(0, 0, 0, 0);
+    sliderslayout->setSpacing(0);
+    ratioSlider = new QSlider;
+    ratioSlider->setOrientation(Qt::Orientation::Vertical);
+    ratioSlider->setMinimumSize(32*dpiRatio, 32*dpiRatio);
+    ratioSlider->setStyleSheet(sliderStyle);
+    ratioSlider->setMaximum(11);
+    ratioSlider->setValue(4);
+    ratioSlider->setPageStep(0);
+    sliderslayout->addWidget(ratioSlider);
+    vlayout_->addLayout(sliderslayout);
+
+    label = new QLabel("Ratio");
+    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
+    label->setFont(m_fonts->boldFont8);
+    label->setAlignment(Qt::AlignCenter);
+    vlayout_->addWidget(label);
+
+
+    hlayout->addLayout(vlayout_);
+    //Mix
+    vlayout_ = new QVBoxLayout;
+    vlayout_->setContentsMargins(4, 4, 4, 4);
+    vlayout_->setSpacing(4);
+
+
+    mixLine = new QLineEdit("100 %");
+    mixLine->setStyleSheet(lineStyle);
+    mixLine->setAlignment(Qt::AlignCenter);
+    mixLine->setMinimumWidth(48*dpiRatio);
+    mixLine->setMaximumWidth(48*dpiRatio);
+    mixLine->setFont(m_fonts->boldFont8);
+    vlayout_->addWidget(mixLine);
+
+    sliderslayout = new QHBoxLayout;
+    sliderslayout->setContentsMargins(0, 0, 0, 0);
+    sliderslayout->setSpacing(0);
+    mixSlider = new QSlider;
+    mixSlider->setOrientation(Qt::Orientation::Vertical);
+    mixSlider->setMinimumSize(32*dpiRatio, 32*dpiRatio);
+    mixSlider->setStyleSheet(sliderStyle);
+    mixSlider->setMaximum(20);
+    mixSlider->setValue(20);
+    mixSlider->setPageStep(0);
+    sliderslayout->addWidget(mixSlider);
+    vlayout_->addLayout(sliderslayout);
+
+    label = new QLabel("Mix");
+    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
+    label->setFont(m_fonts->boldFont8);
+    label->setAlignment(Qt::AlignCenter);
+    vlayout_->addWidget(label);
+
+
+    hlayout->addLayout(vlayout_);
+    //Gain
+    vlayout_ = new QVBoxLayout;
+    vlayout_->setContentsMargins(4, 4, 4, 4);
+    vlayout_->setSpacing(4);
+
+
+    gainLine = new QLineEdit("0 db");
+    gainLine->setStyleSheet(lineStyle);
+    gainLine->setAlignment(Qt::AlignCenter);
+    gainLine->setMinimumWidth(48*dpiRatio);
+    gainLine->setMaximumWidth(48*dpiRatio);
+    gainLine->setFont(m_fonts->boldFont8);
+    vlayout_->addWidget(gainLine);
+
+    sliderslayout = new QHBoxLayout;
+    sliderslayout->setContentsMargins(0, 0, 0, 0);
+    sliderslayout->setSpacing(0);
+    gainSlider = new QSlider;
+    gainSlider->setOrientation(Qt::Orientation::Vertical);
+    gainSlider->setMinimumSize(32*dpiRatio, 32*dpiRatio);
+    gainSlider->setStyleSheet(sliderStyle);
+    gainSlider->setMaximum(48);
+    gainSlider->setValue(0);
+    gainSlider->setPageStep(0);
+    sliderslayout->addWidget(gainSlider);
+    vlayout_->addLayout(sliderslayout);
+
+    label = new QLabel("Gain");
+    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
+    label->setFont(m_fonts->boldFont8);
+    label->setAlignment(Qt::AlignCenter);
+    vlayout_->addWidget(label);
+
+    hlayout->addLayout(vlayout_);
+    //end
+
+    vlayout->addLayout(hlayout);
+
+    widget->setLayout(vlayout);
+
+    return widget;
+}
+
+QWidget *DynamicsWidget::compEnvWidget(){
+    QWidget *widget = new QWidget;
+    widget->setSizePolicy(QSizePolicy::Maximum,
+                            QSizePolicy::Minimum);
+
+    QVBoxLayout *vlayout = new QVBoxLayout;
+    vlayout->setContentsMargins(4, 4, 4, 4);
+    vlayout->setSpacing(4);
+
+    QLabel *label = new QLabel("Envelope");
+    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
+    label->setFont(m_fonts->boldFont8);
+    label->setAlignment(Qt::AlignCenter);
+    vlayout->addWidget(label);
+    //Auto button
+    QHBoxLayout *hlayout_ = new QHBoxLayout;
+    hlayout_->setContentsMargins(0, 0, 0, 0);
+    hlayout_->setSpacing(0);
     compAutoPushButton = new QPushButton("Auto Time");
     compAutoPushButton->setCheckable(true);
     compAutoPushButton->setMinimumSize(96*dpiRatio, 24*dpiRatio);
-    compAutoPushButton->setStyleSheet("QPushButton {"
-                          "color: rgb(0,0,0);"
-                          "background-color: rgb(196, 196, 196);"
-                          "border: 1px solid rgb(32,32,32);"
-                          "border-radius: 0px;}"
-                          "QPushButton:pressed {"
-                          "background-color: rgb(128, 128, 128);}"
-                          "QPushButton:checked {"
-                          "background-color: rgb(128, 255, 128);}"
-                          "QPushButton:checked:pressed {"
-                          "background-color: rgb(128, 196, 128);}");
+    compAutoPushButton->setMaximumSize(96*dpiRatio, 24*dpiRatio);
+    compAutoPushButton->setStyleSheet(buttonStyle);
     compAutoPushButton->setFont(m_fonts->boldFont8);
-    autohlayout->addWidget(compAutoPushButton);
-
-    horizontalSpacer = new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    autohlayout->addItem(horizontalSpacer);
-
-    vlayout_->addLayout(autohlayout);
-
-    hlayout_->addLayout(vlayout_);
-    /*filter*/
-    horizontalSpacer = new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    hlayout_->addItem(horizontalSpacer);
-
-    vlayout_ = new QVBoxLayout;
+    hlayout_->addWidget(compAutoPushButton);
+    vlayout->addLayout(hlayout_);
+    //Envelope faders
+    QHBoxLayout *hlayout = new QHBoxLayout;
+    hlayout->setContentsMargins(4, 4, 4, 4);
+    hlayout->setSpacing(4);
+    //Attack
+    QVBoxLayout *vlayout_ = new QVBoxLayout;
     vlayout_->setContentsMargins(4, 4, 4, 4);
     vlayout_->setSpacing(4);
 
-    //Comp Filter Widgets
-    label = new QLabel("Filter");
+
+    compAttackLine = new QLineEdit("0");
+    compAttackLine->setStyleSheet(lineStyle);
+    compAttackLine->setAlignment(Qt::AlignCenter);
+    compAttackLine->setMinimumWidth(48*dpiRatio);
+    compAttackLine->setMaximumWidth(48*dpiRatio);
+    compAttackLine->setFont(m_fonts->boldFont8);
+    vlayout_->addWidget(compAttackLine);
+
+    QHBoxLayout *sliderslayout = new QHBoxLayout;
+    sliderslayout->setContentsMargins(0, 0, 0, 0);
+    sliderslayout->setSpacing(0);
+    compAttackSlider = new QSlider;
+    compAttackSlider->setOrientation(Qt::Orientation::Vertical);
+    compAttackSlider->setMinimumSize(32*dpiRatio, 32*dpiRatio);
+    compAttackSlider->setStyleSheet(sliderStyle);
+    compAttackSlider->setMaximum(120);
+    compAttackSlider->setValue(0);
+    compAttackSlider->setPageStep(0);
+    sliderslayout->addWidget(compAttackSlider);
+    vlayout_->addLayout(sliderslayout);
+
+    label = new QLabel("Attack");
     label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
     label->setFont(m_fonts->boldFont8);
     label->setAlignment(Qt::AlignCenter);
     vlayout_->addWidget(label);
 
-    compFilter = new compFilterPaint(dpiRatio);
-    vlayout_->addWidget(compFilter);
 
-    //add key source
-    autohlayout = new QHBoxLayout;
-    autohlayout->setContentsMargins(0, 0, 0, 0);
-    autohlayout->setSpacing(0);
+    hlayout->addLayout(vlayout_);
+    //Hold
+    vlayout_ = new QVBoxLayout;
+    vlayout_->setContentsMargins(4, 4, 4, 4);
+    vlayout_->setSpacing(4);
 
-    horizontalSpacer = new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    autohlayout->addItem(horizontalSpacer);
+
+    compHoldLine = new QLineEdit("0");
+    compHoldLine->setStyleSheet(lineStyle);
+    compHoldLine->setAlignment(Qt::AlignCenter);
+    compHoldLine->setMinimumWidth(48*dpiRatio);
+    compHoldLine->setMaximumWidth(48*dpiRatio);
+    compHoldLine->setFont(m_fonts->boldFont8);
+    vlayout_->addWidget(compHoldLine);
+
+    sliderslayout = new QHBoxLayout;
+    sliderslayout->setContentsMargins(0, 0, 0, 0);
+    sliderslayout->setSpacing(0);
+    compHoldSlider = new QSlider;
+    compHoldSlider->setOrientation(Qt::Orientation::Vertical);
+    compHoldSlider->setMinimumSize(32*dpiRatio, 32*dpiRatio);
+    compHoldSlider->setStyleSheet(sliderStyle);
+    compHoldSlider->setMaximum(100);
+    compHoldSlider->setValue(0);
+    compHoldSlider->setPageStep(0);
+    sliderslayout->addWidget(compHoldSlider);
+    vlayout_->addLayout(sliderslayout);
+
+    label = new QLabel("Hold");
+    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
+    label->setFont(m_fonts->boldFont8);
+    label->setAlignment(Qt::AlignCenter);
+    vlayout_->addWidget(label);
+
+
+    hlayout->addLayout(vlayout_);
+    //Release
+    vlayout_ = new QVBoxLayout;
+    vlayout_->setContentsMargins(4, 4, 4, 4);
+    vlayout_->setSpacing(4);
+
+
+    compReleaseLine = new QLineEdit("0");
+    compReleaseLine->setStyleSheet(lineStyle);
+    compReleaseLine->setAlignment(Qt::AlignCenter);
+    compReleaseLine->setMinimumWidth(48*dpiRatio);
+    compReleaseLine->setMaximumWidth(48*dpiRatio);
+    compReleaseLine->setFont(m_fonts->boldFont8);
+    vlayout_->addWidget(compReleaseLine);
+
+    sliderslayout = new QHBoxLayout;
+    sliderslayout->setContentsMargins(0, 0, 0, 0);
+    sliderslayout->setSpacing(0);
+    compReleaseSlider = new QSlider;
+    compReleaseSlider->setOrientation(Qt::Orientation::Vertical);
+    compReleaseSlider->setMinimumSize(32*dpiRatio, 32*dpiRatio);
+    compReleaseSlider->setStyleSheet(sliderStyle);
+    compReleaseSlider->setMaximum(100);
+    compReleaseSlider->setValue(0);
+    compReleaseSlider->setPageStep(0);
+    sliderslayout->addWidget(compReleaseSlider);
+    vlayout_->addLayout(sliderslayout);
+
+    label = new QLabel("Release");
+    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
+    label->setFont(m_fonts->boldFont8);
+    label->setAlignment(Qt::AlignCenter);
+    vlayout_->addWidget(label);
+
+    hlayout->addLayout(vlayout_);
+    //End
+    vlayout->addLayout(hlayout);
+
+    widget->setLayout(vlayout);
+
+    return widget;
+}
+
+QWidget *DynamicsWidget::compFltrWidget(){
+    QWidget *widget = new QWidget;
+    widget->setSizePolicy(QSizePolicy::Maximum,
+                            QSizePolicy::Minimum);
+
+
+    QVBoxLayout *vlayout = new QVBoxLayout;
+    vlayout->setContentsMargins(4, 4, 4, 4);
+    vlayout->setSpacing(4);
+
+    QLabel *label = new QLabel("Side Chain/Filter");
+    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
+    label->setFont(m_fonts->boldFont8);
+    label->setAlignment(Qt::AlignCenter);
+    vlayout->addWidget(label);
+    //side chain
+    QHBoxLayout *hlayout_ = new QHBoxLayout;
+    hlayout_->setContentsMargins(0, 0, 0, 0);
+    hlayout_->setSpacing(0);
+
+    label = new QLabel("Key");
+    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
+    label->setFont(m_fonts->boldFont8);
+    label->setAlignment(Qt::AlignCenter);
+    hlayout_->addWidget(label);
 
     compFilterSourceComboBox = new QComboBox;
-    compFilterSourceComboBox->setMinimumSize(72*dpiRatio, 24*dpiRatio);
+    compFilterSourceComboBox->setMinimumSize(96*dpiRatio, 24*dpiRatio);
+    compFilterSourceComboBox->setMaximumSize(96*dpiRatio, 24*dpiRatio);
     compFilterSourceComboBox->addItem(QString("Self"), 0);
     for(int i = 1;i < 33;i++)
         compFilterSourceComboBox->addItem(QString("Channel " + QString::number(i)), i);
@@ -320,288 +667,18 @@ QFrame *DynamicsWidget::compWidget(){
     compFilterSourceComboBox->addItem(QString("Fx Rtn 4L"), 47);
     compFilterSourceComboBox->addItem(QString("Fx Rtn 4R"), 48);
     for(int i = 1;i < 17;i++)
-        compFilterSourceComboBox->addItem(QString("Bus " + QString::number(i)), i + 48);
-    autohlayout->addWidget(compFilterSourceComboBox);
-
-    horizontalSpacer = new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    autohlayout->addItem(horizontalSpacer);
-
-    vlayout_->addLayout(autohlayout);
-
-    hlayout_->addLayout(vlayout_);
+        compFilterSourceComboBox->addItem(QString("Bus " + QString::number(i)), i + 48);    
+    hlayout_->addWidget(compFilterSourceComboBox);
 
     vlayout->addLayout(hlayout_);
 
-    hlayout_ = new QHBoxLayout;
-    hlayout_->setContentsMargins(0, 0, 0, 0);
-    hlayout_->setSpacing(0);
-    /*treshold*/
-    vlayout_ = new QVBoxLayout;
-    vlayout_->setContentsMargins(4, 4, 4, 4);
-    vlayout_->setSpacing(4);
+    //Envelope faders
+    QHBoxLayout *hlayout = new QHBoxLayout;
+    hlayout->setContentsMargins(4, 4, 4, 4);
+    hlayout->setSpacing(4);
 
-
-    tresholdLine = new QLineEdit("-16.5 db");
-    tresholdLine->setStyleSheet("QLineEdit {"
-                          "color: rgb(255,255,255);"
-                          "background-color: rgb(96, 96, 96);"
-                          "border: 2px solid rgb(32,32,32);"
-                          "border-radius: 0px;"
-                          "}");
-    tresholdLine->setAlignment(Qt::AlignCenter);
-    tresholdLine->setMaximumWidth(64*dpiRatio);
-    tresholdLine->setFont(m_fonts->boldFont8);
-    vlayout_->addWidget(tresholdLine);
-
-    sliderslayout = new QHBoxLayout;
-    sliderslayout->setContentsMargins(0, 0, 0, 0);
-    sliderslayout->setSpacing(0);
-    tresholdSlider = new QSlider;
-    tresholdSlider->setOrientation(Qt::Orientation::Vertical);
-    tresholdSlider->setMaximum(120);
-    tresholdSlider->setValue(87);
-    tresholdSlider->setPageStep(0);
-    sliderslayout->addWidget(tresholdSlider);
-    vlayout_->addLayout(sliderslayout);
-
-    label = new QLabel("Treshold");
-    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
-    label->setFont(m_fonts->boldFont8);
-    label->setAlignment(Qt::AlignCenter);
-    vlayout_->addWidget(label);
-
-
-    hlayout_->addLayout(vlayout_);
-    /*ratio*/
-    vlayout_ = new QVBoxLayout;
-    vlayout_->setContentsMargins(4, 4, 4, 4);
-    vlayout_->setSpacing(4);
-
-
-    ratioLine = new QLineEdit("2.5");
-    ratioLine->setStyleSheet("QLineEdit {"
-                          "color: rgb(255,255,255);"
-                          "background-color: rgb(96, 96, 96);"
-                          "border: 2px solid rgb(32,32,32);"
-                          "border-radius: 0px;"
-                          "}");
-    ratioLine->setAlignment(Qt::AlignCenter);
-    ratioLine->setMaximumWidth(64*dpiRatio);
-    ratioLine->setFont(m_fonts->boldFont8);
-    vlayout_->addWidget(ratioLine);
-
-    sliderslayout = new QHBoxLayout;
-    sliderslayout->setContentsMargins(0, 0, 0, 0);
-    sliderslayout->setSpacing(0);
-    ratioSlider = new QSlider;
-    ratioSlider->setOrientation(Qt::Orientation::Vertical);
-    ratioSlider->setMaximum(11);
-    ratioSlider->setValue(4);
-    ratioSlider->setPageStep(0);
-    sliderslayout->addWidget(ratioSlider);
-    vlayout_->addLayout(sliderslayout);
-
-    label = new QLabel("Ratio");
-    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
-    label->setFont(m_fonts->boldFont8);
-    label->setAlignment(Qt::AlignCenter);
-    vlayout_->addWidget(label);
-
-
-    hlayout_->addLayout(vlayout_);
-    /*mix*/
-    vlayout_ = new QVBoxLayout;
-    vlayout_->setContentsMargins(4, 4, 4, 4);
-    vlayout_->setSpacing(4);
-
-
-    mixLine = new QLineEdit("100 %");
-    mixLine->setStyleSheet("QLineEdit {"
-                          "color: rgb(255,255,255);"
-                          "background-color: rgb(96, 96, 96);"
-                          "border: 2px solid rgb(32,32,32);"
-                          "border-radius: 0px;"
-                          "}");
-    mixLine->setAlignment(Qt::AlignCenter);
-    mixLine->setMaximumWidth(64*dpiRatio);
-    mixLine->setFont(m_fonts->boldFont8);
-    vlayout_->addWidget(mixLine);
-
-    sliderslayout = new QHBoxLayout;
-    sliderslayout->setContentsMargins(0, 0, 0, 0);
-    sliderslayout->setSpacing(0);
-    mixSlider = new QSlider;
-    mixSlider->setOrientation(Qt::Orientation::Vertical);
-    mixSlider->setMaximum(20);
-    mixSlider->setValue(20);
-    mixSlider->setPageStep(0);
-    sliderslayout->addWidget(mixSlider);
-    vlayout_->addLayout(sliderslayout);
-
-    label = new QLabel("Mix");
-    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
-    label->setFont(m_fonts->boldFont8);
-    label->setAlignment(Qt::AlignCenter);
-    vlayout_->addWidget(label);
-
-
-    hlayout_->addLayout(vlayout_);
-    /*gain*/
-    vlayout_ = new QVBoxLayout;
-    vlayout_->setContentsMargins(4, 4, 4, 4);
-    vlayout_->setSpacing(4);
-
-
-    gainLine = new QLineEdit("0 db");
-    gainLine->setStyleSheet("QLineEdit {"
-                          "color: rgb(255,255,255);"
-                          "background-color: rgb(96, 96, 96);"
-                          "border: 2px solid rgb(32,32,32);"
-                          "border-radius: 0px;"
-                          "}");
-    gainLine->setAlignment(Qt::AlignCenter);
-    gainLine->setMaximumWidth(64*dpiRatio);
-    gainLine->setFont(m_fonts->boldFont8);
-    vlayout_->addWidget(gainLine);
-
-    sliderslayout = new QHBoxLayout;
-    sliderslayout->setContentsMargins(0, 0, 0, 0);
-    sliderslayout->setSpacing(0);
-    gainSlider = new QSlider;
-    gainSlider->setOrientation(Qt::Orientation::Vertical);
-    gainSlider->setMaximum(48);
-    gainSlider->setValue(0);
-    gainSlider->setPageStep(0);
-    sliderslayout->addWidget(gainSlider);
-    vlayout_->addLayout(sliderslayout);
-
-    label = new QLabel("Gain");
-    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
-    label->setFont(m_fonts->boldFont8);
-    label->setAlignment(Qt::AlignCenter);
-    vlayout_->addWidget(label);
-
-    hlayout_->addLayout(vlayout_);
-
-    horizontalSpacer = new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    hlayout_->addItem(horizontalSpacer);
-
-    /*attack*/
-    vlayout_ = new QVBoxLayout;
-    vlayout_->setContentsMargins(4, 4, 4, 4);
-    vlayout_->setSpacing(4);
-
-
-    compAttackLine = new QLineEdit("0");
-    compAttackLine->setStyleSheet("QLineEdit {"
-                          "color: rgb(255,255,255);"
-                          "background-color: rgb(96, 96, 96);"
-                          "border: 2px solid rgb(32,32,32);"
-                          "border-radius: 0px;"
-                          "}");
-    compAttackLine->setAlignment(Qt::AlignCenter);
-    compAttackLine->setMaximumWidth(64*dpiRatio);
-    compAttackLine->setFont(m_fonts->boldFont8);
-    vlayout_->addWidget(compAttackLine);
-
-    sliderslayout = new QHBoxLayout;
-    sliderslayout->setContentsMargins(0, 0, 0, 0);
-    sliderslayout->setSpacing(0);
-    compAttackSlider = new QSlider;
-    compAttackSlider->setOrientation(Qt::Orientation::Vertical);
-    compAttackSlider->setMaximum(120);
-    compAttackSlider->setValue(0);
-    compAttackSlider->setPageStep(0);
-    sliderslayout->addWidget(compAttackSlider);
-    vlayout_->addLayout(sliderslayout);
-
-    label = new QLabel("Attack");
-    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
-    label->setFont(m_fonts->boldFont8);
-    label->setAlignment(Qt::AlignCenter);
-    vlayout_->addWidget(label);
-
-
-    hlayout_->addLayout(vlayout_);
-    /*hold*/
-    vlayout_ = new QVBoxLayout;
-    vlayout_->setContentsMargins(4, 4, 4, 4);
-    vlayout_->setSpacing(4);
-
-
-    compHoldLine = new QLineEdit("0");
-    compHoldLine->setStyleSheet("QLineEdit {"
-                          "color: rgb(255,255,255);"
-                          "background-color: rgb(96, 96, 96);"
-                          "border: 2px solid rgb(32,32,32);"
-                          "border-radius: 0px;"
-                          "}");
-    compHoldLine->setAlignment(Qt::AlignCenter);
-    compHoldLine->setMaximumWidth(64*dpiRatio);
-    compHoldLine->setFont(m_fonts->boldFont8);
-    vlayout_->addWidget(compHoldLine);
-
-    sliderslayout = new QHBoxLayout;
-    sliderslayout->setContentsMargins(0, 0, 0, 0);
-    sliderslayout->setSpacing(0);
-    compHoldSlider = new QSlider;
-    compHoldSlider->setOrientation(Qt::Orientation::Vertical);
-    compHoldSlider->setMaximum(100);
-    compHoldSlider->setValue(0);
-    compHoldSlider->setPageStep(0);
-    sliderslayout->addWidget(compHoldSlider);
-    vlayout_->addLayout(sliderslayout);
-
-    label = new QLabel("Hold");
-    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
-    label->setFont(m_fonts->boldFont8);
-    label->setAlignment(Qt::AlignCenter);
-    vlayout_->addWidget(label);
-
-
-    hlayout_->addLayout(vlayout_);
-    /*release*/
-    vlayout_ = new QVBoxLayout;
-    vlayout_->setContentsMargins(4, 4, 4, 4);
-    vlayout_->setSpacing(4);
-
-
-    compReleaseLine = new QLineEdit("0");
-    compReleaseLine->setStyleSheet("QLineEdit {"
-                          "color: rgb(255,255,255);"
-                          "background-color: rgb(96, 96, 96);"
-                          "border: 2px solid rgb(32,32,32);"
-                          "border-radius: 0px;"
-                          "}");
-    compReleaseLine->setAlignment(Qt::AlignCenter);
-    compReleaseLine->setMaximumWidth(64*dpiRatio);
-    compReleaseLine->setFont(m_fonts->boldFont8);
-    vlayout_->addWidget(compReleaseLine);
-
-    sliderslayout = new QHBoxLayout;
-    sliderslayout->setContentsMargins(0, 0, 0, 0);
-    sliderslayout->setSpacing(0);
-    compReleaseSlider = new QSlider;
-    compReleaseSlider->setOrientation(Qt::Orientation::Vertical);
-    compReleaseSlider->setMaximum(100);
-    compReleaseSlider->setValue(0);
-    compReleaseSlider->setPageStep(0);
-    sliderslayout->addWidget(compReleaseSlider);
-    vlayout_->addLayout(sliderslayout);
-
-    label = new QLabel("Release");
-    label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
-    label->setFont(m_fonts->boldFont8);
-    label->setAlignment(Qt::AlignCenter);
-    vlayout_->addWidget(label);
-
-    hlayout_->addLayout(vlayout_);
-
-    horizontalSpacer = new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    hlayout_->addItem(horizontalSpacer);
-
-    /*filter/solo*/
-    vlayout_ = new QVBoxLayout;
+    //Filter,solo buttons
+    QVBoxLayout *vlayout_ = new QVBoxLayout;
     vlayout_->setContentsMargins(4, 4, 4, 4);
     vlayout_->setSpacing(4);
 
@@ -609,17 +686,7 @@ QFrame *DynamicsWidget::compWidget(){
     compFilterPushButton->setCheckable(true);
     compFilterPushButton->setMinimumSize(48*dpiRatio, 24*dpiRatio);
     compFilterPushButton->setMaximumSize(48*dpiRatio, 24*dpiRatio);
-    compFilterPushButton->setStyleSheet("QPushButton {"
-                          "color: rgb(0,0,0);"
-                          "background-color: rgb(196, 196, 196);"
-                          "border: 1px solid rgb(32,32,32);"
-                          "border-radius: 0px;}"
-                          "QPushButton:pressed {"
-                          "background-color: rgb(128, 128, 128);}"
-                          "QPushButton:checked {"
-                          "background-color: rgb(128, 255, 128);}"
-                          "QPushButton:checked:pressed {"
-                          "background-color: rgb(128, 196, 128);}");
+    compFilterPushButton->setStyleSheet(buttonStyle);
     compFilterPushButton->setFont(m_fonts->boldFont8);
     vlayout_->addWidget(compFilterPushButton);
 
@@ -641,10 +708,10 @@ QFrame *DynamicsWidget::compWidget(){
     compFilterSoloPushButton->setFont(m_fonts->boldFont8);
     vlayout_->addWidget(compFilterSoloPushButton);
 
-    verticalSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QSpacerItem *verticalSpacer = new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
     vlayout_->addItem(verticalSpacer);
 
-    hlayout_->addLayout(vlayout_);
+    hlayout->addLayout(vlayout_);
     /*filtertype*/
     vlayout_ = new QVBoxLayout;
     vlayout_->setContentsMargins(4, 4, 4, 4);
@@ -652,23 +719,21 @@ QFrame *DynamicsWidget::compWidget(){
 
 
     compFilterTypeLine = new QLineEdit("0");
-    compFilterTypeLine->setStyleSheet("QLineEdit {"
-                          "color: rgb(255,255,255);"
-                          "background-color: rgb(96, 96, 96);"
-                          "border: 2px solid rgb(32,32,32);"
-                          "border-radius: 0px;"
-                          "}");
+    compFilterTypeLine->setStyleSheet(lineStyle);
     compFilterTypeLine->setAlignment(Qt::AlignCenter);
-    compFilterTypeLine->setMaximumWidth(64*dpiRatio);
+    compFilterTypeLine->setMinimumWidth(48*dpiRatio);
+    compFilterTypeLine->setMaximumWidth(48*dpiRatio);
     compFilterTypeLine->setFont(m_fonts->boldFont8);
     vlayout_->addWidget(compFilterTypeLine);
 
-    sliderslayout = new QHBoxLayout;
+    QHBoxLayout *sliderslayout = new QHBoxLayout;
     sliderslayout->setContentsMargins(0, 0, 0, 0);
     sliderslayout->setSpacing(0);
     compFilterTypeSlider = new QSlider;
     compFilterTypeSlider->setOrientation(Qt::Orientation::Vertical);
-    compFilterTypeSlider->setMaximum(100);
+    compFilterTypeSlider->setMinimumSize(32*dpiRatio, 32*dpiRatio);
+    compFilterTypeSlider->setStyleSheet(sliderStyle);
+    compFilterTypeSlider->setMaximum(8);
     compFilterTypeSlider->setValue(0);
     compFilterTypeSlider->setPageStep(0);
     sliderslayout->addWidget(compFilterTypeSlider);
@@ -680,21 +745,17 @@ QFrame *DynamicsWidget::compWidget(){
     label->setAlignment(Qt::AlignCenter);
     vlayout_->addWidget(label);
 
-    hlayout_->addLayout(vlayout_);
+    hlayout->addLayout(vlayout_);
     /*filterfreq*/
     vlayout_ = new QVBoxLayout;
     vlayout_->setContentsMargins(4, 4, 4, 4);
     vlayout_->setSpacing(4);
 
     compFilterFreqLine = new QLineEdit("0");
-    compFilterFreqLine->setStyleSheet("QLineEdit {"
-                          "color: rgb(255,255,255);"
-                          "background-color: rgb(96, 96, 96);"
-                          "border: 2px solid rgb(32,32,32);"
-                          "border-radius: 0px;"
-                          "}");
+    compFilterFreqLine->setStyleSheet(lineStyle);
     compFilterFreqLine->setAlignment(Qt::AlignCenter);
-    compFilterFreqLine->setMaximumWidth(64*dpiRatio);
+    compFilterFreqLine->setMinimumWidth(48*dpiRatio);
+    compFilterFreqLine->setMaximumWidth(48*dpiRatio);
     compFilterFreqLine->setFont(m_fonts->boldFont8);
     vlayout_->addWidget(compFilterFreqLine);
 
@@ -703,7 +764,9 @@ QFrame *DynamicsWidget::compWidget(){
     sliderslayout->setSpacing(0);
     compFilterFreqSlider = new QSlider;
     compFilterFreqSlider->setOrientation(Qt::Orientation::Vertical);
-    compFilterFreqSlider->setMaximum(100);
+    compFilterFreqSlider->setMinimumSize(32*dpiRatio, 32*dpiRatio);
+    compFilterFreqSlider->setStyleSheet(sliderStyle);
+    compFilterFreqSlider->setMaximum(200);
     compFilterFreqSlider->setValue(0);
     compFilterFreqSlider->setPageStep(0);
     sliderslayout->addWidget(compFilterFreqSlider);
@@ -715,19 +778,13 @@ QFrame *DynamicsWidget::compWidget(){
     label->setAlignment(Qt::AlignCenter);
     vlayout_->addWidget(label);
 
-    hlayout_->addLayout(vlayout_);
+    hlayout->addLayout(vlayout_);
+    //End
+    vlayout->addLayout(hlayout);
 
-    vlayout->addLayout(hlayout_);
+    widget->setLayout(vlayout);
 
-    hlayout->addLayout(vlayout);
-
-    QFrame *frame = new QFrame;
-    frame->setLayout(hlayout);
-    frame->setFrameShape(QFrame::Box);
-    frame->setFrameShadow(QFrame::Plain);
-    frame->setSizePolicy(QSizePolicy(QSizePolicy::Preferred,
-                                     QSizePolicy::MinimumExpanding));
-    return frame;
+    return widget;
 }
 
 QFrame *DynamicsWidget::gateWidget(){
@@ -786,6 +843,10 @@ void DynamicsWidget::connectSignals(){
                      this, &DynamicsWidget::emitHoldChanged);
     QSlider::connect(compReleaseSlider, &QSlider::valueChanged,
                      this, &DynamicsWidget::emitReleaseChanged);
+    QSlider::connect(compFilterTypeSlider, &QSlider::valueChanged,
+                     this, &DynamicsWidget::emitFilterTypeChanged);
+    QSlider::connect(compFilterFreqSlider, &QSlider::valueChanged,
+                     this, &DynamicsWidget::emitFilterFrequencyChanged);
 }
 
 void DynamicsWidget::onOffRecieved(int value){}
@@ -912,7 +973,21 @@ void DynamicsWidget::releaseRecieved(float value){
                         this, &DynamicsWidget::emitReleaseChanged);
 }
 
-void DynamicsWidget::autoTimeRecieved(int value){}
+void DynamicsWidget::autoTimeRecieved(int value){
+    QPushButton::disconnect(compAutoPushButton, &QPushButton::clicked,
+                         this, &DynamicsWidget::emitAutoTimeChanged);
+    compAutoPushButton->setChecked(value);
+
+    compAttackLine->setDisabled(value);
+    compAttackSlider->setDisabled(value);
+    compHoldLine->setDisabled(value);
+    compHoldSlider->setDisabled(value);
+    compReleaseLine->setDisabled(value);
+    compReleaseSlider->setDisabled(value);
+
+    QPushButton::connect(compAutoPushButton, &QPushButton::clicked,
+                         this, &DynamicsWidget::emitAutoTimeChanged);
+}
 
 void DynamicsWidget::keySourceRecieved(int value){
     QComboBox::disconnect(compFilterSourceComboBox, &QComboBox::currentIndexChanged,
@@ -924,11 +999,29 @@ void DynamicsWidget::keySourceRecieved(int value){
                          this, &DynamicsWidget::emitKeySourceChanged);
 }
 
-void DynamicsWidget::filterRecieved(int value){}
-void DynamicsWidget::filterTypeRecieved(int value){}
-void DynamicsWidget::filterFrequencyRecieved(float value){}
+void DynamicsWidget::filterRecieved(int value){
+    QPushButton::disconnect(compFilterPushButton, &QPushButton::clicked,
+                         this, &DynamicsWidget::emitFilterChanged);
+    compFilterPushButton->setChecked(value);
+    QPushButton::connect(compFilterPushButton, &QPushButton::clicked,
+                         this, &DynamicsWidget::emitFilterChanged);
+}
 
-void DynamicsWidget::emitOnOffChanged(){}
+void DynamicsWidget::filterTypeRecieved(int value){
+    QSlider::disconnect(compFilterTypeSlider, &QSlider::valueChanged,
+                     this, &DynamicsWidget::emitFilterTypeChanged);
+    compFilterTypeSlider->setValue(value);
+    QSlider::connect(compFilterTypeSlider, &QSlider::valueChanged,
+                     this, &DynamicsWidget::emitFilterTypeChanged);
+}
+
+void DynamicsWidget::filterFrequencyRecieved(float value){
+    //NOT YET
+}
+
+void DynamicsWidget::emitOnOffChanged(){
+    //NOT YET
+}
 
 void DynamicsWidget::emitTresholdChanged(){
     float value = float(tresholdSlider->value()) / 120;
@@ -1001,17 +1094,41 @@ void DynamicsWidget::emitReleaseChanged(){
     compReleaseLine->setText(QString::number(release2ms(compReleaseSlider->value())) + " ms");
 }
 
-void DynamicsWidget::emitAutoTimeChanged(){}
+void DynamicsWidget::emitAutoTimeChanged(){
+    bool value = compAutoPushButton->isChecked();
+    compAttackLine->setDisabled(value);
+    compAttackSlider->setDisabled(value);
+    compHoldLine->setDisabled(value);
+    compHoldSlider->setDisabled(value);
+    compReleaseLine->setDisabled(value);
+    compReleaseSlider->setDisabled(value);
+    emit autoTimeChanged(int(value));
+}
 
 void DynamicsWidget::emitKeySourceChanged(){
     emit keySourceChanged(compFilterSourceComboBox->currentData().toInt());
 }
 
-void DynamicsWidget::emitFilterChanged(){}
+void DynamicsWidget::emitFilterChanged(){
+    //NOT YET
+}
 
-void DynamicsWidget::emitFilterTypeChanged(){}
+void DynamicsWidget::emitFilterTypeChanged(){
+    compFilterTypeLine->setText(
+                QString::fromStdString(
+                    index2filtertype(
+                        compFilterTypeSlider->value()
+                        )
+                    )
+                );
+    emit filterTypeChanged(compFilterTypeSlider->value());
+}
 
-void DynamicsWidget::emitFilterFrequencyChanged(){}
+void DynamicsWidget::emitFilterFrequencyChanged(){
+    //NOT YET
+    float value = float(compFilterFreqSlider->value()) / 200.f;
+    emit filterFrequencyChanged(value);
+}
 
 compGainPaint::compGainPaint(float dpiRatio_) : QWidget() {
     QVBoxLayout *vlayout = new QVBoxLayout;
@@ -1134,192 +1251,4 @@ void compGainPaint::paintLine(QPainter &painter, int height){
     painterpath.lineTo(end);
 
     painter.drawPath(painterpath);
-}
-
-compEnvPaint::compEnvPaint(float dpiRatio_) : QWidget() {
-    QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->setContentsMargins(0, 0, 0, 0);
-    vlayout->setSpacing(0);
-    QSpacerItem *verticalSpacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    vlayout->addItem(verticalSpacer);
-    this->setLayout(vlayout);
-    this->setStyleSheet("background-color: rgb(96, 96, 96);");
-
-    dpiRatio = dpiRatio_;
-
-    backColor.setRgb(0x10, 0x10, 0x10);
-    squaresColor.setRgb(0x10, 0x80, 0x30);
-    lineColor.setRgb(0x10, 0xe0, 0x50);
-    linePen.setColor(lineColor);
-    linePen.setWidthF(qreal(2));
-
-    squaresCache = new QPixmap;
-    lineCache = new QPixmap;
-}
-
-void compEnvPaint::paintEvent(QPaintEvent *event)
-{
-    const QRect rect = event->region().boundingRect();
-    int side = rect.height();
-    int center = (rect.width() / 2) - (rect.height() / 2);
-    if (rect.width() < rect.height()) {
-        side = rect.width();
-        center = 0;
-    }
-
-    QSize paintCacheSize = QSize(side, side);
-    if (squaresCache == nullptr || squaresCache->size() != paintCacheSize) {
-        delete squaresCache;
-        squaresCache = new QPixmap(paintCacheSize);
-
-        QColor clearColor(0, 0, 0, 0);
-        squaresCache->fill(clearColor);
-
-        QPainter painter(squaresCache);
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.translate(0, 0);
-        painter.scale(1, 1);
-        paintSquares(painter, paintCacheSize.height());
-        painter.end();
-    }
-
-    paintCacheSize = QSize(side - 4, side - 4);
-    if (lineCache == nullptr || lineCache->size() != paintCacheSize || repaint) {
-        delete lineCache;
-        lineCache = new QPixmap(paintCacheSize);
-
-        QColor clearColor(0, 0, 0, 0);
-        lineCache->fill(clearColor);
-
-        QPainter painter(lineCache);
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.translate(0, 0);
-        painter.scale(1, 1);
-        paintLine(painter, paintCacheSize.height());
-        painter.end();
-        repaint = false;
-    }
-
-    QPainter painter(this);
-
-    painter.translate(0, side);
-    painter.scale(1, -1);
-
-    painter.drawPixmap(center, 0, *squaresCache);
-    painter.drawPixmap(center + 2, 2, *lineCache);
-}
-
-void compEnvPaint::paintSquares(QPainter &painter, int height){
-    painter.setPen(backColor);
-    painter.fillRect(0, 0, height, height, backColor);
-
-    painter.setPen(lineColor);
-    painter.drawRect(0, 0, height, height);
-    painter.drawRect(1, 1, height - 2, height - 2);
-
-    painter.setPen(squaresColor);
-    qreal scale = height / qreal(10) ;
-    for (int i = 1;i < 10; i++){
-        painter.drawLine(i * scale, 2, i * scale, height - 2);
-        painter.drawLine(2, i * scale, height - 2, i * scale);
-    }
-}
-
-void compEnvPaint::paintLine(QPainter &painter, int height){
-    Q_UNUSED(painter)
-    Q_UNUSED(height)
-}
-
-compFilterPaint::compFilterPaint(float dpiRatio_) : QWidget() {
-    QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->setContentsMargins(0, 0, 0, 0);
-    vlayout->setSpacing(0);
-    QSpacerItem *verticalSpacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
-    vlayout->addItem(verticalSpacer);
-    this->setLayout(vlayout);
-    this->setStyleSheet("background-color: rgb(96, 96, 96);");
-
-    dpiRatio = dpiRatio_;
-
-    backColor.setRgb(0x10, 0x10, 0x10);
-    squaresColor.setRgb(0x10, 0x80, 0x30);
-    lineColor.setRgb(0x10, 0xe0, 0x50);
-    linePen.setColor(lineColor);
-    linePen.setWidthF(qreal(2));
-
-    squaresCache = new QPixmap;
-    lineCache = new QPixmap;
-}
-
-void compFilterPaint::paintEvent(QPaintEvent *event)
-{
-    const QRect rect = event->region().boundingRect();
-    int side = rect.height();
-    int center = (rect.width() / 2) - (rect.height() / 2);
-    if (rect.width() < rect.height()) {
-        side = rect.width();
-        center = 0;
-    }
-
-    QSize paintCacheSize = QSize(side, side);
-    if (squaresCache == nullptr || squaresCache->size() != paintCacheSize) {
-        delete squaresCache;
-        squaresCache = new QPixmap(paintCacheSize);
-
-        QColor clearColor(0, 0, 0, 0);
-        squaresCache->fill(clearColor);
-
-        QPainter painter(squaresCache);
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.translate(0, 0);
-        painter.scale(1, 1);
-        paintSquares(painter, paintCacheSize.height());
-        painter.end();
-    }
-
-    paintCacheSize = QSize(side - 4, side - 4);
-    if (lineCache == nullptr || lineCache->size() != paintCacheSize || repaint) {
-        delete lineCache;
-        lineCache = new QPixmap(paintCacheSize);
-
-        QColor clearColor(0, 0, 0, 0);
-        lineCache->fill(clearColor);
-
-        QPainter painter(lineCache);
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.translate(0, 0);
-        painter.scale(1, 1);
-        paintLine(painter, paintCacheSize.height());
-        painter.end();
-        repaint = false;
-    }
-
-    QPainter painter(this);
-
-    painter.translate(0, side);
-    painter.scale(1, -1);
-
-    painter.drawPixmap(center, 0, *squaresCache);
-    painter.drawPixmap(center + 2, 2, *lineCache);
-}
-
-void compFilterPaint::paintSquares(QPainter &painter, int height){
-    painter.setPen(backColor);
-    painter.fillRect(0, 0, height, height, backColor);
-
-    painter.setPen(lineColor);
-    painter.drawRect(0, 0, height, height);
-    painter.drawRect(1, 1, height - 2, height - 2);
-
-    painter.setPen(squaresColor);
-    qreal scale = height / qreal(10) ;
-    for (int i = 1;i < 10; i++){
-        painter.drawLine(i * scale, 2, i * scale, height - 2);
-        painter.drawLine(2, i * scale, height - 2, i * scale);
-    }
-}
-
-void compFilterPaint::paintLine(QPainter &painter, int height){
-    Q_UNUSED(painter)
-    Q_UNUSED(height)
 }

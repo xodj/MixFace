@@ -81,14 +81,14 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/
 
 LIBS += -lkernel32 -lws2_32 -lwinmm
 
-INCLUDEPATH += $$PWD/../../boost_1_74_0/
-DEPENDPATH += $$PWD/../../boost_1_74_0/
+INCLUDEPATH += $$PWD/../../boost_1_76_0/
+DEPENDPATH += $$PWD/../../boost_1_76_0/
 }
 
 # ANDROID
 android {
-INCLUDEPATH += $$PWD/../../boost_1_74_0/stage/include/boost-1_74
-DEPENDPATH += $$PWD/../../boost_1_74_0/stage/include/boost-1_74
+INCLUDEPATH += $$PWD/../../boost_1_76_0/stage/include/boost-1_76
+DEPENDPATH += $$PWD/../../boost_1_76_0/stage/include/boost-1_76
 
 contains(QT_ARCH, armeabi-v7a) {
     LIBS += -L$$OUT_PWD/../MixFaceLibrary/ -lMixFaceLibrary_armeabi-v7a
@@ -122,8 +122,8 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 # LINUX
 unix:!android {
-    INCLUDEPATH += $$PWD/../../boost_1_74_0/
-    DEPENDPATH += $$PWD/../../boost_1_74_0/
+    INCLUDEPATH += $$PWD/../../boost_1_76_0/
+    DEPENDPATH += $$PWD/../../boost_1_76_0/
 
     LIBS += -L$$OUT_PWD/../MixFaceLibrary/ -lMixFaceLibrary
     PRE_TARGETDEPS += $$OUT_PWD/../MixFaceLibrary/libMixFaceLibrary.so

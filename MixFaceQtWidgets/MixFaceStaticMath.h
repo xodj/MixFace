@@ -316,4 +316,33 @@ static inline int release2ms(int value) {
     }
     return ms;
 }
+
+#include <string>
+
+using namespace std;
+
+static inline string index2filtertype(int value) {
+    string filtertype;
+    switch (value) {
+    case 0: filtertype = "LC6"; break;
+    case 1: filtertype = "LC12"; break;
+    case 2: filtertype = "HC6"; break;
+    case 3: filtertype = "HC12"; break;
+    case 4: filtertype = "1.0"; break;
+    case 5: filtertype = "2.0"; break;
+    case 6: filtertype = "3.0"; break;
+    case 7: filtertype = "5.0"; break;
+    case 8: filtertype = "10.0"; break;
+    }
+    return filtertype;
+}
+//dosnt works!
+static inline float float2filterfreq(float value) {
+    float filterfreq = value * 201;
+    switch (int(value * 201)) {
+    case 0: filterfreq = 20.f; break;
+    case 1: filterfreq = 20.7; break;
+    }
+    return filterfreq;
+}
 #endif // MIXFACESTATICMATH_H

@@ -1,6 +1,6 @@
 #include "MixFaceEqualizerWidget.h"
 
-EqualizerWidget::EqualizerWidget(int idx, float dpiRatio,
+EqualizerWidget::EqualizerWidget(float dpiRatio,
                                  MixFaceFonts *m_fonts_)
     : m_fonts(m_fonts_)
 {

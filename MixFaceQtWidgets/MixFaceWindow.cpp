@@ -5,8 +5,7 @@ int main(int argc, char *argv[]) {
     qputenv("QT_ENABLE_HIGHDPI_SCALING", "0"); //Disable Auto High DPI
     QApplication *mixFace = new QApplication(argc, argv);
     MixFaceWindow *mixFaceWindow = new MixFaceWindow(new DebugLibrary(argc, argv));
-    //mixFaceWindow->showMaximized();
-    mixFaceWindow->show();
+    mixFaceWindow->showMaximized();
     return mixFace->exec();
 }
 
@@ -426,8 +425,10 @@ void MixFaceWindow::nameChanged(int idx, QString value){
 void MixFaceWindow::buttonSrcClicked(){
     int idx = reinterpret_cast<QObject *>(sender())->property("idx").toInt();
 
-    if (eqWidget != nullptr) { delete eqWidget; eqWidget = nullptr; }
-    if (srcWidget != nullptr) { delete srcWidget; srcWidget = nullptr; }
+    if (srcWidget != nullptr) { srcWidget->setHidden(true); }
+    if (eqWidget != nullptr) { eqWidget->setHidden(true); }
+    if (dynWidget != nullptr) { dynWidget->setHidden(true); }
+
     if (srcFader != nullptr) {
         mf_demoTimer->RemoveFader(srcFader);
         disconnect(srcFader, &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
@@ -460,8 +461,12 @@ void MixFaceWindow::buttonSrcClicked(){
             connect(srcFader, &FaderWidget::iconButtonClicked, this, &MixFaceWindow::iconButtonClicked);
         }
 
-        srcWidget = new SourceWidget(idx, dpiRatio, mf_fonts);
+        if (srcWidget == nullptr)
+            srcWidget = new SourceWidget(dpiRatio, mf_fonts);
+        else
+            srcWidget->setVisible(true);
         srcLayout->addWidget(srcWidget);
+        srcWidget->setIdx(idx);
 
         scrollArea->setHidden(true);
         bar->setHidden(true);
@@ -478,8 +483,10 @@ void MixFaceWindow::buttonSrcClicked(){
 void MixFaceWindow::buttonEqClicked(){
     int idx = reinterpret_cast<QObject *>(sender())->property("idx").toInt();
 
-    if (eqWidget != nullptr) { delete eqWidget; eqWidget = nullptr; }
-    if (srcWidget != nullptr) { delete srcWidget; srcWidget = nullptr; }
+    if (srcWidget != nullptr) { srcWidget->setHidden(true); }
+    if (eqWidget != nullptr) { eqWidget->setHidden(true); }
+    if (dynWidget != nullptr) { dynWidget->setHidden(true); }
+
     if (srcFader != nullptr) {
         mf_demoTimer->RemoveFader(srcFader);
         disconnect(srcFader, &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
@@ -512,8 +519,12 @@ void MixFaceWindow::buttonEqClicked(){
             connect(srcFader, &FaderWidget::iconButtonClicked, this, &MixFaceWindow::iconButtonClicked);
         }
 
-        eqWidget = new EqualizerWidget(idx, dpiRatio, mf_fonts);
+        if (eqWidget == nullptr)
+            eqWidget = new EqualizerWidget(dpiRatio, mf_fonts);
+        else
+            eqWidget->setVisible(true);
         srcLayout->addWidget(eqWidget);
+        eqWidget->setIdx(idx);
 
         scrollArea->setHidden(true);
         bar->setHidden(true);
@@ -530,8 +541,10 @@ void MixFaceWindow::buttonEqClicked(){
 void MixFaceWindow::buttonDynClicked(){
     int idx = reinterpret_cast<QObject *>(sender())->property("idx").toInt();
 
-    if (eqWidget != nullptr) { delete eqWidget; eqWidget = nullptr; }
-    if (srcWidget != nullptr) { delete srcWidget; srcWidget = nullptr; }
+    if (srcWidget != nullptr) { srcWidget->setHidden(true); }
+    if (eqWidget != nullptr) { eqWidget->setHidden(true); }
+    if (dynWidget != nullptr) { dynWidget->setHidden(true); }
+
     if (srcFader != nullptr) {
         mf_demoTimer->RemoveFader(srcFader);
         disconnect(srcFader, &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
@@ -566,8 +579,10 @@ void MixFaceWindow::buttonDynClicked(){
 
         if (dynWidget == nullptr)
             dynWidget = new DynamicsWidget(dpiRatio, mf_fonts);
-        dynWidget->setIdx(idx);
+        else
+            dynWidget->setVisible(true);
         srcLayout->addWidget(dynWidget);
+        dynWidget->setIdx(idx);
 
         scrollArea->setHidden(true);
         bar->setHidden(true);
@@ -1021,9 +1036,9 @@ void MixFaceWindow::threadMeter1(float *array){
         //32 input channels
         scrollWidget[i]->setMeter(array[i], array[i+1]);
         //32 gate gain reductions
-        scrollWidget[i]->setGate(array[i + 32]);
+        scrollWidget[i]->setGateMeter(array[i + 32]);
         //32 dynamics gain reductions
-        scrollWidget[i]->setDynamics(array[i + 64]);
+        scrollWidget[i]->setDynamicsMeter(array[i + 64]);
     }
 }
 
@@ -1082,51 +1097,51 @@ void MixFaceWindow::threadMeter2(float *array){
 
     //dynamics gain reduction
     //16 bus masters
-    mainWidget[48]->setDynamics(array[25]);
-    mainWidget[49]->setDynamics(array[26]);
-    mainWidget[50]->setDynamics(array[27]);
-    mainWidget[51]->setDynamics(array[28]);
-    mainWidget[52]->setDynamics(array[29]);
-    mainWidget[53]->setDynamics(array[30]);
-    mainWidget[54]->setDynamics(array[31]);
-    mainWidget[55]->setDynamics(array[32]);
-    mainWidget[56]->setDynamics(array[33]);
-    mainWidget[57]->setDynamics(array[34]);
-    mainWidget[58]->setDynamics(array[35]);
-    mainWidget[59]->setDynamics(array[36]);
-    mainWidget[60]->setDynamics(array[37]);
-    mainWidget[61]->setDynamics(array[38]);
-    mainWidget[62]->setDynamics(array[39]);
-    mainWidget[63]->setDynamics(array[40]);
-    scrollWidget[48]->setDynamics(array[25]);
-    scrollWidget[49]->setDynamics(array[26]);
-    scrollWidget[50]->setDynamics(array[27]);
-    scrollWidget[51]->setDynamics(array[28]);
-    scrollWidget[52]->setDynamics(array[29]);
-    scrollWidget[53]->setDynamics(array[30]);
-    scrollWidget[54]->setDynamics(array[31]);
-    scrollWidget[55]->setDynamics(array[32]);
-    scrollWidget[56]->setDynamics(array[33]);
-    scrollWidget[57]->setDynamics(array[34]);
-    scrollWidget[58]->setDynamics(array[35]);
-    scrollWidget[59]->setDynamics(array[36]);
-    scrollWidget[60]->setDynamics(array[37]);
-    scrollWidget[61]->setDynamics(array[38]);
-    scrollWidget[62]->setDynamics(array[39]);
-    scrollWidget[63]->setDynamics(array[40]);
+    mainWidget[48]->setDynamicsMeter(array[25]);
+    mainWidget[49]->setDynamicsMeter(array[26]);
+    mainWidget[50]->setDynamicsMeter(array[27]);
+    mainWidget[51]->setDynamicsMeter(array[28]);
+    mainWidget[52]->setDynamicsMeter(array[29]);
+    mainWidget[53]->setDynamicsMeter(array[30]);
+    mainWidget[54]->setDynamicsMeter(array[31]);
+    mainWidget[55]->setDynamicsMeter(array[32]);
+    mainWidget[56]->setDynamicsMeter(array[33]);
+    mainWidget[57]->setDynamicsMeter(array[34]);
+    mainWidget[58]->setDynamicsMeter(array[35]);
+    mainWidget[59]->setDynamicsMeter(array[36]);
+    mainWidget[60]->setDynamicsMeter(array[37]);
+    mainWidget[61]->setDynamicsMeter(array[38]);
+    mainWidget[62]->setDynamicsMeter(array[39]);
+    mainWidget[63]->setDynamicsMeter(array[40]);
+    scrollWidget[48]->setDynamicsMeter(array[25]);
+    scrollWidget[49]->setDynamicsMeter(array[26]);
+    scrollWidget[50]->setDynamicsMeter(array[27]);
+    scrollWidget[51]->setDynamicsMeter(array[28]);
+    scrollWidget[52]->setDynamicsMeter(array[29]);
+    scrollWidget[53]->setDynamicsMeter(array[30]);
+    scrollWidget[54]->setDynamicsMeter(array[31]);
+    scrollWidget[55]->setDynamicsMeter(array[32]);
+    scrollWidget[56]->setDynamicsMeter(array[33]);
+    scrollWidget[57]->setDynamicsMeter(array[34]);
+    scrollWidget[58]->setDynamicsMeter(array[35]);
+    scrollWidget[59]->setDynamicsMeter(array[36]);
+    scrollWidget[60]->setDynamicsMeter(array[37]);
+    scrollWidget[61]->setDynamicsMeter(array[38]);
+    scrollWidget[62]->setDynamicsMeter(array[39]);
+    scrollWidget[63]->setDynamicsMeter(array[40]);
     //matrix
-    scrollWidget[64]->setDynamics(array[41]);
-    scrollWidget[65]->setDynamics(array[42]);
-    scrollWidget[66]->setDynamics(array[43]);
-    scrollWidget[67]->setDynamics(array[44]);
-    scrollWidget[68]->setDynamics(array[45]);
-    scrollWidget[69]->setDynamics(array[46]);
+    scrollWidget[64]->setDynamicsMeter(array[41]);
+    scrollWidget[65]->setDynamicsMeter(array[42]);
+    scrollWidget[66]->setDynamicsMeter(array[43]);
+    scrollWidget[67]->setDynamicsMeter(array[44]);
+    scrollWidget[68]->setDynamicsMeter(array[45]);
+    scrollWidget[69]->setDynamicsMeter(array[46]);
     //main lr
-    mainWidget[70]->setDynamics(array[47]);
-    scrollWidget[70]->setDynamics(array[47]);
+    mainWidget[70]->setDynamicsMeter(array[47]);
+    scrollWidget[70]->setDynamicsMeter(array[47]);
     //mono mc
-    mainWidget[71]->setDynamics(array[48]);
-    scrollWidget[71]->setDynamics(array[48]);
+    mainWidget[71]->setDynamicsMeter(array[48]);
+    scrollWidget[71]->setDynamicsMeter(array[48]);
 }
 
 void MixFaceWindow::slotMeter3(float *array){

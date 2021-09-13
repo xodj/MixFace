@@ -1,6 +1,6 @@
 #include "MixFaceSourceWidget.h"
 
-SourceWidget::SourceWidget(int idx, float dpiRatio, MixFaceFonts *m_fonts_)
+SourceWidget::SourceWidget(float dpiRatio, MixFaceFonts *m_fonts_)
     :m_fonts(m_fonts_)
 {
     Q_UNUSED(dpiRatio)

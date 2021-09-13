@@ -109,7 +109,7 @@ void FaderWidget::initWidget(){
                              "border-radius: 4px;"
                              "width: "+QString::number(18*dpiRatio)+"px;"
                              "}"
-                             "QSlider::handle:hover"
+                             "QSlider::handle:pressed"
                              "{"
                              "background-color:"
                              "qlineargradient(spread:reflect,"
@@ -508,9 +508,10 @@ void FaderWidget::emitPanChanged(){
 }
 
 void FaderWidget::sliderReleased(){
-    int currentSliderReleasedTime = QTime::currentTime().msec() + (QTime::currentTime().second() * 1000) + (QTime::currentTime().minute() * 60000) + (QTime::currentTime().hour() * 3600000);
-    debug->sendMessage(QString::number(lastSliderReleasedTime).toStdString(), 0);
-    debug->sendMessage(QString::number(currentSliderReleasedTime).toStdString(), 0);
+    int currentSliderReleasedTime = QTime::currentTime().msec()
+            + (QTime::currentTime().second() * 1000)
+            + (QTime::currentTime().minute() * 60000)
+            + (QTime::currentTime().hour() * 3600000);
     if((currentSliderReleasedTime - lastSliderReleasedTime) < 300)
         panSlider->setValue(5000);
     lastSliderReleasedTime = currentSliderReleasedTime;
@@ -693,12 +694,12 @@ void FaderWidget::setMeter(float preL_, float preR_){
     m_vmeter->setMeter(preL_, preR_);
 }
 
-void FaderWidget::setDynamics(float comp){
+void FaderWidget::setDynamicsMeter(float comp){
     if(dyn->isEnabled())
         m_dmeter->setDynamics(comp);
 }
 
-void FaderWidget::setGate(float gate){
+void FaderWidget::setGateMeter(float gate){
     if(dyn->isEnabled())
         m_dmeter->setGate(gate);
 }

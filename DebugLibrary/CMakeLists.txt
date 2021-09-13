@@ -32,13 +32,27 @@ if(WIN32)
         )
 endif(WIN32)
 
-add_library(DebugLibrary SHARED
-        ${DebugLibrary_SOURCES}
-        )
+if(UNIX AND NOT ANDROID)
+    add_library(DebugLibrary STATIC
+            ${DebugLibrary_SOURCES}
+            )
+else(UNIX AND NOT ANDROID)
+    add_library(DebugLibrary SHARED
+            ${DebugLibrary_SOURCES}
+            )
+endif(UNIX AND NOT ANDROID)
 
-if(NOT ANDROID)
+if(NOT UNIX)
     set_target_properties(DebugLibrary
         PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
+    set_target_properties(DebugLibrary PROPERTIES PREFIX "")
+    set_target_properties(DebugLibrary PROPERTIES OUTPUT_NAME "DebugLibrary")
+endif()
+
+if(ANDROID)
+    set_target_properties(DebugLibrary
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/android-build/libs/${ANDROID_ABI}/")
+    set_target_properties(DebugLibrary PROPERTIES OUTPUT_NAME "DebugLibrary_${ANDROID_ABI}")
 endif()
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})

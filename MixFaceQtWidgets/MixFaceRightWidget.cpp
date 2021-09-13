@@ -18,9 +18,7 @@ void MixFaceRightWidget::initRightAreaBar(){
     this->setMinimumWidth(64*dpiRatio);
     QVBoxLayout *vLayout = new QVBoxLayout(this);
     vLayout->setContentsMargins(0, 0, 0, 0);
-    //vLayout->setSpacing(1);
     vLayout->setAlignment(Qt::AlignCenter);
-    //vLayout->addStretch();
 
     busButton = new QPushButton("LR");
     busButton->setMinimumSize(50*dpiRatio,40*dpiRatio);
@@ -52,9 +50,8 @@ void MixFaceRightWidget::initRightAreaBar(){
     assignButton->setInputMethodHints(Qt::ImhMultiLine);
     assignButton->setFont(mf_fonts->boldFont);
     vLayout->addWidget(assignButton);
-    QPushButton::connect(assignButton, &QPushButton::clicked, this, &MixFaceRightWidget::assignButtonClicked);
-
-    //vLayout->addStretch();
+    QPushButton::connect(assignButton, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::assignButtonClicked);
 
     this->setLayout(vLayout);
     this->setStyleSheet("QWidget {"
@@ -100,7 +97,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,40*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,40*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     busAction = new QPushButton("M/C");
     busAction->setProperty("idx",71);
@@ -117,7 +115,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,40*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,40*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     popupVLayout->addLayout(popupHLayout);
 
@@ -140,7 +139,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     busAction = new QPushButton("Bus 2");
     busAction->setProperty("idx",49);
@@ -157,7 +157,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     popupVLayout->addLayout(popupHLayout);
 
@@ -180,7 +181,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     busAction = new QPushButton("Bus 4");
     busAction->setProperty("idx",51);
@@ -197,7 +199,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     popupVLayout->addLayout(popupHLayout);
 
@@ -220,7 +223,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     busAction = new QPushButton("Bus 6");
     busAction->setProperty("idx",53);
@@ -237,7 +241,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     popupVLayout->addLayout(popupHLayout);
 
@@ -260,7 +265,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     busAction = new QPushButton("Bus 8");
     busAction->setProperty("idx",55);
@@ -277,7 +283,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     popupVLayout->addLayout(popupHLayout);
 
@@ -300,7 +307,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     busAction = new QPushButton("Bus 10");
     busAction->setProperty("idx",57);
@@ -317,7 +325,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     popupVLayout->addLayout(popupHLayout);
 
@@ -340,7 +349,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     busAction = new QPushButton("Bus 12");
     busAction->setProperty("idx",59);
@@ -357,7 +367,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     popupVLayout->addLayout(popupHLayout);
 
@@ -380,7 +391,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     busAction = new QPushButton("Bus 14");
     busAction->setProperty("idx",61);
@@ -397,7 +409,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     popupVLayout->addLayout(popupHLayout);
 
@@ -420,7 +433,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     busAction = new QPushButton("Bus 16");
     busAction->setProperty("idx",63);
@@ -437,7 +451,8 @@ void MixFaceRightWidget::initBusPopup(){
     busAction->setMinimumSize(70*dpiRatio,35*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,35*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignMainFader);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignMainFader);
 
     popupVLayout->addLayout(popupHLayout);
 }
@@ -472,7 +487,8 @@ void MixFaceRightWidget::initAssignPopup(){
     busAction->setMinimumHeight(40*dpiRatio);
     busAction->setMaximumHeight(40*dpiRatio);
     popupVLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignScrollFaders);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignScrollFaders);
 
     QHBoxLayout *popupHLayout = new QHBoxLayout();
     popupHLayout->setContentsMargins(0, 0, 0, 0);
@@ -492,7 +508,8 @@ void MixFaceRightWidget::initAssignPopup(){
     busAction->setMinimumSize(70*dpiRatio,40*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,40*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignScrollFaders);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignScrollFaders);
 
     busAction = new QPushButton("B");
     busAction->setProperty("idy",2);
@@ -508,7 +525,8 @@ void MixFaceRightWidget::initAssignPopup(){
     busAction->setMinimumSize(70*dpiRatio,40*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,40*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignScrollFaders);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignScrollFaders);
 
     popupVLayout->addLayout(popupHLayout);
 
@@ -530,7 +548,8 @@ void MixFaceRightWidget::initAssignPopup(){
     busAction->setMinimumSize(70*dpiRatio,40*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,40*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignScrollFaders);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignScrollFaders);
 
     busAction = new QPushButton("D");
     busAction->setProperty("idy",4);
@@ -546,7 +565,8 @@ void MixFaceRightWidget::initAssignPopup(){
     busAction->setMinimumSize(70*dpiRatio,40*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,40*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignScrollFaders);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignScrollFaders);
 
     popupVLayout->addLayout(popupHLayout);
 
@@ -567,7 +587,8 @@ void MixFaceRightWidget::initAssignPopup(){
     busAction->setMinimumSize(70*dpiRatio,40*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,40*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignScrollFaders);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignScrollFaders);
 
     busAction = new QPushButton("F");
     busAction->setProperty("idy",6);
@@ -583,7 +604,8 @@ void MixFaceRightWidget::initAssignPopup(){
     busAction->setMinimumSize(70*dpiRatio,40*dpiRatio);
     busAction->setMaximumSize(70*dpiRatio,40*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::emitAssignScrollFaders);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::emitAssignScrollFaders);
 
     popupVLayout->addLayout(popupHLayout);
 
@@ -604,7 +626,8 @@ void MixFaceRightWidget::initAssignPopup(){
     busAction->setMinimumHeight(40*dpiRatio);
     busAction->setMaximumHeight(40*dpiRatio);
     popupHLayout->addWidget(busAction);
-    QPushButton::connect(busAction, &QPushButton::clicked, this, &MixFaceRightWidget::configButtonClicked);
+    QPushButton::connect(busAction, &QPushButton::clicked,
+                         this, &MixFaceRightWidget::configButtonClicked);
 
     popupVLayout->addLayout(popupHLayout);
 }

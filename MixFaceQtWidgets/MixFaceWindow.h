@@ -147,7 +147,7 @@ protected:
     void timerEvent(QTimerEvent *event) override {
         Q_UNUSED(event)
         if(!connected){
-            for(int i = 0;i < 4;i++){
+            for(int i = 0;i < 2;i++){
                 if(demoissum[i]&&demoStep[i]==1)
                     demoissum[i] = false;
                 else
@@ -161,21 +161,25 @@ protected:
                 demoValue[i] = pow(10,demoStep[i]/20);
             }
 
-            for(FaderWidget *fader:faders)
+            for(FaderWidget *fader:faders) {
                 fader->setMeter(demoValue[0], demoValue[1]);
+                fader->setDynamicsMeter(demoValue[0]);
+                fader->setGateMeter(demoValue[1]);
+            }
         } else
             this->ResetValues();
     }
 
     void ResetValues(){
-        for(FaderWidget *fader:faders)
+        for(FaderWidget *fader:faders) {
             fader->setMeter(.0f, .0f);
+        }
         this->stop();
     }
 
-    float demoStep[4] = {-90, -60, -45, -15};
-    bool demoissum[4] = {true, true, true, true};
-    float demoValue[4] = {.0f, .0f, .0f, .0f};
+    float demoStep[4] = {-90, -60};
+    bool demoissum[4] = {true, true};
+    float demoValue[4] = {.0f, .0f};
 
     QList<FaderWidget *> faders;
 };

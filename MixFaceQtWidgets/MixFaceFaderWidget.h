@@ -39,8 +39,8 @@ public:
     void setName(QString value);
 
     void setMeter(float preL_, float preR_);
-    void setDynamics(float comp);
-    void setGate(float gate);
+    void setDynamicsMeter(float comp);
+    void setGateMeter(float gate);
 
 signals:
     void faderChanged(float value);

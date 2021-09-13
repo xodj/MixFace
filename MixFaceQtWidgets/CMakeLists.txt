@@ -20,6 +20,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(Qt6_FOUND TRUE)
+set(Qt6Network_FOUND TRUE)
+
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets Network REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network REQUIRED)
 
@@ -73,13 +76,6 @@ endif(WIN32)
 qt_add_resources(MixFaceQtWidgets_QRC_SOURCES ${MixFaceQtWidgets_QRC})
 
 if(ANDROID)
-    set(ANDROID_PACKAGE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/android CACHE INTERNAL "")
-    add_library(MixFace SHARED
-        ${MixFaceQtWidgets_SOURCES}
-        ${MixFaceQtWidgets_HEADERS}
-        ${MixFaceQtWidgets_QRC_SOURCES}
-        android/AndroidManifest.xml.in
-        android/AndroidManifest.xml)
     #Place version to .xml
     set(STR_MF_VERSION ${MixFace_VERSION})
     string(REPLACE "." "." RC_SPLIT ${STR_MF_VERSION})
@@ -89,20 +85,48 @@ if(ANDROID)
     list(GET RC_SPLIT 1 MF_MAJOR_VERSION)
     list(GET RC_SPLIT 2 MF_MINOR_VERSION)
     list(GET RC_SPLIT 3 MF_PATCH_VERSION)
-    configure_file(${PROJECT_SOURCE_DIR}/android/AndroidManifest.xml.in ${PROJECT_SOURCE_DIR}/android/AndroidManifest.xml)
-endif()
 
-if(NOT ANDROID)
+    configure_file(${PROJECT_SOURCE_DIR}/AndroidManifest.xml.in
+        ${PROJECT_SOURCE_DIR}/android/AndroidManifest.xml)
+    configure_file(${PROJECT_SOURCE_DIR}/android-MixFace-deployment-settings.json.in
+        ${CMAKE_BINARY_DIR}/android-MixFace-deployment-settings.json)
+
+    set(ANDROID_PACKAGE_SOURCE_DIR ${PROJECT_SOURCE_DIR}/android CACHE INTERNAL "")
+    add_library(MixFace SHARED
+        ${MixFaceQtWidgets_SOURCES}
+        ${MixFaceQtWidgets_HEADERS}
+        ${MixFaceQtWidgets_QRC_SOURCES}
+        )
+    set_target_properties(MixFace PROPERTIES OUTPUT_NAME "MixFace_${ANDROID_ABI}")
+
+    ADD_CUSTOM_COMMAND(TARGET MixFace POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_BINARY_DIR}/MixFaceQtWidgets/libMixFace_${ANDROID_ABI}.so
+        ${CMAKE_BINARY_DIR}/android-build/libs/${ANDROID_ABI}/libMixFace_${ANDROID_ABI}.so
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_BINARY_DIR}/DebugLibrary/libDebugLibrary_${ANDROID_ABI}.so
+        ${CMAKE_BINARY_DIR}/android-build/libs/${ANDROID_ABI}/libDebugLibrary_${ANDROID_ABI}.so
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_BINARY_DIR}/MixFaceLibrary/libMixFaceLibrary_${ANDROID_ABI}.so
+        ${CMAKE_BINARY_DIR}/android-build/libs/${ANDROID_ABI}/libMixFaceLibrary_${ANDROID_ABI}.so
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_BINARY_DIR}/OSCPACK/libOSCPACK_${ANDROID_ABI}.so
+        ${CMAKE_BINARY_DIR}/android-build/libs/${ANDROID_ABI}/libOSCPACK_${ANDROID_ABI}.so
+        COMMENT "Copy Libraries To Gradle...")
+else()
     add_executable(MixFace
         ${MixFaceQtWidgets_SOURCES}
         ${MixFaceQtWidgets_HEADERS}
         ${MixFaceQtWidgets_QRC_SOURCES})
-
-set_target_properties(MixFace
-    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
+    set_target_properties(MixFace
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Appfolder")
 endif()
 
-target_link_libraries(MixFace PRIVATE MixFaceLibrary DebugLibrary Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
+target_link_libraries(MixFace PRIVATE
+    MixFaceLibrary
+    DebugLibrary
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Network)
 
 if(WIN32 AND MSVC)
 set_target_properties(MixFace PROPERTIES
@@ -126,3 +150,9 @@ INCLUDE_DIRECTORIES(${BOOST_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../OSCPACK)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../MixFaceLibrary)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../DebugLibrary)
+
+#get_cmake_property(_variableNames VARIABLES)
+#list (SORT _variableNames)
+#foreach (_variableName ${_variableNames})
+#    message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
