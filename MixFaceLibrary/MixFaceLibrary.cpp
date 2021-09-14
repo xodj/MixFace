@@ -5,28 +5,98 @@ MixFaceLibrary::MixFaceLibrary(DebugLibrary *debug_)
     : debug(debug_){
     for (int idx=0;idx<80;idx++){
         db.stereoon[idx] = 1;
+        db.monoon[idx] = 0;
+        db.mlevel[idx] = 0;
         db.fader[idx] = 0.75;
         db.pan[idx] = 0.5;
         db.on[idx] = 1;
         db.solo[idx] = 0;
-        db.monoon[idx] = 0;
-        db.mlevel[idx] = 0;
+
         db.chlink[idx] = 0;
+        db.auxlink[idx] = 0;
+        db.buslink[idx] = 0;
+        db.mtxlink[idx] = 0;
+
         db.phantom[idx] = 0;
         db.invert[idx] = 0;
         db.source[idx] = 0;
         db.gain[idx] = 0.5;
         db.trim[idx] = 0.5;
-        db.configicon[idx] = 0;
-        db.configcolor[idx] = 0;
-        db.configname[idx] = channelNameFromIdx(idx);
+
+        db.hpf[idx] = 0;
+        db.hpon[idx] = 0;
+        db.delayon[idx] = 0;
+        db.delaytime[idx] = 0;
+        db.inserton[idx] = 0;
+        db.insertsel[idx] = 0;
+        db.insertpos[idx] = 0;
+
+        db.gateon[idx] = 0;
+        db.gatethr[idx] = 0;
+        db.gaterange[idx] = 0;
+        db.gatemode[idx] = 0;
+        db.gateattack[idx] = 0;
+        db.gatehold[idx] = 0;
+        db.gaterelease[idx] = 0;
+        db.gatekeysrc[idx] = 0;
+        db.gatefilteron[idx] = 0;
+        db.gatefiltertype[idx] = 0;
+        db.gatefilterf[idx] = 0;
+
+        db.dynon[idx] = 0;
+        db.dynthr[idx] = 1;
+        db.dynratio[idx] = 5;
+        db.dynmix[idx] = 1.f;
+        db.dynmgain[idx] = 0;
+        db.dynattack[idx] = 0.0834f;
+        db.dynhold[idx] = 0.5400f;
+        db.dynrelease[idx] = 0.5100f;
+        db.dynmode[idx] = 0;
+        db.dynknee[idx] = 0.2f;
+        db.dynenv[idx] = 1;
+        db.dyndet[idx] = 0;
+        db.dynauto[idx] = 0;
+        db.dynkeysrc[idx] = 0;
+        db.dynfilteron[idx] = 0;
+        db.dynfiltertype[idx] = 6;
+        db.dynfilterf[idx] = 0.5650f;
+
+        db.eq1type[idx] = 0;
+        db.eq1g[idx] = 0;
+        db.eq1f[idx] = 0;
+        db.eq1q[idx] = 0;
+        db.eq2type[idx] = 0;
+        db.eq2g[idx] = 0;
+        db.eq2f[idx] = 0;
+        db.eq2q[idx] = 0;
+        db.eq3type[idx] = 0;
+        db.eq3g[idx] = 0;
+        db.eq3f[idx] = 0;
+        db.eq3q[idx] = 0;
+        db.eq4type[idx] = 0;
+        db.eq4g[idx] = 0;
+        db.eq4f[idx] = 0;
+        db.eq4q[idx] = 0;
+        db.eq5type[idx] = 0;
+        db.eq5g[idx] = 0;
+        db.eq5f[idx] = 0;
+        db.eq5q[idx] = 0;
+        db.eq6type[idx] = 0;
+        db.eq6g[idx] = 0;
+        db.eq6f[idx] = 0;
+        db.eq6q[idx] = 0;
+
         for(int idy=0;idy<16;idy++){
-            db.sendlevel[idx][idy] = 0.75;
+            db.sendlevel[idx][idy] = 0;
             db.sendpan[idx][idy] = 0.5;
             db.sendpanfollow[idx][idy] = 0;
             db.sendtype[idx][idy] = 5;
             db.sendon[idx][idy] = 1;
         }
+
+        db.configicon[idx] = 0;
+        db.configcolor[idx] = 0;
+        db.configname[idx] = channelNameFromIdx(idx);
     }
     linker = new MixFaceLinker(debug);
     sendRenewMessagesTimer = new IntervalThread(1000, false, true);
@@ -238,6 +308,10 @@ void MixFaceLibrary::processIntMessage(string message, int ival) {
     case solo:
         db.solo[chN-1] = ival;
         valueChanged(mtype,chN-1,0);
+        break;
+    case keysolo:
+        db.keysolo = ival;
+        valueChanged(mtype,0,0);
         break;
     case chlink:
         db.chlink[idx] = ival;
@@ -597,6 +671,9 @@ string MixFaceLibrary::getOscAddress(MessageType mtype,
         else
             oscAddress = ("/-stat/solosw/" + to_string(channelN));
         break;
+    case keysolo:
+        oscAddress = ("/-stat/keysolo");
+        break;
     case monoon:
         oscAddress = ("/mix/mono");
         break;
@@ -871,7 +948,7 @@ string MixFaceLibrary::getOscAddress(MessageType mtype,
     }
     if (mtype != solo && mtype != chlink && mtype != auxlink &&
             mtype != buslink && mtype != mtxlink && mtype != phantom &&
-            mtype != gain) {
+            mtype != gain && mtype != keysolo) {
         switch (chtype) {
         case channel:
             if (channelN < 10) {
@@ -964,6 +1041,7 @@ MessageType MixFaceLibrary::getMessageType(string message, ChannelType type) {
         else if (strstr(message.c_str(), msgTypeStr.pan)) mtype = pan;
         else if (strstr(message.c_str(), msgTypeStr.on)) mtype = on;
         else if (strstr(message.c_str(), msgTypeStr.solo)) mtype = solo;
+        else if (strstr(message.c_str(), msgTypeStr.keysolo)) mtype = keysolo;
         else if (strstr(message.c_str(), msgTypeStr.chlink)) mtype = chlink;
         else if (strstr(message.c_str(), msgTypeStr.auxlink)) mtype = auxlink;
         else if (strstr(message.c_str(), msgTypeStr.buslink)) mtype = buslink;

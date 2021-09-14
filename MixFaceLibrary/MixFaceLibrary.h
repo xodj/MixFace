@@ -24,6 +24,7 @@ enum MessageType {
     pan,       // ch/01/mix/pan~~,f~~
     on,      // ch/01/mix/on~~~,i~~ 0 muted 1 on
     solo,      //-stat/solosw/01~~~~,i~~ 1 on 0 off
+    keysolo, //-stat/keysolo
 
     chlink,    // config/chlink/1-2 1 on 0 off
     auxlink,
@@ -146,11 +147,12 @@ protected:
     struct x32db {
         int stereoon[80];
         int monoon[80];
-        float mlevel[80];
+        float mlevel[80] ;
         float fader[80];
         float pan[80];
         int on[80];
         int solo[80];
+        int keysolo = 0;
 
         int chlink[80];
         int auxlink[80];
@@ -244,6 +246,7 @@ protected:
         const char *pan = ("/mix/pan");
         const char *on = ("/mix/on");
         const char *solo = ("/-stat/solosw/");
+        const char *keysolo = ("/-stat/keysolo");
 
         const char *chlink = ("/config/chlink/");
         const char *auxlink = ("/config/auxlink/");
@@ -369,6 +372,9 @@ public:
     void sendString(const char *oscAddress, string value){
         linker->sendString(oscAddress, value);
     }
+    void sendRequest(const char *oscAddress){
+        linker->sendCmdOnly(oscAddress);
+    }
     //Shared tool
     string channelNameFromIdx(int idx);
     string getOscAddress(MessageType mtype, ChannelType chtype, int channelN,
@@ -395,11 +401,55 @@ public:
     void threadSendSyncMessages(){
         boost::thread{&MixFaceLibrary::sendSyncMessages, this};
     }
+    void threadSendDynRequestsMessages(int idx){
+        boost::thread{&MixFaceLibrary::sendDynRequestsMessages, this, idx};
+    }
 
 private:
     void connect(string hostNameString);
     void sendSyncMessages();
     void sendXremoteMessage();
+    void sendDynRequestsMessages(int idx){
+        ChannelType chtype = getChannelTypeFromIdx(idx);
+        int chN = getChannelNumberFromIdx(idx);
+        string msg = getOscAddress(dynon, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynthr, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynratio, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynmix, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynmgain, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynattack, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynhold, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynrelease, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynmode, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynknee, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynenv, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dyndet, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynauto, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynkeysrc, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynfilteron, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynfiltertype, chtype, chN, 0);
+        sendRequest(msg.c_str());
+        msg = getOscAddress(dynfilterf, chtype, chN, 0);
+        sendRequest(msg.c_str());
+
+        msg = getOscAddress(keysolo, cherror, 0, 0);
+        sendRequest(msg.c_str());
+    }
     void processStringMessage(string message, string sval);
     void processIntMessage(string message, int ival);
     void processFloatMessage(string message, float fval);

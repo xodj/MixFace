@@ -107,12 +107,40 @@ private:
     void logoChanged(int idx, int value);
     void colorChanged(int idx, int value);
     void nameChanged(int idx, QString value);
+
     void buttonSrcClicked();
     void buttonEqClicked();
     void buttonDynClicked();
 
+    void compOnOffChanged(int value);
+    void compTresholdChanged(float value);
+    void compRatioChanged(int value);
+
+    void compMixChanged(float value);
+    void compGainChanged(float value);
+    void compKneeChanged(float value);
+
+    void compModeCompExpChanged(int value);
+    void compEnvLinLogChanged(int value);
+    void compDetPeakRmsChanged(int value);
+
+    void compAttackChanged(float value);
+    void compHoldChanged(float value);
+    void compReleaseChanged(float value);
+    void compAutoTimeChanged(int value);
+
+    void compKeySourceChanged(int value);
+    void compFilterChanged(int value);
+    void compFilterSoloChanged(int value);
+    void compFilterTypeChanged(int value);
+    void compFilterFrequencyChanged(float value);
+
     void windowRenew();
-    void sendSyncMessages(){ mf_library->threadSendSyncMessages(); }
+    void sendSyncMessages(){
+        mf_library->threadSendSyncMessages();
+        if (m_mode == mDyn)
+            mf_library->threadSendDynRequestsMessages(dynWidget->getIdx());
+    }
 
     float dpiRatio;
 

@@ -18,50 +18,52 @@ public:
     void setIdx(int idx_){ idx = idx_; };
     int getIdx(){ return idx; };
 
-    void onOffRecieved(int value);
-    void tresholdRecieved(float value);
-    void ratioRecieved(int value);
+    void compOnOffRecieved(int value);
+    void compTresholdRecieved(float value);
+    void compRatioRecieved(int value);
 
-    void mixRecieved(float value);
-    void gainRecieved(float value);
-    void kneeRecieved(float value);
+    void compMixRecieved(float value);
+    void compGainRecieved(float value);
+    void compKneeRecieved(float value);
 
-    void modeCompExpRecieved(int value);
-    void envLinLogRecieved(int value);
-    void detPeakRmsRecieved(int value);
+    void compModeCompExpRecieved(int value);
+    void compEnvLinLogRecieved(int value);
+    void compDetPeakRmsRecieved(int value);
 
-    void attackRecieved(float value);
-    void holdRecieved(float value);
-    void releaseRecieved(float value);
-    void autoTimeRecieved(int value);
+    void compAttackRecieved(float value);
+    void compHoldRecieved(float value);
+    void compReleaseRecieved(float value);
+    void compAutoTimeRecieved(int value);
 
-    void keySourceRecieved(int value);
-    void filterRecieved(int value);
-    void filterTypeRecieved(int value);
-    void filterFrequencyRecieved(float value);
+    void compKeySourceRecieved(int value);
+    void compFilterRecieved(int value);
+    void compFilterSoloRecieved(int value);
+    void compFilterTypeRecieved(int value);
+    void compFilterFrequencyRecieved(float value);
 
 signals:
-    void onOffChanged(int value);
-    void tresholdChanged(float value);
-    void ratioChanged(int value);
+    void compOnOffChanged(int value);
+    void compTresholdChanged(float value);
+    void compRatioChanged(int value);
 
-    void mixChanged(float value);
-    void gainChanged(float value);
-    void kneeChanged(float value);
+    void compMixChanged(float value);
+    void compGainChanged(float value);
+    void compKneeChanged(float value);
 
-    void modeCompExpChanged(int value);
-    void envLinLogChanged(int value);
-    void detPeakRmsChanged(int value);
+    void compModeCompExpChanged(int value);
+    void compEnvLinLogChanged(int value);
+    void compDetPeakRmsChanged(int value);
 
-    void attackChanged(float value);
-    void holdChanged(float value);
-    void releaseChanged(float value);
-    void autoTimeChanged(int value);
+    void compAttackChanged(float value);
+    void compHoldChanged(float value);
+    void compReleaseChanged(float value);
+    void compAutoTimeChanged(int value);
 
-    void keySourceChanged(int value);
-    void filterChanged(int value);
-    void filterTypeChanged(int value);
-    void filterFrequencyChanged(float value);
+    void compKeySourceChanged(int value);
+    void compFilterChanged(int value);
+    void compFilterSoloChanged(int value);
+    void compFilterTypeChanged(int value);
+    void compFilterFrequencyChanged(float value);
 
 private:
     QFrame *compWidget();
@@ -72,27 +74,28 @@ private:
     QFrame *gateWidget();
     void connectSignals();
 
-    void emitOnOffChanged();
-    void emitTresholdChanged();
-    void emitRatioChanged();
+    void emitCompOnOffChanged();
+    void emitCompTresholdChanged();
+    void emitCompRatioChanged();
 
-    void emitMixChanged();
-    void emitGainChanged();
-    void emitKneeChanged();
+    void emitCompMixChanged();
+    void emitCompGainChanged();
+    void emitCompKneeChanged();
 
-    void emitModeCompExpChanged();
-    void emitEnvLinLogChanged();
-    void emitDetPeakRmsChanged();
+    void emitCompModeCompExpChanged();
+    void emitCompEnvLinLogChanged();
+    void emitCompDetPeakRmsChanged();
 
-    void emitAttackChanged();
-    void emitHoldChanged();
-    void emitReleaseChanged();
-    void emitAutoTimeChanged();
+    void emitCompAttackChanged();
+    void emitCompHoldChanged();
+    void emitCompReleaseChanged();
+    void emitCompAutoTimeChanged();
 
-    void emitKeySourceChanged();
-    void emitFilterChanged();
-    void emitFilterTypeChanged();
-    void emitFilterFrequencyChanged();
+    void emitCompKeySourceChanged();
+    void emitCompFilterChanged();
+    void emitCompFilterSoloChanged();
+    void emitCompFilterTypeChanged();
+    void emitCompFilterFrequencyChanged();
 
     MixFaceFonts *m_fonts;
     compGainPaint *compGain;

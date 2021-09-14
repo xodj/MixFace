@@ -121,47 +121,47 @@ DynamicsWidget::DynamicsWidget(float dpiRatio, MixFaceFonts *m_fonts_)
 DynamicsWidget::~DynamicsWidget(){
     tablesRenew->stop();
     QPushButton::disconnect(compActivePushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitOnOffChanged);
+                         this, &DynamicsWidget::emitCompOnOffChanged);
     QPushButton::disconnect(compAutoPushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitAutoTimeChanged);
+                         this, &DynamicsWidget::emitCompAutoTimeChanged);
     QPushButton::disconnect(compFilterPushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitFilterChanged);
-    /*QPushButton::disconnect(compFilterSoloPushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitCompFilterSoloChanged);*/
+                         this, &DynamicsWidget::emitCompFilterChanged);
+    QPushButton::disconnect(compFilterSoloPushButton, &QPushButton::clicked,
+                         this, &DynamicsWidget::emitCompFilterSoloChanged);
     QComboBox::disconnect(compFilterSourceComboBox, &QComboBox::currentIndexChanged,
-                         this, &DynamicsWidget::emitKeySourceChanged);
+                         this, &DynamicsWidget::emitCompKeySourceChanged);
     QSlider::disconnect(tresholdSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitTresholdChanged);
+                        this, &DynamicsWidget::emitCompTresholdChanged);
     QSlider::disconnect(ratioSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitRatioChanged);
+                        this, &DynamicsWidget::emitCompRatioChanged);
     QSlider::disconnect(mixSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitMixChanged);
+                        this, &DynamicsWidget::emitCompMixChanged);
     QSlider::disconnect(gainSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitGainChanged);
+                        this, &DynamicsWidget::emitCompGainChanged);
     QSlider::disconnect(kneeSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitKneeChanged);
+                        this, &DynamicsWidget::emitCompKneeChanged);
     QRadioButton::disconnect(compTypeRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitModeCompExpChanged);
+                             this, &DynamicsWidget::emitCompModeCompExpChanged);
     QRadioButton::disconnect(expTypeRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitModeCompExpChanged);
+                             this, &DynamicsWidget::emitCompModeCompExpChanged);
     QRadioButton::disconnect(compLinRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitEnvLinLogChanged);
+                             this, &DynamicsWidget::emitCompEnvLinLogChanged);
     QRadioButton::disconnect(compLogRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitEnvLinLogChanged);
+                             this, &DynamicsWidget::emitCompEnvLinLogChanged);
     QRadioButton::disconnect(compPeakRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitDetPeakRmsChanged);
+                             this, &DynamicsWidget::emitCompDetPeakRmsChanged);
     QRadioButton::disconnect(compRmsRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitDetPeakRmsChanged);
+                             this, &DynamicsWidget::emitCompDetPeakRmsChanged);
     QSlider::disconnect(compAttackSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitAttackChanged);
+                        this, &DynamicsWidget::emitCompAttackChanged);
     QSlider::disconnect(compHoldSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitHoldChanged);
+                        this, &DynamicsWidget::emitCompHoldChanged);
     QSlider::disconnect(compReleaseSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitReleaseChanged);
+                        this, &DynamicsWidget::emitCompReleaseChanged);
     QSlider::disconnect(compFilterTypeSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitFilterTypeChanged);
+                     this, &DynamicsWidget::emitCompFilterTypeChanged);
     QSlider::disconnect(compFilterFreqSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitFilterFrequencyChanged);
+                     this, &DynamicsWidget::emitCompFilterFrequencyChanged);
     delete tablesRenew;
 }
 
@@ -634,7 +634,7 @@ QWidget *DynamicsWidget::compFltrWidget(){
     vlayout->setContentsMargins(4, 4, 4, 4);
     vlayout->setSpacing(4);
 
-    QLabel *label = new QLabel("Side Chain/Filter");
+    QLabel *label = new QLabel("Side Chain Filter");
     label->setStyleSheet("QLabel {color: rgb(255,255,255);}");
     label->setFont(m_fonts->boldFont8);
     label->setAlignment(Qt::AlignCenter);
@@ -806,176 +806,182 @@ QFrame *DynamicsWidget::gateWidget(){
 
 void DynamicsWidget::connectSignals(){
     QPushButton::connect(compActivePushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitOnOffChanged);
+                         this, &DynamicsWidget::emitCompOnOffChanged);
     QPushButton::connect(compAutoPushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitAutoTimeChanged);
+                         this, &DynamicsWidget::emitCompAutoTimeChanged);
     QPushButton::connect(compFilterPushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitFilterChanged);
-    /*QPushButton::connect(compFilterSoloPushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitCompFilterSoloChanged);*/
+                         this, &DynamicsWidget::emitCompFilterChanged);
+    QPushButton::connect(compFilterSoloPushButton, &QPushButton::clicked,
+                         this, &DynamicsWidget::emitCompFilterSoloChanged);
     QComboBox::connect(compFilterSourceComboBox, &QComboBox::currentIndexChanged,
-                         this, &DynamicsWidget::emitKeySourceChanged);
+                         this, &DynamicsWidget::emitCompKeySourceChanged);
     QSlider::connect(tresholdSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitTresholdChanged);
+                     this, &DynamicsWidget::emitCompTresholdChanged);
     QSlider::connect(ratioSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitRatioChanged);
+                     this, &DynamicsWidget::emitCompRatioChanged);
     QSlider::connect(mixSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitMixChanged);
+                     this, &DynamicsWidget::emitCompMixChanged);
     QSlider::connect(gainSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitGainChanged);
+                     this, &DynamicsWidget::emitCompGainChanged);
     QSlider::connect(kneeSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitKneeChanged);
+                     this, &DynamicsWidget::emitCompKneeChanged);
     QRadioButton::connect(compTypeRadio, &QRadioButton::clicked,
-                          this, &DynamicsWidget::emitModeCompExpChanged);
+                          this, &DynamicsWidget::emitCompModeCompExpChanged);
     QRadioButton::connect(expTypeRadio, &QRadioButton::clicked,
-                          this, &DynamicsWidget::emitModeCompExpChanged);
+                          this, &DynamicsWidget::emitCompModeCompExpChanged);
     QRadioButton::connect(compLinRadio, &QRadioButton::clicked,
-                          this, &DynamicsWidget::emitEnvLinLogChanged);
+                          this, &DynamicsWidget::emitCompEnvLinLogChanged);
     QRadioButton::connect(compLogRadio, &QRadioButton::clicked,
-                          this, &DynamicsWidget::emitEnvLinLogChanged);
+                          this, &DynamicsWidget::emitCompEnvLinLogChanged);
     QRadioButton::connect(compPeakRadio, &QRadioButton::clicked,
-                          this, &DynamicsWidget::emitDetPeakRmsChanged);
+                          this, &DynamicsWidget::emitCompDetPeakRmsChanged);
     QRadioButton::connect(compRmsRadio, &QRadioButton::clicked,
-                          this, &DynamicsWidget::emitDetPeakRmsChanged);
+                          this, &DynamicsWidget::emitCompDetPeakRmsChanged);
     QSlider::connect(compAttackSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitAttackChanged);
+                     this, &DynamicsWidget::emitCompAttackChanged);
     QSlider::connect(compHoldSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitHoldChanged);
+                     this, &DynamicsWidget::emitCompHoldChanged);
     QSlider::connect(compReleaseSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitReleaseChanged);
+                     this, &DynamicsWidget::emitCompReleaseChanged);
     QSlider::connect(compFilterTypeSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitFilterTypeChanged);
+                     this, &DynamicsWidget::emitCompFilterTypeChanged);
     QSlider::connect(compFilterFreqSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitFilterFrequencyChanged);
+                     this, &DynamicsWidget::emitCompFilterFrequencyChanged);
 }
 
-void DynamicsWidget::onOffRecieved(int value){}
+void DynamicsWidget::compOnOffRecieved(int value){
+    QPushButton::disconnect(compActivePushButton, &QPushButton::clicked,
+                         this, &DynamicsWidget::emitCompOnOffChanged);
+    compActivePushButton->setChecked(value);
+    QPushButton::connect(compActivePushButton, &QPushButton::clicked,
+                         this, &DynamicsWidget::emitCompOnOffChanged);
+}
 
-void DynamicsWidget::tresholdRecieved(float value){
+void DynamicsWidget::compTresholdRecieved(float value){
     QSlider::disconnect(tresholdSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitTresholdChanged);
+                        this, &DynamicsWidget::emitCompTresholdChanged);
     tresholdSlider->setValue(value * 120);
     float db = float(tresholdSlider->value()) / 2 - 60.;
     compGain->setTreshold(db);
     tresholdLine->setText(QString::number(db) + " db");
     QSlider::connect(tresholdSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitTresholdChanged);
+                     this, &DynamicsWidget::emitCompTresholdChanged);
 }
 
-void DynamicsWidget::ratioRecieved(int value){
+void DynamicsWidget::compRatioRecieved(int value){
     QSlider::disconnect(ratioSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitRatioChanged);
+                        this, &DynamicsWidget::emitCompRatioChanged);
     ratioSlider->setValue(value);
     compGain->setRatio(int2ratio(value));
     ratioLine->setText(QString::number(int2ratio(value)));
     QSlider::connect(ratioSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitRatioChanged);
+                        this, &DynamicsWidget::emitCompRatioChanged);
 }
 
-void DynamicsWidget::mixRecieved(float value){
+void DynamicsWidget::compMixRecieved(float value){
     QSlider::disconnect(mixSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitMixChanged);
+                        this, &DynamicsWidget::emitCompMixChanged);
     mixSlider->setValue(value * 20);
     mixLine->setText(QString::number(value*100) + " %");
     QSlider::connect(mixSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitMixChanged);
+                        this, &DynamicsWidget::emitCompMixChanged);
 }
 
-void DynamicsWidget::gainRecieved(float value){
+void DynamicsWidget::compGainRecieved(float value){
     QSlider::disconnect(gainSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitGainChanged);
+                        this, &DynamicsWidget::emitCompGainChanged);
     gainSlider->setValue(value * 48);
     gainLine->setText(QString::number(value * 24) + " db");
     QSlider::connect(gainSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitGainChanged);
+                        this, &DynamicsWidget::emitCompGainChanged);
 }
 
-void DynamicsWidget::kneeRecieved(float value){
+void DynamicsWidget::compKneeRecieved(float value){
     QSlider::disconnect(kneeSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitKneeChanged);
+                        this, &DynamicsWidget::emitCompKneeChanged);
     kneeSlider->setValue(value * 5);
     kneeLine->setText(QString::number(kneeSlider->value()));
     compGain->setKnee(kneeSlider->value());
     QSlider::connect(kneeSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitKneeChanged);
+                        this, &DynamicsWidget::emitCompKneeChanged);
 }
 
-void DynamicsWidget::modeCompExpRecieved(int value){
+void DynamicsWidget::compModeCompExpRecieved(int value){
     QRadioButton::disconnect(compTypeRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitModeCompExpChanged);
+                             this, &DynamicsWidget::emitCompModeCompExpChanged);
     QRadioButton::disconnect(expTypeRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitModeCompExpChanged);
+                             this, &DynamicsWidget::emitCompModeCompExpChanged);
     if(value == 1)
         expTypeRadio->setChecked(true);
     else
         compTypeRadio->setChecked(true);
     compGain->setType(value);
     QRadioButton::connect(compTypeRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitModeCompExpChanged);
+                             this, &DynamicsWidget::emitCompModeCompExpChanged);
     QRadioButton::connect(expTypeRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitModeCompExpChanged);
+                             this, &DynamicsWidget::emitCompModeCompExpChanged);
 }
 
-void DynamicsWidget::envLinLogRecieved(int value){
+void DynamicsWidget::compEnvLinLogRecieved(int value){
     QRadioButton::disconnect(compLinRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitEnvLinLogChanged);
+                             this, &DynamicsWidget::emitCompEnvLinLogChanged);
     QRadioButton::disconnect(compLogRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitEnvLinLogChanged);
+                             this, &DynamicsWidget::emitCompEnvLinLogChanged);
     if(value == 1)
         compLogRadio->setChecked(true);
     else
         compLinRadio->setChecked(true);
     QRadioButton::connect(compLinRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitEnvLinLogChanged);
+                             this, &DynamicsWidget::emitCompEnvLinLogChanged);
     QRadioButton::connect(compLogRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitEnvLinLogChanged);
+                             this, &DynamicsWidget::emitCompEnvLinLogChanged);
 }
 
-void DynamicsWidget::detPeakRmsRecieved(int value){
+void DynamicsWidget::compDetPeakRmsRecieved(int value){
     QRadioButton::disconnect(compPeakRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitDetPeakRmsChanged);
+                             this, &DynamicsWidget::emitCompDetPeakRmsChanged);
     QRadioButton::disconnect(compRmsRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitDetPeakRmsChanged);
+                             this, &DynamicsWidget::emitCompDetPeakRmsChanged);
     if(value == 1)
         compRmsRadio->setChecked(true);
     else
         compPeakRadio->setChecked(true);
     QRadioButton::connect(compPeakRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitDetPeakRmsChanged);
+                             this, &DynamicsWidget::emitCompDetPeakRmsChanged);
     QRadioButton::connect(compRmsRadio, &QRadioButton::clicked,
-                             this, &DynamicsWidget::emitDetPeakRmsChanged);
+                             this, &DynamicsWidget::emitCompDetPeakRmsChanged);
 }
 
-void DynamicsWidget::attackRecieved(float value){
+void DynamicsWidget::compAttackRecieved(float value){
     QSlider::disconnect(compAttackSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitAttackChanged);
+                        this, &DynamicsWidget::emitCompAttackChanged);
     compAttackSlider->setValue(value * 120);
     compAttackLine->setText(QString::number(compAttackSlider->value()) + " ms");
     QSlider::connect(compAttackSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitAttackChanged);
+                        this, &DynamicsWidget::emitCompAttackChanged);
 }
 
-void DynamicsWidget::holdRecieved(float value){
+void DynamicsWidget::compHoldRecieved(float value){
     QSlider::disconnect(compHoldSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitHoldChanged);
+                        this, &DynamicsWidget::emitCompHoldChanged);
     compHoldSlider->setValue(value * 100);
     compHoldLine->setText(QString::number(hold2ms(compHoldSlider->value())) + " ms");
     QSlider::connect(compHoldSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitHoldChanged);
+                        this, &DynamicsWidget::emitCompHoldChanged);
 }
 
-void DynamicsWidget::releaseRecieved(float value){
+void DynamicsWidget::compReleaseRecieved(float value){
     QSlider::disconnect(compReleaseSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitReleaseChanged);
+                        this, &DynamicsWidget::emitCompReleaseChanged);
     compReleaseSlider->setValue(value * 100);
     compReleaseLine->setText(QString::number(release2ms(compReleaseSlider->value())) + " ms");
     QSlider::connect(compReleaseSlider, &QSlider::valueChanged,
-                        this, &DynamicsWidget::emitReleaseChanged);
+                        this, &DynamicsWidget::emitCompReleaseChanged);
 }
 
-void DynamicsWidget::autoTimeRecieved(int value){
+void DynamicsWidget::compAutoTimeRecieved(int value){
     QPushButton::disconnect(compAutoPushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitAutoTimeChanged);
+                         this, &DynamicsWidget::emitCompAutoTimeChanged);
     compAutoPushButton->setChecked(value);
 
     compAttackLine->setDisabled(value);
@@ -986,115 +992,133 @@ void DynamicsWidget::autoTimeRecieved(int value){
     compReleaseSlider->setDisabled(value);
 
     QPushButton::connect(compAutoPushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitAutoTimeChanged);
+                         this, &DynamicsWidget::emitCompAutoTimeChanged);
 }
 
-void DynamicsWidget::keySourceRecieved(int value){
+void DynamicsWidget::compKeySourceRecieved(int value){
     QComboBox::disconnect(compFilterSourceComboBox, &QComboBox::currentIndexChanged,
-                         this, &DynamicsWidget::emitKeySourceChanged);
+                         this, &DynamicsWidget::emitCompKeySourceChanged);
     for(int i=0;i < 65;i++)
         if(compFilterSourceComboBox->itemData(i).toInt() == value)
             compFilterSourceComboBox->setCurrentIndex(i);
     QComboBox::connect(compFilterSourceComboBox, &QComboBox::currentIndexChanged,
-                         this, &DynamicsWidget::emitKeySourceChanged);
+                         this, &DynamicsWidget::emitCompKeySourceChanged);
 }
 
-void DynamicsWidget::filterRecieved(int value){
+void DynamicsWidget::compFilterRecieved(int value){
     QPushButton::disconnect(compFilterPushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitFilterChanged);
+                         this, &DynamicsWidget::emitCompFilterChanged);
     compFilterPushButton->setChecked(value);
     QPushButton::connect(compFilterPushButton, &QPushButton::clicked,
-                         this, &DynamicsWidget::emitFilterChanged);
+                         this, &DynamicsWidget::emitCompFilterChanged);
 }
 
-void DynamicsWidget::filterTypeRecieved(int value){
+void DynamicsWidget::compFilterSoloRecieved(int value){
+    QPushButton::disconnect(compFilterSoloPushButton, &QPushButton::clicked,
+                         this, &DynamicsWidget::emitCompFilterSoloChanged);
+    compFilterSoloPushButton->setChecked(value);
+    QPushButton::connect(compFilterSoloPushButton, &QPushButton::clicked,
+                         this, &DynamicsWidget::emitCompFilterSoloChanged);
+}
+
+void DynamicsWidget::compFilterTypeRecieved(int value){
     QSlider::disconnect(compFilterTypeSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitFilterTypeChanged);
+                     this, &DynamicsWidget::emitCompFilterTypeChanged);
     compFilterTypeSlider->setValue(value);
+    compFilterTypeLine->setText(
+                QString::fromStdString(
+                    index2filtertype(value)
+                    )
+                );
     QSlider::connect(compFilterTypeSlider, &QSlider::valueChanged,
-                     this, &DynamicsWidget::emitFilterTypeChanged);
+                     this, &DynamicsWidget::emitCompFilterTypeChanged);
 }
 
-void DynamicsWidget::filterFrequencyRecieved(float value){
-    //NOT YET
+void DynamicsWidget::compFilterFrequencyRecieved(float value){
+    QSlider::disconnect(compFilterFreqSlider, &QSlider::valueChanged,
+                     this, &DynamicsWidget::emitCompFilterFrequencyChanged);
+    compFilterFreqSlider->setValue(value * 200);
+    compFilterFreqLine->setText(QString::fromStdString(c201logScaleToFrequencyString(value)));
+    QSlider::connect(compFilterFreqSlider, &QSlider::valueChanged,
+                     this, &DynamicsWidget::emitCompFilterFrequencyChanged);
 }
 
-void DynamicsWidget::emitOnOffChanged(){
-    //NOT YET
+void DynamicsWidget::emitCompOnOffChanged(){
+    emit compOnOffChanged(compActivePushButton->isChecked());
 }
 
-void DynamicsWidget::emitTresholdChanged(){
+void DynamicsWidget::emitCompTresholdChanged(){
     float value = float(tresholdSlider->value()) / 120;
     float db = float(tresholdSlider->value()) / 2 - 60.;
     compGain->setTreshold(db);
     tresholdLine->setText(QString::number(db) + " db");
-    emit tresholdChanged(value);
+    emit compTresholdChanged(value);
 }
 
-void DynamicsWidget::emitRatioChanged(){
+void DynamicsWidget::emitCompRatioChanged(){
     float ratio = int2ratio(ratioSlider->value());
     compGain->setRatio(ratio);
     ratioLine->setText(QString::number(ratio));
-    emit ratioChanged(ratioSlider->value());
+    emit compRatioChanged(ratioSlider->value());
 }
 
-void DynamicsWidget::emitMixChanged(){
+void DynamicsWidget::emitCompMixChanged(){
     float value = float(mixSlider->value()) / 20;
     mixLine->setText(QString::number(value*100) + " %");
-    emit mixChanged(value);
+    emit compMixChanged(value);
 }
 
-void DynamicsWidget::emitGainChanged(){
+void DynamicsWidget::emitCompGainChanged(){
     float value = float(gainSlider->value()) / 48;
     gainLine->setText(QString::number(value*24) + " db");
-    emit gainChanged(value);
+    emit compGainChanged(value);
 }
 
-void DynamicsWidget::emitKneeChanged(){
+void DynamicsWidget::emitCompKneeChanged(){
     float value = float(kneeSlider->value()) / 5;
     kneeLine->setText(QString::number(kneeSlider->value()));
     compGain->setKnee(kneeSlider->value());
-    emit kneeChanged(value);
+    emit compKneeChanged(value);
 }
 
-void DynamicsWidget::emitModeCompExpChanged(){
+void DynamicsWidget::emitCompModeCompExpChanged(){
     int value = 0;
     if (expTypeRadio->isChecked()) value = 1;
     compGain->setType(value);
-    emit modeCompExpChanged(value);
+    emit compModeCompExpChanged(value);
 }
 
-void DynamicsWidget::emitEnvLinLogChanged(){
+void DynamicsWidget::emitCompEnvLinLogChanged(){
     int value = 0;
     if (compLogRadio->isChecked()) value = 1;
-    emit envLinLogChanged(value);
+    emit compEnvLinLogChanged(value);
 }
 
-void DynamicsWidget::emitDetPeakRmsChanged(){
+void DynamicsWidget::emitCompDetPeakRmsChanged(){
     int value = 0;
     if (compRmsRadio->isChecked()) value = 1;
-    emit detPeakRmsChanged(value);
+    emit compDetPeakRmsChanged(value);
 }
 
-void DynamicsWidget::emitAttackChanged(){
+void DynamicsWidget::emitCompAttackChanged(){
     float value = float(compAttackSlider->value()) / 120;
-    emit attackChanged(value);
+    emit compAttackChanged(value);
     compAttackLine->setText(QString::number(compAttackSlider->value()) + " ms");
 }
 
-void DynamicsWidget::emitHoldChanged(){
+void DynamicsWidget::emitCompHoldChanged(){
     float value = float(compHoldSlider->value()) / 100;
-    emit holdChanged(value);
+    emit compHoldChanged(value);
     compHoldLine->setText(QString::number(hold2ms(compHoldSlider->value())) + " ms");
 }
 
-void DynamicsWidget::emitReleaseChanged(){
+void DynamicsWidget::emitCompReleaseChanged(){
     float value = float(compReleaseSlider->value()) / 100;
-    emit releaseChanged(value);
+    emit compReleaseChanged(value);
     compReleaseLine->setText(QString::number(release2ms(compReleaseSlider->value())) + " ms");
 }
 
-void DynamicsWidget::emitAutoTimeChanged(){
+void DynamicsWidget::emitCompAutoTimeChanged(){
     bool value = compAutoPushButton->isChecked();
     compAttackLine->setDisabled(value);
     compAttackSlider->setDisabled(value);
@@ -1102,32 +1126,37 @@ void DynamicsWidget::emitAutoTimeChanged(){
     compHoldSlider->setDisabled(value);
     compReleaseLine->setDisabled(value);
     compReleaseSlider->setDisabled(value);
-    emit autoTimeChanged(int(value));
+    emit compAutoTimeChanged(int(value));
 }
 
-void DynamicsWidget::emitKeySourceChanged(){
-    emit keySourceChanged(compFilterSourceComboBox->currentData().toInt());
+void DynamicsWidget::emitCompKeySourceChanged(){
+    emit compKeySourceChanged(compFilterSourceComboBox->currentData().toInt());
 }
 
-void DynamicsWidget::emitFilterChanged(){
-    //NOT YET
+void DynamicsWidget::emitCompFilterChanged(){
+    emit compFilterChanged(compFilterPushButton->isChecked());
 }
 
-void DynamicsWidget::emitFilterTypeChanged(){
+void DynamicsWidget::emitCompFilterSoloChanged(){
+    emit compFilterSoloChanged(compFilterSoloPushButton->isChecked());
+}
+
+void DynamicsWidget::emitCompFilterTypeChanged(){
+    int value = compFilterTypeSlider->value();
     compFilterTypeLine->setText(
                 QString::fromStdString(
-                    index2filtertype(
-                        compFilterTypeSlider->value()
-                        )
+                    index2filtertype(value)
                     )
                 );
-    emit filterTypeChanged(compFilterTypeSlider->value());
+    emit compFilterTypeChanged(value);
 }
 
-void DynamicsWidget::emitFilterFrequencyChanged(){
-    //NOT YET
+void DynamicsWidget::emitCompFilterFrequencyChanged(){
     float value = float(compFilterFreqSlider->value()) / 200.f;
-    emit filterFrequencyChanged(value);
+    compFilterFreqLine->setText(QString::fromStdString(
+                                    c201logScaleToFrequencyString(value)
+                                    ));
+    emit compFilterFrequencyChanged(value);
 }
 
 compGainPaint::compGainPaint(float dpiRatio_) : QWidget() {

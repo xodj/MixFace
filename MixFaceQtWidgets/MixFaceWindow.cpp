@@ -561,25 +561,79 @@ void MixFaceWindow::buttonDynClicked(){
 
     if (m_mode != mDyn){
         if(idx!=70&&idx!=71&&(idx<48||idx>63)){
-            srcFader = new FaderWidget(dpiRatio, mf_fonts, mf_metersTimer, debug);
+            srcFader = new FaderWidget(dpiRatio, mf_fonts,
+                                       mf_metersTimer, debug);
             mf_demoTimer->AddFader(srcFader);
             srcLayout->addWidget(srcFader);
-            srcFader->setChannelNativeName(QString::fromStdString(mf_library->channelNameFromIdx(idx)));
+            srcFader->setChannelNativeName(
+                        QString::fromStdString(
+                            mf_library->channelNameFromIdx(idx)
+                            )
+                        );
             srcFader->setFaderType(mf_types.getFaderType(idx));
             srcFader->setProperty("idx", idx);
-            connect(srcFader, &FaderWidget::faderChanged, this, &MixFaceWindow::faderChanged);
-            connect(srcFader, &FaderWidget::panChanged, this, &MixFaceWindow::panChanged);
-            connect(srcFader, &FaderWidget::muteChanged, this, &MixFaceWindow::muteClicked);
-            connect(srcFader, &FaderWidget::soloChanged, this, &MixFaceWindow::soloClicked);
-            connect(srcFader, &FaderWidget::srcClicked, this, &MixFaceWindow::buttonSrcClicked);
-            connect(srcFader, &FaderWidget::eqClicked, this, &MixFaceWindow::buttonEqClicked);
-            connect(srcFader, &FaderWidget::dynClicked, this, &MixFaceWindow::buttonDynClicked);
-            connect(srcFader, &FaderWidget::iconButtonClicked, this, &MixFaceWindow::iconButtonClicked);
+            connect(srcFader, &FaderWidget::faderChanged,
+                    this, &MixFaceWindow::faderChanged);
+            connect(srcFader, &FaderWidget::panChanged,
+                    this, &MixFaceWindow::panChanged);
+            connect(srcFader, &FaderWidget::muteChanged,
+                    this, &MixFaceWindow::muteClicked);
+            connect(srcFader, &FaderWidget::soloChanged,
+                    this, &MixFaceWindow::soloClicked);
+            connect(srcFader, &FaderWidget::srcClicked,
+                    this, &MixFaceWindow::buttonSrcClicked);
+            connect(srcFader, &FaderWidget::eqClicked,
+                    this, &MixFaceWindow::buttonEqClicked);
+            connect(srcFader, &FaderWidget::dynClicked,
+                    this, &MixFaceWindow::buttonDynClicked);
+            connect(srcFader, &FaderWidget::iconButtonClicked,
+                    this, &MixFaceWindow::iconButtonClicked);
         }
 
-        if (dynWidget == nullptr)
+        if (dynWidget == nullptr) {
             dynWidget = new DynamicsWidget(dpiRatio, mf_fonts);
-        else
+
+            connect(dynWidget, &DynamicsWidget::compOnOffChanged,
+                    this, &MixFaceWindow::compOnOffChanged);
+            connect(dynWidget, &DynamicsWidget::compTresholdChanged,
+                    this, &MixFaceWindow::compTresholdChanged);
+            connect(dynWidget, &DynamicsWidget::compRatioChanged,
+                    this, &MixFaceWindow::compRatioChanged);
+
+            connect(dynWidget, &DynamicsWidget::compMixChanged,
+                    this, &MixFaceWindow::compMixChanged);
+            connect(dynWidget, &DynamicsWidget::compGainChanged,
+                    this, &MixFaceWindow::compGainChanged);
+            connect(dynWidget, &DynamicsWidget::compKneeChanged,
+                    this, &MixFaceWindow::compKneeChanged);
+
+            connect(dynWidget, &DynamicsWidget::compModeCompExpChanged,
+                    this, &MixFaceWindow::compModeCompExpChanged);
+            connect(dynWidget, &DynamicsWidget::compEnvLinLogChanged,
+                    this, &MixFaceWindow::compEnvLinLogChanged);
+            connect(dynWidget, &DynamicsWidget::compDetPeakRmsChanged,
+                    this, &MixFaceWindow::compDetPeakRmsChanged);
+
+            connect(dynWidget, &DynamicsWidget::compAttackChanged,
+                    this, &MixFaceWindow::compAttackChanged);
+            connect(dynWidget, &DynamicsWidget::compHoldChanged,
+                    this, &MixFaceWindow::compHoldChanged);
+            connect(dynWidget, &DynamicsWidget::compReleaseChanged,
+                    this, &MixFaceWindow::compReleaseChanged);
+            connect(dynWidget, &DynamicsWidget::compAutoTimeChanged,
+                    this, &MixFaceWindow::compAutoTimeChanged);
+
+            connect(dynWidget, &DynamicsWidget::compKeySourceChanged,
+                    this, &MixFaceWindow::compKeySourceChanged);
+            connect(dynWidget, &DynamicsWidget::compFilterChanged,
+                    this, &MixFaceWindow::compFilterChanged);
+            connect(dynWidget, &DynamicsWidget::compFilterSoloChanged,
+                    this, &MixFaceWindow::compFilterSoloChanged);
+            connect(dynWidget, &DynamicsWidget::compFilterTypeChanged,
+                    this, &MixFaceWindow::compFilterTypeChanged);
+            connect(dynWidget, &DynamicsWidget::compFilterFrequencyChanged,
+                    this, &MixFaceWindow::compFilterFrequencyChanged);
+        } else
             dynWidget->setVisible(true);
         srcLayout->addWidget(dynWidget);
         dynWidget->setIdx(idx);
@@ -589,28 +643,226 @@ void MixFaceWindow::buttonDynClicked(){
         srcArea->setVisible(true);
         m_mode = mDyn;
 
-        dynWidget->onOffRecieved(mf_library->db.dynon[idx]);
-        dynWidget->tresholdRecieved(mf_library->db.dynthr[idx]);
-        dynWidget->ratioRecieved(mf_library->db.dynratio[idx]);
-        dynWidget->mixRecieved(mf_library->db.dynmix[idx]);
-        dynWidget->gainRecieved(mf_library->db.dynmgain[idx]);
-        dynWidget->attackRecieved(mf_library->db.dynattack[idx]);
-        dynWidget->holdRecieved(mf_library->db.dynhold[idx]);
-        dynWidget->releaseRecieved(mf_library->db.dynrelease[idx]);
-        dynWidget->modeCompExpRecieved(mf_library->db.dynmode[idx]);
-        dynWidget->kneeRecieved(mf_library->db.dynknee[idx]);
-        dynWidget->envLinLogRecieved(mf_library->db.dynenv[idx]);
-        dynWidget->detPeakRmsRecieved(mf_library->db.dyndet[idx]);
-        dynWidget->autoTimeRecieved(mf_library->db.dynauto[idx]);
-        dynWidget->keySourceRecieved(mf_library->db.dynkeysrc[idx]);
-        dynWidget->filterRecieved(mf_library->db.dynfilteron[idx]);
-        dynWidget->filterTypeRecieved(mf_library->db.dynfiltertype[idx]);
-        dynWidget->filterFrequencyRecieved(mf_library->db.dynfilterf[idx]);
+        if (connected)
+            mf_library->threadSendDynRequestsMessages(idx);
+
+        dynWidget->compOnOffRecieved(mf_library->db.dynon[idx]);
+        dynWidget->compTresholdRecieved(mf_library->db.dynthr[idx]);
+        dynWidget->compRatioRecieved(mf_library->db.dynratio[idx]);
+        dynWidget->compMixRecieved(mf_library->db.dynmix[idx]);
+        dynWidget->compGainRecieved(mf_library->db.dynmgain[idx]);
+        dynWidget->compAttackRecieved(mf_library->db.dynattack[idx]);
+        dynWidget->compHoldRecieved(mf_library->db.dynhold[idx]);
+        dynWidget->compReleaseRecieved(mf_library->db.dynrelease[idx]);
+        dynWidget->compModeCompExpRecieved(mf_library->db.dynmode[idx]);
+        dynWidget->compKneeRecieved(mf_library->db.dynknee[idx]);
+        dynWidget->compEnvLinLogRecieved(mf_library->db.dynenv[idx]);
+        dynWidget->compDetPeakRmsRecieved(mf_library->db.dyndet[idx]);
+        dynWidget->compAutoTimeRecieved(mf_library->db.dynauto[idx]);
+        dynWidget->compKeySourceRecieved(mf_library->db.dynkeysrc[idx]);
+        dynWidget->compFilterRecieved(mf_library->db.dynfilteron[idx]);
+        dynWidget->compFilterSoloRecieved(mf_library->db.keysolo);
+        dynWidget->compFilterTypeRecieved(mf_library->db.dynfiltertype[idx]);
+        dynWidget->compFilterFrequencyRecieved(mf_library->db.dynfilterf[idx]);
     } else {
         srcArea->setHidden(true);
         scrollArea->setVisible(true);
         bar->setVisible(true);
         m_mode = mCtrl;
+    }
+}
+
+void MixFaceWindow::compOnOffChanged(int value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynon[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynon, chtype, chN, 0);
+        mf_library->sendInt(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compTresholdChanged(float value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynthr[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynthr, chtype, chN, 0);
+        mf_library->sendFloat(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compRatioChanged(int value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynratio[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynratio, chtype, chN, 0);
+        mf_library->sendInt(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compMixChanged(float value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynmix[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynmix, chtype, chN, 0);
+        mf_library->sendFloat(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compGainChanged(float value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynmgain[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynmgain, chtype, chN, 0);
+        mf_library->sendFloat(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compKneeChanged(float value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynknee[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynknee, chtype, chN, 0);
+        mf_library->sendFloat(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compModeCompExpChanged(int value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynmode[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynmode, chtype, chN, 0);
+        mf_library->sendInt(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compEnvLinLogChanged(int value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynenv[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynenv, chtype, chN, 0);
+        mf_library->sendInt(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compDetPeakRmsChanged(int value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dyndet[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dyndet, chtype, chN, 0);
+        mf_library->sendInt(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compAttackChanged(float value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynattack[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynattack, chtype, chN, 0);
+        mf_library->sendFloat(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compHoldChanged(float value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynhold[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynhold, chtype, chN, 0);
+        mf_library->sendFloat(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compReleaseChanged(float value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynrelease[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynrelease, chtype, chN, 0);
+        mf_library->sendFloat(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compAutoTimeChanged(int value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynauto[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynauto, chtype, chN, 0);
+        mf_library->sendInt(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compKeySourceChanged(int value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynkeysrc[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynkeysrc, chtype, chN, 0);
+        mf_library->sendInt(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compFilterChanged(int value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynfilteron[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynfilteron, chtype, chN, 0);
+        mf_library->sendInt(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compFilterSoloChanged(int value){
+    mf_library->db.keysolo = value;
+    if (connected) {
+        mf_library->sendInt(mf_library->msgTypeStr.keysolo, value);
+    }
+}
+
+void MixFaceWindow::compFilterTypeChanged(int value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynfiltertype[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynfiltertype, chtype, chN, 0);
+        mf_library->sendInt(msg.c_str(), value);
+    }
+}
+
+void MixFaceWindow::compFilterFrequencyChanged(float value){
+    int idx = dynWidget->getIdx();
+    mf_library->db.dynfilterf[idx] = value;
+    if (connected) {
+        ChannelType chtype = mf_library->getChannelTypeFromIdx(idx);
+        int chN = mf_library->getChannelNumberFromIdx(idx);
+        string msg = mf_library->getOscAddress(dynfilterf, chtype, chN, 0);
+        mf_library->sendFloat(msg.c_str(), value);
     }
 }
 
@@ -804,6 +1056,10 @@ void MixFaceWindow::threadValueChanged(int imtype, int idx, int idy) {
                 mainWidget[idx]->setSolo(true);
         }
         break;
+    case keysolo:
+        if (m_mode == mDyn && dynWidget != nullptr)
+            dynWidget->compFilterSoloRecieved(mf_library->db.keysolo);
+        break;
     case chlink:
         break;
     case auxlink:
@@ -860,71 +1116,71 @@ void MixFaceWindow::threadValueChanged(int imtype, int idx, int idy) {
         break;
     case dynon:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->onOffRecieved(mf_library->db.dynon[idx]);
+            dynWidget->compOnOffRecieved(mf_library->db.dynon[idx]);
         break;
     case dynthr:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->tresholdRecieved(mf_library->db.dynthr[idx]);
+            dynWidget->compTresholdRecieved(mf_library->db.dynthr[idx]);
         break;
     case dynratio:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->ratioRecieved(mf_library->db.dynratio[idx]);
+            dynWidget->compRatioRecieved(mf_library->db.dynratio[idx]);
         break;
     case dynmix:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->mixRecieved(mf_library->db.dynmix[idx]);
+            dynWidget->compMixRecieved(mf_library->db.dynmix[idx]);
         break;
     case dynmgain:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->gainRecieved(mf_library->db.dynmgain[idx]);
+            dynWidget->compGainRecieved(mf_library->db.dynmgain[idx]);
         break;
     case dynattack:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->attackRecieved(mf_library->db.dynattack[idx]);
+            dynWidget->compAttackRecieved(mf_library->db.dynattack[idx]);
         break;
     case dynhold:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->holdRecieved(mf_library->db.dynhold[idx]);
+            dynWidget->compHoldRecieved(mf_library->db.dynhold[idx]);
         break;
     case dynrelease:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->releaseRecieved(mf_library->db.dynrelease[idx]);
+            dynWidget->compReleaseRecieved(mf_library->db.dynrelease[idx]);
         break;
     case dynmode:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->modeCompExpRecieved(mf_library->db.dynmode[idx]);
+            dynWidget->compModeCompExpRecieved(mf_library->db.dynmode[idx]);
         break;
     case dynknee:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->kneeRecieved(mf_library->db.dynknee[idx]);
+            dynWidget->compKneeRecieved(mf_library->db.dynknee[idx]);
         break;
     case dynenv:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->envLinLogRecieved(mf_library->db.dynenv[idx]);
+            dynWidget->compEnvLinLogRecieved(mf_library->db.dynenv[idx]);
         break;
     case dyndet:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->detPeakRmsRecieved(mf_library->db.dyndet[idx]);
+            dynWidget->compDetPeakRmsRecieved(mf_library->db.dyndet[idx]);
         break;
     case dynauto:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->autoTimeRecieved(mf_library->db.dynauto[idx]);
+            dynWidget->compAutoTimeRecieved(mf_library->db.dynauto[idx]);
         break;
     case dynkeysrc:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->keySourceRecieved(mf_library->db.dynkeysrc[idx]);
+            dynWidget->compKeySourceRecieved(mf_library->db.dynkeysrc[idx]);
         break;
     case dynfilteron:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->filterRecieved(mf_library->db.dynfilteron[idx]);
+            dynWidget->compFilterRecieved(mf_library->db.dynfilteron[idx]);
         break;
     case dynfiltertype:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->filterTypeRecieved(mf_library->db.dynfiltertype[idx]);
+            dynWidget->compFilterTypeRecieved(mf_library->db.dynfiltertype[idx]);
         break;
     case dynfilterf:
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
-            dynWidget->filterFrequencyRecieved(mf_library->db.dynfilterf[idx]);
+            dynWidget->compFilterFrequencyRecieved(mf_library->db.dynfilterf[idx]);
         break;
     case eq1type:
         break;
