@@ -600,6 +600,9 @@ MessageType MixFaceLibrary::getMessageType(std::string message, ChannelType type
         else if (strstr(message.c_str(), msgTypeStr.sendon)) mtype = sendon;
     } else {
         if (strstr(message.c_str(), msgTypeStr.dcaon)) mtype = on;
+        else if (strstr(message.c_str(), msgTypeStr.configicon)) mtype = configicon;
+        else if (strstr(message.c_str(), msgTypeStr.configcolor)) mtype = configcolor;
+        else if (strstr(message.c_str(), msgTypeStr.configname)) mtype = configname;
         else if (strstr(message.c_str(), msgTypeStr.dca)) mtype = fader;
     }
     return mtype;
