@@ -298,7 +298,8 @@ void MixFaceWindow::initControlAreaWidgetIdx(int idx, FaderType ftype) {
     scrollWidget[idx]->setProperty("idx", idx);
     scrollWidget[idx]->setFaderValue(mf_library->db->fader[idx]);
     scrollWidget[idx]->setPanValue(mf_library->db->pan[idx]);
-    scrollWidget[idx]->setMute(mf_library->db->on[idx]);
+    if (mf_library->db->on[idx]==0)
+        scrollWidget[idx]->setMute(true);
     scrollWidget[idx]->setSolo(mf_library->db->solo[idx]);
     scrollWidget[idx]->setLogo(mf_library->db->configicon[idx]);
     scrollWidget[idx]->setColor(mf_library->db->configcolor[idx]);
@@ -340,7 +341,8 @@ void MixFaceWindow::initMainAreaWidgetIdx(int idx) {
     mainWidget[idx]->setProperty("idx", idx);
     mainWidget[idx]->setFaderValue(mf_library->db->fader[idx]);
     mainWidget[idx]->setPanValue(mf_library->db->pan[idx]);
-    mainWidget[idx]->setMute(mf_library->db->on[idx]);
+    if (mf_library->db->on[idx]==0)
+        mainWidget[idx]->setMute(true);
     mainWidget[idx]->setSolo(mf_library->db->solo[idx]);
     mainWidget[idx]->setLogo(mf_library->db->configicon[idx]);
     mainWidget[idx]->setColor(mf_library->db->configcolor[idx]);

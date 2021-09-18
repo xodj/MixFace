@@ -126,16 +126,16 @@ void MixFaceKeeper::loadX32DB(){
                     get_optional<int>("chid" + to_string(idx) + ".monoon");
             if(monoon.has_value())
                 db->monoon[idx] = monoon.get();
-            boost::optional<int> mlevel = propertyTree.
-                    get_optional<int>("chid" + to_string(idx) + ".mlevel");
+            boost::optional<float> mlevel = propertyTree.
+                    get_optional<float>("chid" + to_string(idx) + ".mlevel");
             if(mlevel.has_value())
                 db->mlevel[idx] = mlevel.get();
-            boost::optional<int> fader = propertyTree.
-                    get_optional<int>("chid" + to_string(idx) + ".fader");
+            boost::optional<float> fader = propertyTree.
+                    get_optional<float>("chid" + to_string(idx) + ".fader");
             if(fader.has_value())
                 db->fader[idx] = fader.get();
-            boost::optional<int> pan = propertyTree.
-                    get_optional<int>("chid" + to_string(idx) + ".pan");
+            boost::optional<float> pan = propertyTree.
+                    get_optional<float>("chid" + to_string(idx) + ".pan");
             if(pan.has_value())
                 db->pan[idx] = pan.get();
             boost::optional<int> on = propertyTree.
