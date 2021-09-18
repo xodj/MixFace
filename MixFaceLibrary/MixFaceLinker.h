@@ -9,7 +9,7 @@
 #include "MixFaceListener.h"
 #include "DebugLibrary.hpp"
 
-class MixFaceLinker : public boost::thread {
+class MixFaceLinker {
 public:
     MixFaceLinker(DebugLibrary *debug_ = new DebugLibrary);
     bool connectTo(string hostNameStr_);
@@ -36,6 +36,7 @@ private:
     bool connected = false;
     string hostNameStr = "127.0.0.1";
     osc::MessageTerminator End;
+    boost::thread *linkerThread;
 };
 
 #endif // MIXFACELINKER_H

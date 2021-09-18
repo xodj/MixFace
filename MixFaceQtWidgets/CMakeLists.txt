@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-PROJECT(MixFace VERSION 0.2.0.148 LANGUAGES CXX)
+PROJECT(MixFace VERSION 0.2.2.228 LANGUAGES CXX)
 
 if(UNIX)
     set(CMAKE_THREAD_LIBS_INIT "-lpthread")
@@ -34,7 +34,6 @@ set(MixFaceQtWidgets_HEADERS
     MixFaceEqualizerWidget.h
     MixFaceFonts.h
     MixFaceEnumTypes.h
-    MixFaceStaticMath.h
     MixFaceIconPicker.h
     MixFaceRightWidget.h
     MixFaceTopWidget.h
@@ -143,13 +142,8 @@ if(WIN32 AND MINGW)
         LINK_FLAGS_MINSIZEREL "-mwindows"
         LINK_FLAGS_RELWITHDEBINFO "-mwindows"
         )
+    include(CopyDependencies.cmake)
 endif()
-
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${BOOST_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../OSCPACK)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../MixFaceLibrary)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../DebugLibrary)
 
 #get_cmake_property(_variableNames VARIABLES)
 #list (SORT _variableNames)

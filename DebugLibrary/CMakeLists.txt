@@ -54,5 +54,3 @@ if(ANDROID)
         PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/android-build/libs/${ANDROID_ABI}/")
     set_target_properties(DebugLibrary PROPERTIES OUTPUT_NAME "DebugLibrary_${ANDROID_ABI}")
 endif()
-
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})

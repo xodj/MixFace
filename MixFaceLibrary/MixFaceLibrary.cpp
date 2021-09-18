@@ -3,108 +3,15 @@
 
 MixFaceLibrary::MixFaceLibrary(DebugLibrary *debug_)
     : debug(debug_){
-    for (int idx=0;idx<80;idx++){
-        db.stereoon[idx] = 1;
-        db.monoon[idx] = 0;
-        db.mlevel[idx] = 0;
-        db.fader[idx] = 0.75;
-        db.pan[idx] = 0.5;
-        db.on[idx] = 1;
-        db.solo[idx] = 0;
-
-        db.chlink[idx] = 0;
-        db.auxlink[idx] = 0;
-        db.buslink[idx] = 0;
-        db.mtxlink[idx] = 0;
-
-        db.phantom[idx] = 0;
-        db.invert[idx] = 0;
-        db.source[idx] = 0;
-        db.gain[idx] = 0.5;
-        db.trim[idx] = 0.5;
-
-        db.hpf[idx] = 0;
-        db.hpon[idx] = 0;
-        db.delayon[idx] = 0;
-        db.delaytime[idx] = 0;
-        db.inserton[idx] = 0;
-        db.insertsel[idx] = 0;
-        db.insertpos[idx] = 0;
-
-        db.gateon[idx] = 0;
-        db.gatethr[idx] = 0;
-        db.gaterange[idx] = 0;
-        db.gatemode[idx] = 0;
-        db.gateattack[idx] = 0;
-        db.gatehold[idx] = 0;
-        db.gaterelease[idx] = 0;
-        db.gatekeysrc[idx] = 0;
-        db.gatefilteron[idx] = 0;
-        db.gatefiltertype[idx] = 0;
-        db.gatefilterf[idx] = 0;
-
-        db.dynon[idx] = 0;
-        db.dynthr[idx] = 1;
-        db.dynratio[idx] = 5;
-        db.dynmix[idx] = 1.f;
-        db.dynmgain[idx] = 0;
-        db.dynattack[idx] = 0.0834f;
-        db.dynhold[idx] = 0.5400f;
-        db.dynrelease[idx] = 0.5100f;
-        db.dynmode[idx] = 0;
-        db.dynknee[idx] = 0.2f;
-        db.dynenv[idx] = 1;
-        db.dyndet[idx] = 0;
-        db.dynauto[idx] = 0;
-        db.dynkeysrc[idx] = 0;
-        db.dynfilteron[idx] = 0;
-        db.dynfiltertype[idx] = 6;
-        db.dynfilterf[idx] = 0.5650f;
-
-        db.eq1type[idx] = 0;
-        db.eq1g[idx] = 0;
-        db.eq1f[idx] = 0;
-        db.eq1q[idx] = 0;
-        db.eq2type[idx] = 0;
-        db.eq2g[idx] = 0;
-        db.eq2f[idx] = 0;
-        db.eq2q[idx] = 0;
-        db.eq3type[idx] = 0;
-        db.eq3g[idx] = 0;
-        db.eq3f[idx] = 0;
-        db.eq3q[idx] = 0;
-        db.eq4type[idx] = 0;
-        db.eq4g[idx] = 0;
-        db.eq4f[idx] = 0;
-        db.eq4q[idx] = 0;
-        db.eq5type[idx] = 0;
-        db.eq5g[idx] = 0;
-        db.eq5f[idx] = 0;
-        db.eq5q[idx] = 0;
-        db.eq6type[idx] = 0;
-        db.eq6g[idx] = 0;
-        db.eq6f[idx] = 0;
-        db.eq6q[idx] = 0;
-
-        for(int idy=0;idy<16;idy++){
-            db.sendlevel[idx][idy] = 0;
-            db.sendpan[idx][idy] = 0.5;
-            db.sendpanfollow[idx][idy] = 0;
-            db.sendtype[idx][idy] = 5;
-            db.sendon[idx][idy] = 1;
-        }
-
-        db.configicon[idx] = 0;
-        db.configcolor[idx] = 0;
-        db.configname[idx] = channelNameFromIdx(idx);
-    }
     linker = new MixFaceLinker(debug);
+    keeper = new MixFaceKeeper(debug);
+    db = keeper->getX32DB();
     sendRenewMessagesTimer = new IntervalThread(1000, false, true);
     sendRenewMessagesTimer->connect(IntervalThread::interval_slot_t(&MixFaceLibrary::sendXremoteMessage, this));
     linker->listener->s_xi.connect(signal_type_xi(&MixFaceLibrary::processXinfo, this, boost::arg<1>()));
 }
 
-void MixFaceLibrary::connect(string hostNameString){
+void MixFaceLibrary::connect(std::string hostNameString){
     bool connected = linker->connectTo(hostNameString);
     if (connected) {
         sendRenewMessagesTimer->start();
@@ -153,7 +60,7 @@ void MixFaceLibrary::sendSyncMessages() {
         int chN = getChannelNumberFromIdx(idx);
 
         MessageType mtype = fader;
-        string msg = getOscAddress(mtype, chtype, chN, 0);
+        std::string msg = getOscAddress(mtype, chtype, chN, 0);
         linker->sendCmdOnly(msg.c_str());
 
         if (idx<64||idx==70){
@@ -224,49 +131,7 @@ void MixFaceLibrary::sendXremoteMessage() {
     linker->sendDynamicMsg(p);
 }
 
-string MixFaceLibrary::channelNameFromIdx(int idx) {
-  string name;
-  idx = idx + 1;
-  if (idx < 33) {
-    name = to_string(idx);
-    name = ("Ch " + name);
-  } else if (idx < 41) {
-    name = to_string(idx - 32);
-    name = ("Aux " + name);
-  } else if (idx == 41) {
-    name = ("FX 1L");
-  } else if (idx == 42) {
-    name = ("FX 1R");
-  } else if (idx == 43) {
-    name = ("FX 2L");
-  } else if (idx == 44) {
-    name = ("FX 2R");
-  } else if (idx == 45) {
-    name = ("FX 3L");
-  } else if (idx == 46) {
-    name = ("FX 3R");
-  } else if (idx == 47) {
-    name = ("FX 4L");
-  } else if (idx == 48) {
-    name = ("FX 4R");
-  } else if (idx < 65) {
-    name = to_string(idx - 48);
-    name = ("Bus " + name);
-  } else if (idx < 71) {
-    name = to_string(idx - 64);
-    name = ("Matrix " + name);
-  } else if (idx == 71) {
-    name = ("Main LR");
-  } else if (idx == 72) {
-    name = ("M/C");
-  } else if (idx < 81) {
-    name = to_string(idx - 72);
-    name = ("DCA " + name);
-  }
-  return name;
-}
-
-void MixFaceLibrary::processStringMessage(string message, string sval) {
+void MixFaceLibrary::processStringMessage(std::string message, std::string sval) {
     ChannelType chtype = getChannelType(message);
     MessageType mtype = getMessageType(message, chtype);
 
@@ -275,7 +140,7 @@ void MixFaceLibrary::processStringMessage(string message, string sval) {
 
     switch (mtype) {
     case configname:
-        db.configname[idx] = sval;
+        db->configname[idx] = sval;
         valueChanged(mtype,idx,0);
         break;
     case merror:
@@ -284,7 +149,7 @@ void MixFaceLibrary::processStringMessage(string message, string sval) {
     }
 }
 
-void MixFaceLibrary::processIntMessage(string message, int ival) {
+void MixFaceLibrary::processIntMessage(std::string message, int ival) {
     ChannelType chtype = getChannelType(message);
     MessageType mtype = getMessageType(message, chtype);
 
@@ -294,171 +159,171 @@ void MixFaceLibrary::processIntMessage(string message, int ival) {
 
     switch (mtype) {
     case stereoon:
-        db.stereoon[idx] = ival;
+        db->stereoon[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case monoon:
-        db.monoon[idx] = ival;
+        db->monoon[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case on:
-        db.on[idx] = ival;
+        db->on[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case solo:
-        db.solo[chN-1] = ival;
+        db->solo[chN-1] = ival;
         valueChanged(mtype,chN-1,0);
         break;
     case keysolo:
-        db.keysolo = ival;
+        db->keysolo = ival;
         valueChanged(mtype,0,0);
         break;
     case chlink:
-        db.chlink[idx] = ival;
+        db->chlink[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case auxlink:
-        db.auxlink[idx] = ival;
+        db->auxlink[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case buslink:
-        db.buslink[idx] = ival;
+        db->buslink[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case mtxlink:
-        db.mtxlink[idx] = ival;
+        db->mtxlink[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case phantom:
-        db.phantom[idx] = ival;
+        db->phantom[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case invert:
-        db.invert[idx] = ival;
+        db->invert[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case source:
-        db.source[idx] = ival;
+        db->source[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case hpon:
-        db.hpon[idx] = ival;
+        db->hpon[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case delayon:
-        db.delayon[idx] = ival;
+        db->delayon[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case inserton:
-        db.inserton[idx] = ival;
+        db->inserton[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case insertsel:
-        db.insertsel[idx] = ival;
+        db->insertsel[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case insertpos:
-        db.insertpos[idx] = ival;
+        db->insertpos[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case gateon:
-        db.gateon[idx] = ival;
+        db->gateon[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case gatemode:
-        db.gatemode[idx] = ival;
+        db->gatemode[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case gatekeysrc:
-        db.gatekeysrc[idx] = ival;
+        db->gatekeysrc[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case gatefilteron:
-        db.gatefilteron[idx] = ival;
+        db->gatefilteron[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case gatefiltertype:
-        db.gatefiltertype[idx] = ival;
+        db->gatefiltertype[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case dynon:
-        db.dynon[idx] = ival;
+        db->dynon[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case dynratio:
-        db.dynratio[idx] = ival;
+        db->dynratio[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case dynmode:
-        db.dynmode[idx] = ival;
+        db->dynmode[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case dynenv:
-        db.dynenv[idx] = ival;
+        db->dynenv[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case dyndet:
-        db.dyndet[idx] = ival;
+        db->dyndet[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case dynauto:
-        db.dynauto[idx] = ival;
+        db->dynauto[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case dynkeysrc:
-        db.dynkeysrc[idx] = ival;
+        db->dynkeysrc[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case dynfilteron:
-        db.dynfilteron[idx] = ival;
+        db->dynfilteron[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case dynfiltertype:
-        db.dynfiltertype[idx] = ival;
+        db->dynfiltertype[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case eq1type:
-        db.eq1type[idx] = ival;
+        db->eq1type[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case eq2type:
-        db.eq2type[idx] = ival;
+        db->eq2type[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case eq3type:
-        db.eq3type[idx] = ival;
+        db->eq3type[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case eq4type:
-        db.eq4type[idx] = ival;
+        db->eq4type[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case eq5type:
-        db.eq5type[idx] = ival;
+        db->eq5type[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case eq6type:
-        db.eq6type[idx] = ival;
+        db->eq6type[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case sendpanfollow:
-        db.sendpanfollow[idx][sendN] = ival;
+        db->sendpanfollow[idx][sendN] = ival;
         valueChanged(mtype,idx,sendN);
         break;
     case sendtype:
-        db.sendtype[idx][sendN] = ival;
+        db->sendtype[idx][sendN] = ival;
         valueChanged(mtype,idx,sendN);
         break;
     case sendon:
-        db.sendon[idx][sendN] = ival;
+        db->sendon[idx][sendN] = ival;
         valueChanged(mtype,idx,sendN);
         break;
     case configicon:
-        db.configicon[idx] = ival;
+        db->configicon[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case configcolor:
-        db.configcolor[idx] = ival;
+        db->configcolor[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
     case merror:
@@ -467,7 +332,7 @@ void MixFaceLibrary::processIntMessage(string message, int ival) {
     }
 }
 
-void MixFaceLibrary::processFloatMessage(string message, float fval) {
+void MixFaceLibrary::processFloatMessage(std::string message, float fval) {
     ChannelType chtype = getChannelType(message);
     MessageType mtype = getMessageType(message, chtype);
 
@@ -476,169 +341,168 @@ void MixFaceLibrary::processFloatMessage(string message, float fval) {
     int sendN = getSendNumber(message);
 
     switch (mtype) {
-    case stereoon:
     case mlevel:
-        db.mlevel[idx] = fval;
+        db->mlevel[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case fader:
-        db.fader[idx] = fval;
+        db->fader[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case pan:
-        db.pan[idx] = fval;
+        db->pan[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case gain:
-        db.gain[idx] = fval;
+        db->gain[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case trim:
-        db.trim[idx] = fval;
+        db->trim[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case hpf:
-        db.hpf[idx] = fval;
+        db->hpf[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case delaytime:
-        db.delaytime[idx] = fval;
+        db->delaytime[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case gatethr:
-        db.gatethr[idx] = fval;
+        db->gatethr[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case gaterange:
-        db.gaterange[idx] = fval;
+        db->gaterange[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case gateattack:
-        db.gateattack[idx] = fval;
+        db->gateattack[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case gatehold:
-        db.gatehold[idx] = fval;
+        db->gatehold[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case gaterelease:
-        db.gaterelease[idx] = fval;
+        db->gaterelease[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case gatefilterf:
-        db.gatefilterf[idx] = fval;
+        db->gatefilterf[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case dynthr:
-        db.dynthr[idx] = fval;
+        db->dynthr[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case dynmix:
-        db.dynmix[idx] = fval;
+        db->dynmix[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case dynmgain:
-        db.dynmgain[idx] = fval;
+        db->dynmgain[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case dynattack:
-        db.dynattack[idx] = fval;
+        db->dynattack[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case dynhold:
-        db.dynhold[idx] = fval;
+        db->dynhold[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case dynrelease:
-        db.dynrelease[idx] = fval;
+        db->dynrelease[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case dynknee:
-        db.dynknee[idx] = fval;
+        db->dynknee[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case dynfilterf:
-        db.dynfilterf[idx] = fval;
+        db->dynfilterf[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq1g:
-        db.eq1g[idx] = fval;
+        db->eq1g[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq1f:
-        db.eq1f[idx] = fval;
+        db->eq1f[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq1q:
-        db.eq1q[idx] = fval;
+        db->eq1q[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq2g:
-        db.eq2g[idx] = fval;
+        db->eq2g[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq2f:
-        db.eq2f[idx] = fval;
+        db->eq2f[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq2q:
-        db.eq2q[idx] = fval;
+        db->eq2q[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq3g:
-        db.eq3g[idx] = fval;
+        db->eq3g[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq3f:
-        db.eq3f[idx] = fval;
+        db->eq3f[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq3q:
-        db.eq3q[idx] = fval;
+        db->eq3q[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq4g:
-        db.eq4g[idx] = fval;
+        db->eq4g[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq4f:
-        db.eq4f[idx] = fval;
+        db->eq4f[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq4q:
-        db.eq4q[idx] = fval;
+        db->eq4q[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq5g:
-        db.eq5g[idx] = fval;
+        db->eq5g[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq5f:
-        db.eq5f[idx] = fval;
+        db->eq5f[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq5q:
-        db.eq5q[idx] = fval;
+        db->eq5q[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq6g:
-        db.eq6g[idx] = fval;
+        db->eq6g[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq6f:
-        db.eq6f[idx] = fval;
+        db->eq6f[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case eq6q:
-        db.eq6q[idx] = fval;
+        db->eq6q[idx] = fval;
         valueChanged(mtype,idx,0);
         break;
     case sendlevel:
-        db.sendlevel[idx][sendN] = fval;
+        db->sendlevel[idx][sendN] = fval;
         valueChanged(mtype,idx,sendN);
         break;
     case sendpan:
-        db.sendpan[idx][sendN] = fval;
+        db->sendpan[idx][sendN] = fval;
         valueChanged(mtype,idx,sendN);
         break;
     case merror:
@@ -647,391 +511,7 @@ void MixFaceLibrary::processFloatMessage(string message, float fval) {
     }
 }
 
-string MixFaceLibrary::getOscAddress(MessageType mtype,
-                                   ChannelType chtype,
-                                   int channelN, int sendN)
-{
-    string oscAddress;
-    switch (mtype) {
-    case stereoon:
-        oscAddress = ("/mix/st");
-        break;
-    case fader:
-        oscAddress = ("/mix/fader");
-        break;
-    case pan:
-        oscAddress = ("/mix/pan");
-        break;
-    case on:
-        oscAddress = ("/mix/on");
-        break;
-    case solo:
-        if (channelN < 10)
-            oscAddress = ("/-stat/solosw/0" + to_string(channelN));
-        else
-            oscAddress = ("/-stat/solosw/" + to_string(channelN));
-        break;
-    case keysolo:
-        oscAddress = ("/-stat/keysolo");
-        break;
-    case monoon:
-        oscAddress = ("/mix/mono");
-        break;
-    case mlevel:
-        oscAddress = ("/mix/mlevel");
-        break;
-    case chlink:
-        if (channelN % 2 == 0) channelN = channelN-1;
-        oscAddress = ("/config/chlink/" + to_string(channelN) + "-" +
-                      to_string(channelN + 1));
-        break;
-    case auxlink:
-        if (channelN % 2 == 0) channelN = channelN-1;
-        oscAddress = ("/config/auxlink/" + to_string(channelN) + "-" +
-                      to_string(channelN + 1));
-        break;
-    case buslink:
-        if (channelN % 2 == 0) channelN = channelN-1;
-        oscAddress = ("/config/buslink/" + to_string(channelN) + "-" +
-                      to_string(channelN + 1));
-        break;
-    case mtxlink:
-        if (channelN % 2 == 0) channelN = channelN-1;
-        oscAddress = ("/config/mtxlink/" + to_string(channelN) + "-" +
-                      to_string(channelN + 1));
-        break;
-    case phantom:
-        if (channelN < 10)
-            oscAddress = ("/headamp/00" + to_string(channelN) + "/phantom");
-        else if (channelN < 100)
-            oscAddress = ("/headamp/0" + to_string(channelN) + "/phantom");
-        else
-            oscAddress = ("/headamp/" + to_string(channelN) + "/phantom");
-        break;
-    case invert:
-        oscAddress = ("/preamp/invert");
-        break;
-    case source:
-        oscAddress = ("/config/source");
-        break;
-    case gain:
-        if (channelN < 10)
-            oscAddress = ("/headamp/00" + to_string(channelN-1) + "/gain");
-        else if (channelN < 100)
-            oscAddress = ("/headamp/0" + to_string(channelN-1) + "/gain");
-        else
-            oscAddress = ("/headamp/" + to_string(channelN-1) + "/gain");
-        break;
-    case trim:
-        oscAddress = ("/preamp/trim");
-        break;
-    case hpf:
-        oscAddress = ("/preamp/hpf");
-        break;
-    case hpon:
-        oscAddress = ("/preamp/hpon");
-        break;
-    case delayon:
-        oscAddress = ("/delay/on");
-        break;
-    case delaytime:
-        oscAddress = ("/delay/time");
-        break;
-    case inserton:
-        oscAddress = ("/insert/on");
-        break;
-    case insertsel:
-        oscAddress = ("/insert/sel");
-        break;
-    case insertpos:
-        oscAddress = ("/insert/pos");
-        break;
-    case gateon:
-        oscAddress = ("/gate/on");
-        break;
-    case gatethr:
-        oscAddress = ("/gate/thr");
-        break;
-    case gaterange:
-        oscAddress = ("/gate/range");
-        break;
-    case gatemode:
-        oscAddress = ("/gate/mode");
-        break;
-    case gateattack:
-        oscAddress = ("/gate/attack");
-        break;
-    case gatehold:
-        oscAddress = ("/gate/hold");
-        break;
-    case gaterelease:
-        oscAddress = ("/gate/release");
-        break;
-    case gatekeysrc:
-        oscAddress = ("/gate/keysrc");
-        break;
-    case gatefilteron:
-        oscAddress = ("/gate/filter/on");
-        break;
-    case gatefiltertype:
-        oscAddress = ("/gate/filter/type");
-        break;
-    case gatefilterf:
-        oscAddress = ("/gate/filter/f");
-        break;
-    case dynon:
-        oscAddress = ("/dyn/on");
-        break;
-    case dynthr:
-        oscAddress = ("/dyn/thr");
-        break;
-    case dynratio:
-        oscAddress = ("/dyn/ratio");
-        break;
-    case dynmix:
-        oscAddress = ("/dyn/mix");
-        break;
-    case dynmgain:
-        oscAddress = ("/dyn/mgain");
-        break;
-    case dynattack:
-        oscAddress = ("/dyn/attack");
-        break;
-    case dynhold:
-        oscAddress = ("/dyn/hold");
-        break;
-    case dynrelease:
-        oscAddress = ("/dyn/release");
-        break;
-    case dynmode:
-        oscAddress = ("/dyn/mode");
-        break;
-    case dynknee:
-        oscAddress = ("/dyn/knee");
-        break;
-    case dynenv:
-        oscAddress = ("/dyn/env");
-        break;
-    case dyndet:
-        oscAddress = ("/dyn/det");
-        break;
-    case dynauto:
-        oscAddress = ("/dyn/auto");
-        break;
-    case dynkeysrc:
-        oscAddress = ("/dyn/keysrc");
-        break;
-    case dynfilteron:
-        oscAddress = ("/dyn/filter/on");
-        break;
-    case dynfiltertype:
-        oscAddress = ("/dyn/filter/type");
-        break;
-    case dynfilterf:
-        oscAddress = ("/dyn/filter/f");
-        break;
-    case eq1type:
-        oscAddress = ("/eq/1/type");
-        break;
-    case eq1g:
-        oscAddress = ("/eq/1/g");
-        break;
-    case eq1f:
-        oscAddress = ("/eq/1/f");
-        break;
-    case eq1q:
-        oscAddress = ("/eq/1/q");
-        break;
-    case eq2type:
-        oscAddress = ("/eq/2/type");
-        break;
-    case eq2g:
-        oscAddress = ("/eq/2/g");
-        break;
-    case eq2f:
-        oscAddress = ("/eq/2/f");
-        break;
-    case eq2q:
-        oscAddress = ("/eq/2/q");
-        break;
-    case eq3type:
-        oscAddress = ("/eq/3/type");
-        break;
-    case eq3g:
-        oscAddress = ("/eq/3/g");
-        break;
-    case eq3f:
-        oscAddress = ("/eq/3/f");
-        break;
-    case eq3q:
-        oscAddress = ("/eq/3/q");
-        break;
-    case eq4type:
-        oscAddress = ("/eq/4/type");
-        break;
-    case eq4g:
-        oscAddress = ("/eq/4/g");
-        break;
-    case eq4f:
-        oscAddress = ("/eq/4/f");
-        break;
-    case eq4q:
-        oscAddress = ("/eq/4/q");
-        break;
-    case eq5type:
-        oscAddress = ("/eq/5/type");
-        break;
-    case eq5g:
-        oscAddress = ("/eq/5/g");
-        break;
-    case eq5f:
-        oscAddress = ("/eq/5/f");
-        break;
-    case eq5q:
-        oscAddress = ("/eq/5/q");
-        break;
-    case eq6type:
-        oscAddress = ("/eq/6/type");
-        break;
-    case eq6g:
-        oscAddress = ("/eq/6/g");
-        break;
-    case eq6f:
-        oscAddress = ("/eq/6/f");
-        break;
-    case eq6q:
-        oscAddress = ("/eq/6/q");
-        break;
-    case sendlevel:
-        if (sendN < 10)
-            oscAddress = ("/mix/0" + to_string(sendN) + "/level");
-        else
-            oscAddress = ("/mix/" + to_string(sendN) + "/level");
-        break;
-    case sendpan:
-        if (sendN < 10)
-            oscAddress = ("/mix/0" + to_string(sendN) + "/pan");
-        else
-            oscAddress = ("/mix/" + to_string(sendN) + "/pan");
-        break;
-    case sendpanfollow:
-        if (sendN < 10)
-            oscAddress = ("/mix/0" + to_string(sendN) + "/panFollow");
-        else
-            oscAddress = ("/mix/" + to_string(sendN) + "/panFollow");
-        break;
-    case sendtype:
-        if (sendN < 10)
-            oscAddress = ("/mix/0" + to_string(sendN) + "/type");
-        else
-            oscAddress = ("/mix/" + to_string(sendN) + "/type");
-        break;
-    case sendon:
-        if (sendN < 10)
-            oscAddress = ("/mix/0" + to_string(sendN) + "/on");
-        else
-            oscAddress = ("/mix/" + to_string(sendN) + "/on");
-        break;
-    case configicon:
-        oscAddress = ("/config/icon");
-        break;
-    case configcolor:
-        oscAddress = ("/config/color");
-        break;
-    case configname:
-        oscAddress = ("/config/name");
-        break;
-    case merror:
-        debug->sendMessage("Message type error " + to_string(channelN),0);
-        oscAddress = nullptr;
-        break;
-    }
-    if (mtype != solo && mtype != chlink && mtype != auxlink &&
-            mtype != buslink && mtype != mtxlink && mtype != phantom &&
-            mtype != gain && mtype != keysolo) {
-        switch (chtype) {
-        case channel:
-            if (channelN < 10) {
-                oscAddress = ("/ch/0" + to_string(channelN) + oscAddress);
-            } else {
-                oscAddress = ("/ch/" + to_string(channelN) + oscAddress);
-            }
-            break;
-        case auxin:
-            oscAddress = ("/auxin/0" + to_string(channelN) + oscAddress);
-            break;
-        case fxreturn:
-            oscAddress = ("/fxrtn/0" + to_string(channelN) + oscAddress);
-            break;
-        case bus:
-            if (channelN < 10) {
-                oscAddress = ("/bus/0" + to_string(channelN) + oscAddress);
-            } else {
-                oscAddress = ("/bus/" + to_string(channelN) + oscAddress);
-            }
-            break;
-        case matrix:
-            oscAddress = ("/mtx/0" + to_string(channelN) + oscAddress);
-            break;
-        case lr:
-            oscAddress = ("/main/st" + oscAddress);
-            break;
-        case mc:
-            oscAddress = ("/main/m" + oscAddress);
-            break;
-        case dca:
-            if (mtype == fader)
-                oscAddress = ("/dca/" + to_string(channelN) + "/fader");
-            else if (mtype == on)
-                oscAddress = ("/dca/" + to_string(channelN) + "/on");
-            else
-                oscAddress = ("/dca/" + to_string(channelN) + oscAddress);
-            break;
-        case headamp:
-            break;
-        case cherror:
-            debug->sendMessage("Channel type error " + to_string(channelN),0);
-            oscAddress = nullptr;
-            break;
-        }
-    }
-    return oscAddress;
-}
-
-ChannelType MixFaceLibrary::getChannelTypeFromIdx(int idx) {
-    ChannelType chtype = cherror;
-    if (idx<32)
-        chtype = channel;
-    else if (idx < 40)
-        chtype = auxin;
-    else if (idx < 48)
-        chtype = fxreturn;
-    else if (idx < 64)
-        chtype = bus;
-    else if (idx < 70)
-        chtype = matrix;
-    else if (idx == 70)
-        chtype = lr;
-    else if (idx == 71)
-        chtype = mc;
-    else if (idx < 80)
-        chtype = dca;
-    return chtype;
-}
-
-int MixFaceLibrary::getChannelNumberFromIdx(int idx) {
-  if (idx < 32) return (idx + 1);
-  else if (idx < 40) return (idx - 31);
-  else if (idx < 48) return (idx - 39);
-  else if (idx < 64) return (idx - 47);
-  else if (idx < 70) return (idx - 63);
-  else if (idx == 70) return 0;
-  else if (idx == 71) return 0;
-  else if (idx < 80) return (idx - 71);
-  else return 0;
-}
-
-MessageType MixFaceLibrary::getMessageType(string message, ChannelType type) {
+MessageType MixFaceLibrary::getMessageType(std::string message, ChannelType type) {
     MessageType mtype = merror;
     if (type != dca) {
         if (strstr(message.c_str(), msgTypeStr.stereoon)) mtype = stereoon;
@@ -1125,7 +605,7 @@ MessageType MixFaceLibrary::getMessageType(string message, ChannelType type) {
     return mtype;
 }
 
-ChannelType MixFaceLibrary::getChannelType(string message) {
+ChannelType MixFaceLibrary::getChannelType(std::string message) {
     ChannelType chtype = cherror;
     if (strstr(message.c_str(), chTypeStr.channel)) chtype = channel;
     else if (strstr(message.c_str(), chTypeStr.auxin)) chtype = auxin;
@@ -1138,12 +618,12 @@ ChannelType MixFaceLibrary::getChannelType(string message) {
     return chtype;
 }
 
-int MixFaceLibrary::getChannelNumber(string message) {
+int MixFaceLibrary::getChannelNumber(std::string message) {
     debug->sendMessage("MixFaceLibrary::getChannelNumber in message: " + message, 3);
     int chN = 0;
     if (strstr(message.c_str(), busTypeStr.ch)) {
         message.erase(0,strlen(busTypeStr.ch));
-        debug->sendMessage("MixFaceLibrary::getChannelNumber erase symbols: " + to_string(strlen(busTypeStr.ch)), 3);
+        debug->sendMessage("MixFaceLibrary::getChannelNumber erase symbols: " + std::to_string(strlen(busTypeStr.ch)), 3);
         message.resize(2);
         chN = atoi(message.c_str());
     } else if (strstr(message.c_str(), busTypeStr.auxin)) {
@@ -1179,11 +659,11 @@ int MixFaceLibrary::getChannelNumber(string message) {
         message.resize(2);
         chN = atoi(message.c_str());
     }
-    debug->sendMessage("MixFaceLibrary::getChannelNumber ch number is: " + to_string(chN), 3);
+    debug->sendMessage("MixFaceLibrary::getChannelNumber ch number is: " + std::to_string(chN), 3);
     return chN;
 }
 
-int MixFaceLibrary::getSendNumber(string message) {
+int MixFaceLibrary::getSendNumber(std::string message) {
     debug->sendMessage("MixFaceLibrary::getSendNumber in message: " + message, 3);
     int sendN = 0;
     if (strstr(message.c_str(), busTypeStr.ch)) {
@@ -1211,23 +691,6 @@ int MixFaceLibrary::getSendNumber(string message) {
         message.resize(2);
         sendN = atoi(message.c_str());
     }
-    debug->sendMessage("MixFaceLibrary::getSendNumber send number: " + to_string(sendN), 3);
+    debug->sendMessage("MixFaceLibrary::getSendNumber send number: " + std::to_string(sendN), 3);
     return sendN;
 }
-
-int MixFaceLibrary::getIdxFromChNandChType(int chN, ChannelType chtype){
-    int idx = -1;
-    switch (chtype){
-    case channel: idx = chN - 1; break;
-    case auxin: idx = chN + 31; break;
-    case fxreturn: idx = chN + 39; break;
-    case bus: idx = chN + 47; break;
-    case matrix: idx = chN + 63; break;
-    case lr: idx = 70; break;
-    case mc: idx = 71; break;
-    case dca: idx = chN + 71; break;
-    case headamp: idx = -1; break;
-    case cherror: idx = -1; break; }
-    return idx;
-}
-

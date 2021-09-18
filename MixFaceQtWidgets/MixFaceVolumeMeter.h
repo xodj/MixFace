@@ -9,7 +9,7 @@
 #include <QTimer>
 
 #include "DebugLibrary.hpp"
-#include "MixFaceStaticMath.h"
+#include "MixFaceStatic.h"
 
 #define CLIP_FLASH_DURATION_MS 1000
 

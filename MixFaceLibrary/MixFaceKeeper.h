@@ -3,13 +3,22 @@
 
 #include <boost/thread.hpp>
 #include <boost/signals2.hpp>
-#include "MixFaceLibrary.h"
 #include "DebugLibrary.hpp"
-#include "Timer.hpp"
+#include "MixFaceStatic.h"
 
 class MixFaceKeeper {
 public:
-    MixFaceKeeper();
+    MixFaceKeeper(DebugLibrary *debug = new DebugLibrary);
+
+    x32db *getX32DB() { return db; }
+    void loadX32DB();
+    void saveX32DB();
+
+private:
+    x32db *db;
+
+    DebugLibrary *debug;
+    boost::thread *keeperThread;
 };
 
 #endif // MIXFACEKEEPER_H

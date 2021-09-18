@@ -115,25 +115,34 @@ private:
     void compOnOffChanged(int value);
     void compTresholdChanged(float value);
     void compRatioChanged(int value);
-
     void compMixChanged(float value);
     void compGainChanged(float value);
     void compKneeChanged(float value);
-
     void compModeCompExpChanged(int value);
     void compEnvLinLogChanged(int value);
     void compDetPeakRmsChanged(int value);
-
     void compAttackChanged(float value);
     void compHoldChanged(float value);
     void compReleaseChanged(float value);
     void compAutoTimeChanged(int value);
-
     void compKeySourceChanged(int value);
     void compFilterChanged(int value);
     void compFilterSoloChanged(int value);
     void compFilterTypeChanged(int value);
     void compFilterFrequencyChanged(float value);
+
+    void gateOnOffChanged(int value);
+    void gateTresholdChanged(float value);
+    void gateRangeChanged(float value);
+    void gateModeChanged(int value);
+    void gateAttackChanged(float value);
+    void gateHoldChanged(float value);
+    void gateReleaseChanged(float value);
+    void gateKeySourceChanged(int value);
+    void gateFilterChanged(int value);
+    void gateFilterSoloChanged(int value);
+    void gateFilterTypeChanged(int value);
+    void gateFilterFrequencyChanged(float value);
 
     void windowRenew();
     void sendSyncMessages(){
@@ -155,6 +164,13 @@ private:
 
 protected:
     void resizeEvent( QResizeEvent *e ) override;
+    virtual void closeEvent(QCloseEvent *event) {
+        QEvent *ev = (QEvent*)event;
+        ev->ignore();
+        this->hide();
+        mf_library->keeperSaveEvent();
+        qApp->exit(0);
+    }
 };
 
 class MixFaceDemoTimer : public QTimer {

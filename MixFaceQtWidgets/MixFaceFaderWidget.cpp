@@ -1,7 +1,7 @@
 #include "MixFaceFaderWidget.h"
 #include <qglobal.h>
 #include <QtCore/QVariant>
-#include "MixFaceStaticMath.h"
+#include "MixFaceStatic.h"
 #include <QTime>
 
 FaderWidget::FaderWidget(float dpiRatio, MixFaceFonts *m_fonts,

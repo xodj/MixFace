@@ -1,7 +1,8 @@
 #include "MixFaceLinker.h"
 
-MixFaceLinker::MixFaceLinker(DebugLibrary *debug_) : boost::thread(), debug(debug_) {
-    boost::thread *linkerThread = new boost::thread{};
+MixFaceLinker::MixFaceLinker(DebugLibrary *debug_)
+    : linkerThread(new boost::thread{}), debug(debug_)
+{
     linkerThread->join();
     debug->sendMessage("MixFaceLinker::MixFaceLinker",5);
     listener = new MixFaceListener(debug);

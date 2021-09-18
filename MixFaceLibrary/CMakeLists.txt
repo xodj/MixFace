@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-PROJECT(MixFaceLibrary VERSION 2.0.3.81 LANGUAGES CXX)
+PROJECT(MixFaceLibrary VERSION 2.1.0.114 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -12,65 +12,66 @@ endif()
 if(ANDROID)
     message(STATUS "Using ${ANDROID_ABI} libraries.")
     if(${ANDROID_ABI} STREQUAL "armeabi-v7a")
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-clang-mt-a32-1_76.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-clang-mt-a32-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_thread-clang-mt-a32-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_chrono-clang-mt-a32-1_76.a)
     elseif(${ANDROID_ABI} STREQUAL "arm64-v8a")
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-clang-mt-a64-1_76.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-clang-mt-a64-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_thread-clang-mt-a64-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_chrono-clang-mt-a64-1_76.a)
     elseif(${ANDROID_ABI} STREQUAL "x86")
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-clang-mt-x32-1_76.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-clang-mt-x32-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_thread-clang-mt-x32-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_chrono-clang-mt-x32-1_76.a)
     elseif(${ANDROID_ABI} STREQUAL "x86_64")
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-clang-mt-x64-1_76.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-clang-mt-x64-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_thread-clang-mt-x64-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_chrono-clang-mt-x64-1_76.a)
     endif()
 endif()
 
 if(WIN32 AND NOT MSVC)
     string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
     if(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-mgw8-mt-d-x64-1_76.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-mgw8-mt-d-x64-1_76.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_date_time-mgw8-mt-d-x64-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_thread-mgw8-mt-d-x64-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_chrono-mgw8-mt-d-x64-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_date_time-mgw8-mt-d-x64-1_76.a)
     else(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-mgw8-mt-x64-1_76.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-mgw8-mt-x64-1_76.a)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_date_time-mgw8-mt-x64-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_thread-mgw8-mt-x64-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_chrono-mgw8-mt-x64-1_76.a)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_date_time-mgw8-mt-x64-1_76.a)
     endif(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
 endif()
 
 if(MSVC)
     string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
     if(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-vc142-mt-gd-x64-1_76.lib)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-vc142-mt-gd-x64-1_76.lib)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_date_time-vc142-mt-gd-x64-1_76.lib)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_thread-vc142-mt-gd-x64-1_76.lib)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_chrono-vc142-mt-gd-x64-1_76.lib)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_date_time-vc142-mt-gd-x64-1_76.lib)
     else(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread-vc142-mt-x64-1_76.lib)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono-vc142-mt-x64-1_76.lib)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_date_time-vc142-mt-x64-1_76.lib)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_thread-vc142-mt-x64-1_76.lib)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_chrono-vc142-mt-x64-1_76.lib)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_date_time-vc142-mt-x64-1_76.lib)
     endif(uppercase_CMAKE_BUILD_TYPE STREQUAL "DEBUG" OR uppercase_CMAKE_BUILD_TYPE STREQUAL "RELWITHDEBINFO")
 endif()
 
 if(UNIX AND NOT ANDROID)
-    set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_thread.a)
-    set(Boost_LIBRARIES ${Boost_LIBRARIES} ${BOOST_LIBRARY_DIRS}/libboost_chrono.a)
+    set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_thread.a)
+    set(Boost_LIBRARIES ${Boost_LIBRARIES} libboost_chrono.a)
 endif()
 
 message(STATUS "Using ${Boost_LIBRARIES} libraries.")
 
 set(MixFaceLibrary_HEADERS
-MixFaceKeeper.h
-MixFaceLibrary.h
-MixFaceLinker.h
-MixFaceListener.h
-Timer.hpp
+    MixFaceStatic.h
+    MixFaceKeeper.h
+    MixFaceLibrary.h
+    MixFaceLinker.h
+    MixFaceListener.h
+    Timer.hpp
 )
 
 set(MixFaceLibrary_SOURCES
-MixFaceKeeper.cpp
-MixFaceLibrary.cpp
-MixFaceLinker.cpp
+    MixFaceKeeper.cpp
+    MixFaceLibrary.cpp
+    MixFaceLinker.cpp
 )
 
 if(WIN32)
@@ -121,7 +122,4 @@ else()
     target_link_libraries(MixFaceLibrary PUBLIC DebugLibrary ${Boost_LIBRARIES} PRIVATE OSCPACK)
 endif()
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${BOOST_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../OSCPACK)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../DebugLibrary)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
