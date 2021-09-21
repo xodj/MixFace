@@ -1381,53 +1381,105 @@ void MixFaceWindow::threadValueChanged(int imtype, int idx, int idy) {
         if (m_mode == mDyn && dynWidget != nullptr && dynWidget->getIdx() == idx)
             dynWidget->compFilterFrequencyRecieved(mf_library->db->dynfilterf[idx]);
         break;
+    case eqon:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqOnOffRecieved(mf_library->db->eqon[idx]);
+        break;
     case eq1type:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandTypeRecieved(0, mf_library->db->eq1type[idx]);
         break;
     case eq1g:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandGainRecieved(0, mf_library->db->eq1g[idx]);
         break;
     case eq1f:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandFreqRecieved(0, mf_library->db->eq1f[idx]);
         break;
     case eq1q:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandQualRecieved(0, mf_library->db->eq1q[idx]);
         break;
     case eq2type:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandTypeRecieved(1, mf_library->db->eq2type[idx]);
         break;
     case eq2g:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandGainRecieved(1, mf_library->db->eq2g[idx]);
         break;
     case eq2f:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandFreqRecieved(1, mf_library->db->eq2f[idx]);
         break;
     case eq2q:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandQualRecieved(1, mf_library->db->eq2q[idx]);
         break;
     case eq3type:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandTypeRecieved(2, mf_library->db->eq3type[idx]);
         break;
     case eq3g:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandGainRecieved(2, mf_library->db->eq3g[idx]);
         break;
     case eq3f:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandFreqRecieved(2, mf_library->db->eq3f[idx]);
         break;
     case eq3q:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandQualRecieved(2, mf_library->db->eq3q[idx]);
         break;
     case eq4type:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandTypeRecieved(3, mf_library->db->eq4type[idx]);
         break;
     case eq4g:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandGainRecieved(3, mf_library->db->eq4g[idx]);
         break;
     case eq4f:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandFreqRecieved(3, mf_library->db->eq4f[idx]);
         break;
     case eq4q:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandQualRecieved(3, mf_library->db->eq4q[idx]);
         break;
     case eq5type:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandTypeRecieved(4, mf_library->db->eq5type[idx]);
         break;
     case eq5g:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandGainRecieved(4, mf_library->db->eq5g[idx]);
         break;
     case eq5f:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandFreqRecieved(4, mf_library->db->eq5f[idx]);
         break;
     case eq5q:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandQualRecieved(4, mf_library->db->eq5q[idx]);
         break;
     case eq6type:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandTypeRecieved(5, mf_library->db->eq6type[idx]);
         break;
     case eq6g:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandGainRecieved(5, mf_library->db->eq6g[idx]);
         break;
     case eq6f:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandFreqRecieved(5, mf_library->db->eq6f[idx]);
         break;
     case eq6q:
+        if (m_mode == mEq && eqWidget != nullptr && eqWidget->getIdx() == idx)
+            eqWidget->eqBandQualRecieved(5, mf_library->db->eq6q[idx]);
         break;
     case sendlevel:
         if(currentIdy==idy&&idx<48) {

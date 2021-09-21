@@ -282,6 +282,10 @@ void MixFaceLibrary::processIntMessage(std::string message, int ival) {
         db->dynfiltertype[idx] = ival;
         valueChanged(mtype,idx,0);
         break;
+    case eqon:
+        db->eqon[idx] = ival;
+        valueChanged(mtype,idx,0);
+        break;
     case eq1type:
         db->eq1type[idx] = ival;
         valueChanged(mtype,idx,0);
@@ -566,6 +570,7 @@ MessageType MixFaceLibrary::getMessageType(std::string message, ChannelType type
         else if (strstr(message.c_str(), msgTypeStr.dynfilteron)) mtype = dynfilteron;
         else if (strstr(message.c_str(), msgTypeStr.dynfiltertype)) mtype = dynfiltertype;
         else if (strstr(message.c_str(), msgTypeStr.dynfilterf)) mtype = dynfilterf;
+        else if (strstr(message.c_str(), msgTypeStr.eqon)) mtype = eqon;
         else if (strstr(message.c_str(), msgTypeStr.eq1type)) mtype = eq1type;
         else if (strstr(message.c_str(), msgTypeStr.eq1g)) mtype = eq1g;
         else if (strstr(message.c_str(), msgTypeStr.eq1f)) mtype = eq1f;

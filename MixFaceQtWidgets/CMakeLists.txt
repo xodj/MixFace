@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-PROJECT(MixFace VERSION 0.2.2.229 LANGUAGES CXX)
+PROJECT(MixFace VERSION 0.2.2.234 LANGUAGES CXX)
 
 if(UNIX)
     set(CMAKE_THREAD_LIBS_INIT "-lpthread")

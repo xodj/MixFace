@@ -64,6 +64,7 @@ enum MessageType {
     dynfiltertype,  // ch/01/dyn/filter/type~~,i~~ 0-8
     dynfilterf,     // ch/01/dyn/filter/f~,f~~ 20Hz-20000kHz
 
+    eqon,
     eq1type, // ch/01/eq/1/type~~~~,i~~ 0-5 0-LCut 1-LShv 2-PEQ 3-VEQ 4-HShv 5-HCut
     eq1g,    // ch/01/eq/1/g~~~,f~~ -15db - +15db 0.5-Zero
     eq1f,    // ch/01/eq/1/f~~~,f~~ freq 20Hz-20kHz
@@ -190,6 +191,7 @@ struct x32db {
     int dynfiltertype[80];
     float dynfilterf[80];
 
+    int eqon[80];
     int eq1type[80];
     float eq1g[80];
     float eq1f[80];
@@ -285,6 +287,7 @@ struct MessageTypeStruct {
     const char *dynfiltertype = ("/dyn/filter/type");
     const char *dynfilterf = ("/dyn/filter/f");
 
+    const char *eqon = ("/eq/on");
     const char *eq1type = ("/eq/1/type");
     const char *eq1g = ("/eq/1/g");
     const char *eq1f = ("/eq/1/f");
@@ -878,6 +881,86 @@ static inline float c201logScaleToFrequency(float value) {
     return filterfreq;
 }
 
+static inline float qualFactorValueToFactor(float value) {
+    float factor;
+    switch (int(value * 71)) {
+    case 0: factor = 10; break;
+    case 1: factor = 9.5; break;
+    case 2: factor = 9.1; break;
+    case 3: factor = 8.6; break;
+    case 4: factor = 8.2; break;
+    case 5: factor = 7.8; break;
+    case 6: factor = 7.4; break;
+    case 7: factor = 7.1; break;
+    case 8: factor = 6.7; break;
+    case 9: factor = 6.1; break;
+    case 10: factor = 5.8; break;
+    case 11: factor = 5.5; break;
+    case 12: factor = 5.3; break;
+    case 13: factor = 5.0; break;
+    case 14: factor = 4.8; break;
+    case 15: factor = 4.5; break;
+    case 16: factor = 4.3; break;
+    case 17: factor = 4.1; break;
+    case 18: factor = 3.9; break;
+    case 19: factor = 3.7; break;
+    case 20: factor = 3.5; break;
+    case 21: factor = 3.4; break;
+    case 22: factor = 3.2; break;
+    case 23: factor = 3.1; break;
+    case 24: factor = 2.9; break;
+    case 25: factor = 2.8; break;
+    case 26: factor = 2.6; break;
+    case 27: factor = 2.5; break;
+    case 28: factor = 2.4; break;
+    case 29: factor = 2.3; break;
+    case 30: factor = 2.2; break;
+    case 31: factor = 2.1; break;
+    case 32: factor = 2.0; break;
+    case 33: factor = 1.9; break;
+    case 34: factor = 1.8; break;
+    case 35: factor = 1.7; break;
+    case 36: factor = 1.6; break;
+    case 37: factor = 1.5; break;
+    case 38: factor = 1.5; break;
+    case 39: factor = 1.4; break;
+    case 40: factor = 1.3; break;
+    case 41: factor = 1.3; break;
+    case 42: factor = 1.2; break;
+    case 43: factor = 1.1; break;
+    case 44: factor = 1.1; break;
+    case 45: factor = 1.0; break;
+    case 46: factor = 1.0; break;
+    case 47: factor = 0.9; break;
+    case 48: factor = 0.9; break;
+    case 49: factor = 0.8; break;
+    case 50: factor = 0.8; break;
+    case 51: factor = 0.8; break;
+    case 52: factor = 0.7; break;
+    case 53: factor = 0.7; break;
+    case 54: factor = 0.7; break;
+    case 55: factor = 0.6; break;
+    case 56: factor = 0.6; break;
+    case 57: factor = 0.6; break;
+    case 58: factor = 0.5; break;
+    case 59: factor = 0.5; break;
+    case 60: factor = 0.5; break;
+    case 61: factor = 0.5; break;
+    case 62: factor = 0.4; break;
+    case 63: factor = 0.4; break;
+    case 64: factor = 0.4; break;
+    case 65: factor = 0.4; break;
+    case 66: factor = 0.4; break;
+    case 67: factor = 0.3; break;
+    case 68: factor = 0.3; break;
+    case 69: factor = 0.3; break;
+    case 70: factor = 0.3; break;
+    case 71: factor = 0.3; break;
+    default: factor = -1; break;
+    }
+    return factor;
+}
+
 static inline std::string index2filtertype(int value) {
     std::string filtertype;
     switch (value) {
@@ -1376,6 +1459,9 @@ static inline std::string getOscAddress(MessageType mtype,
         break;
     case dynfilterf:
         oscAddress = ("/dyn/filter/f");
+        break;
+    case eqon:
+        oscAddress = ("/eq/on");
         break;
     case eq1type:
         oscAddress = ("/eq/1/type");
